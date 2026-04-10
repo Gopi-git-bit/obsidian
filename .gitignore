@@ -1,0 +1,64 @@
+
+# ── GSD baseline (auto-generated) ──
+.gsd
+.gsd-id
+.bg-shell/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
+
+# ── Secrets and Environment ──
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+
+# ── Node ──
+node_modules/
+.next/
+dist/
+build/
+
+# ── Python ──
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# ── Java/Rust ──
+target/
+vendor/
+
+# ── Logs and Coverage ──
+*.log
+coverage/
+.cache/
+.ruff_cache/
+tmp/
+
+# ── Nested git repositories ──
+transport-service/
+
+# ── Database dumps ──
+*.sql.bak
+*.sql.gz
+
+# ── Package lists (generated) ──
+packages.txt
+packages_utf8.txt
+
+# ── ML models (large binary files) ──
+backend/models/
+*.pkl
+*.joblib
+*.pt
+*.onnx

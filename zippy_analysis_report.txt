@@ -1,0 +1,303 @@
+
+================================================================================
+ZIPPY LOGISTICS DATABASE ANALYSIS REPORT
+================================================================================
+
+Generated: 2026-04-05 13:35:50
+Database: zippy_logistics
+Host: localhost:5432
+
+================================================================================
+DATABASE OVERVIEW
+================================================================================
+
+Tables Analyzed:
+- pdf_chunks: 1811 rows
+  Columns: id, file_name, chunk_index, chunk_text, extracted_at
+
+- raw_web_data: 3 rows
+  Columns: id, source, url, content, scraped_at
+
+================================================================================
+PATTERN 1: COST/FREIGHT RATE PATTERNS
+================================================================================
+
+Total Findings: 89
+
+Breakdown by Mode:
+  - road: 27 mentions
+  - Unknown: 23 mentions
+  - air: 13 mentions
+  - rail: 8 mentions
+  - truck: 7 mentions
+  - sea: 5 mentions
+  - train: 3 mentions
+  - ship: 3 mentions
+
+Key Findings (Top 5):
+
+  1. Source: FreightReportNationalLevel.pdf...
+     Mode: road
+     Cost: None
+     Route: fuel-efficient
+     Date: 2026-04-05 13:12:17.063323
+
+  2. Source: FreightReportNationalLevel.pdf...
+     Mode: road
+     Cost: None
+     Route: compared-coastal
+     Date: 2026-04-05 13:12:17.063323
+
+  3. Source: FreightReportNationalLevel.pdf...
+     Mode: truck
+     Cost: None
+     Route: inven-ry
+     Date: 2026-04-05 13:12:17.063323
+
+  4. Source: FreightReportNationalLevel.pdf...
+     Mode: rail
+     Cost: None
+     Route: compared-their
+     Date: 2026-04-05 13:12:17.063323
+
+  5. Source: FreightReportNationalLevel.pdf...
+     Mode: road
+     Cost: None
+     Route: vehicles-BS
+     Date: 2026-04-05 13:12:17.063323
+
+================================================================================
+PATTERN 2: INFRASTRUCTURE & BOTTLENECK PATTERNS
+================================================================================
+
+Total Findings: 101
+
+Breakdown by Issue Type:
+  - Congestion: 63 mentions
+  - Delay: 12 mentions
+  - Capacity Constraint: 9 mentions
+  - Bottleneck: 8 mentions
+  - Unknown: 8 mentions
+  - Infrastructure Gap: 1 mentions
+
+Breakdown by Severity:
+  - Unknown: 68
+  - Major: 20
+  - Significant: 10
+  - Severe: 2
+  - Critical: 1
+
+Key Findings (Top 5):
+
+  1. Source: DTEE_TNA_India_en.pdf...
+     Location: in the
+     Issue: Congestion
+     Severity: Unknown
+
+  2. Source: DTEE_TNA_India_en.pdf...
+     Location: on key
+     Issue: Congestion
+     Severity: Significant
+
+  3. Source: DTEE_TNA_India_en.pdf...
+     Location: None
+     Issue: Congestion
+     Severity: Unknown
+
+  4. Source: DTEE_TNA_India_en.pdf...
+     Location: than on
+     Issue: Congestion
+     Severity: Significant
+
+  5. Source: DTEE_TNA_India_en.pdf...
+     Location: None
+     Issue: Congestion
+     Severity: Unknown
+
+================================================================================
+PATTERN 3: GOVERNMENT POLICY & INITIATIVE PATTERNS
+================================================================================
+
+Total Findings: 100
+
+Breakdown by Scheme:
+  - Other/Unidentified: 40 mentions
+  - Dedicated Freight Corridor: 20 mentions
+  - National Logistics Policy: 12 mentions
+  - Make in India: 9 mentions
+  - Bharatmala: 8 mentions
+  - PM Gati Shakti: 7 mentions
+  - Sagarmala: 4 mentions
+
+Key Findings (Top 5):
+
+  1. Source: DTEE_TNA_India_en.pdf...
+     Scheme: None
+     Investment: None
+     Coverage: None
+
+  2. Source: DTEE_TNA_India_en.pdf...
+     Scheme: None
+     Investment: None
+     Coverage: None
+
+  3. Source: DTEE_TNA_India_en.pdf...
+     Scheme: None
+     Investment: None
+     Coverage: None
+
+  4. Source: DTEE_TNA_India_en.pdf...
+     Scheme: None
+     Investment: None
+     Coverage: None
+
+  5. Source: DTEE_TNA_India_en.pdf...
+     Scheme: None
+     Investment: None
+     Coverage: None
+
+================================================================================
+PATTERN 4: MODAL SPLIT DATA
+================================================================================
+
+Total Findings: 100
+
+Breakdown by Mode:
+  - road: 66 mentions
+  - Unknown: 16 mentions
+  - rail: 15 mentions
+  - air: 2 mentions
+  - water: 1 mentions
+
+Breakdown by Trend:
+  - Unknown: 66
+  - Increasing: 33
+  - Stable: 1
+
+Key Findings (Top 5):
+
+  1. Source: DTEE_TNA_India_en.pdf...
+     Mode: road
+     Percentage: None%
+     Trend: Unknown
+
+  2. Source: DTEE_TNA_India_en.pdf...
+     Mode: road
+     Percentage: None%
+     Trend: Unknown
+
+  3. Source: DTEE_TNA_India_en.pdf...
+     Mode: None
+     Percentage: None%
+     Trend: Unknown
+
+  4. Source: DTEE_TNA_India_en.pdf...
+     Mode: None
+     Percentage: 13%
+     Trend: Unknown
+
+  5. Source: DTEE_TNA_India_en.pdf...
+     Mode: road
+     Percentage: 23%
+     Trend: Increasing
+
+================================================================================
+PATTERN 5: GROWTH & TREND PATTERNS
+================================================================================
+
+Total Findings: 100
+
+Breakdown by Metric Type:
+  - Transport Sector Growth: 35 mentions
+  - General Growth: 35 mentions
+  - Logistics Sector Growth: 16 mentions
+  - Market Growth: 8 mentions
+  - Freight Growth: 6 mentions
+
+Key Findings (Top 5):
+
+  1. Source: DTEE_TNA_India_en.pdf...
+     Metric: Transport Sector Growth
+     Growth Rate: None
+     Timeframe: None
+
+  2. Source: DTEE_TNA_India_en.pdf...
+     Metric: Transport Sector Growth
+     Growth Rate: None
+     Timeframe: None
+
+  3. Source: DTEE_TNA_India_en.pdf...
+     Metric: Transport Sector Growth
+     Growth Rate: None
+     Timeframe: 2030
+
+  4. Source: DTEE_TNA_India_en.pdf...
+     Metric: General Growth
+     Growth Rate: None
+     Timeframe: 2030
+
+  5. Source: DTEE_TNA_India_en.pdf...
+     Metric: General Growth
+     Growth Rate: None
+     Timeframe: 2030
+
+================================================================================
+KEY INSIGHTS FOR ZIPPY LOGISTICS
+================================================================================
+
+1. COST OPTIMIZATION OPPORTUNITIES:
+   - 27 road transport cost mentions
+   - 8 rail transport cost mentions
+   - 13 air transport cost mentions
+   - Consider multi-modal strategies for cost optimization
+
+2. INFRASTRUCTURE CHALLENGES:
+   - 63 congestion-related issues identified
+   - 8 bottlenecks detected
+   - 9 capacity constraints noted
+   - Plan alternative routes avoiding identified bottlenecks
+
+3. GOVERNMENT INITIATIVES TO LEVERAGE:
+   - 7 PM Gati Shakti references
+   - 8 Bharatmala references
+   - 12 NLP references
+   - Align operations with government corridors for efficiency
+
+4. MODAL SHIFT TRENDS:
+   - 66 road transport mentions
+   - 15 rail transport mentions
+   - 33 growth trends identified
+   - Monitor modal shift opportunities
+
+5. GROWTH PROJECTIONS:
+   - 100 growth metrics identified
+   - 16 logistics growth projections
+   - Plan capacity for projected 2025-2030 growth
+
+================================================================================
+RECOMMENDATIONS FOR ZIPPY LOGISTICS
+================================================================================
+
+1. ROUTE OPTIMIZATION:
+   - Use identified cost data to benchmark freight rates
+   - Avoid routes with known congestion/bottlenecks
+   - Consider rail for bulk cargo where cost-effective
+
+2. STRATEGIC PLANNING:
+   - Align with PM Gati Shakti corridors
+   - Monitor Bharatmala project developments
+   - Prepare for NLP implementation benefits
+
+3. CAPACITY PLANNING:
+   - Plan for 16 logistics growth trends
+   - Consider infrastructure gaps in expansion planning
+   - Monitor modal split shifts for fleet planning
+
+4. COST MANAGEMENT:
+   - Benchmark against extracted freight rates
+   - Explore multi-modal combinations
+   - Leverage government initiatives for cost reduction
+
+================================================================================
+END OF REPORT
+================================================================================

@@ -1,0 +1,51 @@
+# Zippy Logitech Backend - Python Dependencies
+
+# FastAPI and server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Database
+sqlalchemy==2.0.25
+psycopg2-binary==2.9.9
+alembic==1.13.1
+
+# Data validation
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# Environment
+python-dotenv==1.0.0
+
+# CORS
+fastapi-cors==0.0.1
+
+# Utilities
+httpx==0.26.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# ML / Pricing
+lightgbm==4.5.0
+scikit-learn==1.5.1
+numpy==1.26.4
+joblib==1.4.2
+
+# Route Optimization
+ortools==9.10.4067
+
+# Deep Learning (optional - for DRL4Route)
+# torch>=2.0.0  # Uncomment when training DRL models
+
+# Geo
+geopy==2.4.1
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.3
+
+# Development
+black==24.1.1
+isort==5.13.2
+flake8==7.0.0
+mypy==1.8.0
