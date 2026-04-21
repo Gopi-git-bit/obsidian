@@ -96,7 +96,7 @@ async def list_bids(
 
     return BidListResponse(
         total=len(bids),
-        bids=[BidResponse.from_orm(b) for b in bids],
+        bids=[BidResponse.model_validate(b) for b in bids],
     )
 
 

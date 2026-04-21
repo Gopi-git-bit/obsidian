@@ -57,7 +57,7 @@ async def list_vehicles(
         total=total,
         limit=limit,
         offset=offset,
-        vehicles=[VehicleResponse.from_orm(v) for v in vehicles],
+        vehicles=[VehicleResponse.model_validate(v) for v in vehicles],
     )
 
 
@@ -69,7 +69,7 @@ async def get_vehicle(vehicle_id: UUID, db: Session = Depends(get_db)):
     if not vehicle:
         raise HTTPException(status_code=404, detail="Vehicle not found")
 
-    return VehicleResponse.from_orm(vehicle)
+    return VehicleResponse.model_validate(vehicle)
 
 
 @router.get("/vehicles/category/{category}", response_model=VehicleListResponse)
@@ -98,7 +98,7 @@ async def get_vehicles_by_category(
         total=total,
         limit=limit,
         offset=offset,
-        vehicles=[VehicleResponse.from_orm(v) for v in vehicles],
+        vehicles=[VehicleResponse.model_validate(v) for v in vehicles],
     )
 
 
@@ -127,7 +127,7 @@ async def get_vehicles_by_manufacturer(
         total=total,
         limit=limit,
         offset=offset,
-        vehicles=[VehicleResponse.from_orm(v) for v in vehicles],
+        vehicles=[VehicleResponse.model_validate(v) for v in vehicles],
     )
 
 
@@ -177,7 +177,7 @@ async def recommend_vehicles(
 
         recommendations.append(
             VehicleRecommendResponse(
-                vehicle=VehicleResponse.from_orm(vehicle),
+                vehicle=VehicleResponse.model_validate(vehicle),
                 utilization_percent=round(utilization * 100, 1),
                 efficiency_score=round(total_score * 100, 1),
                 recommended=True,

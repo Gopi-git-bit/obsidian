@@ -245,7 +245,7 @@ async def list_matches(
 
     return MatchListResponse(
         total=total,
-        matches=[MatchResponse.from_orm(m) for m in matches],
+        matches=[MatchResponse.model_validate(m) for m in matches],
     )
 
 

@@ -2,7 +2,6 @@
 Tests for Order, Match, and Bid API endpoints
 """
 
-import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 
@@ -27,7 +26,7 @@ SAMPLE_ORDER = {
 }
 
 
-def test_create_order():
+def create_order():
     response = client.post("/api/v1/orders", json=SAMPLE_ORDER)
     assert response.status_code == 201
     data = response.json()
@@ -37,6 +36,10 @@ def test_create_order():
     assert data["destination_city"] == "Delhi"
     assert data["weight_kg"] == 5000.0
     return data["id"]
+
+
+def test_create_order():
+    create_order()
 
 
 def test_list_orders():
@@ -58,7 +61,7 @@ def test_list_orders_with_filters():
 
 
 def test_get_order():
-    order_id = test_create_order()
+    order_id = create_order()
     response = client.get(f"/api/v1/orders/{order_id}")
     assert response.status_code == 200
     data = response.json()
@@ -71,7 +74,7 @@ def test_get_order_not_found():
 
 
 def test_update_order_status():
-    order_id = test_create_order()
+    order_id = create_order()
     response = client.patch(
         f"/api/v1/orders/{order_id}", json={"status": "pending_match"}
     )
@@ -81,7 +84,7 @@ def test_update_order_status():
 
 
 def test_cancel_order():
-    order_id = test_create_order()
+    order_id = create_order()
     response = client.post(f"/api/v1/orders/{order_id}/cancel")
     assert response.status_code == 200
     data = response.json()

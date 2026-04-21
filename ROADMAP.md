@@ -1,189 +1,108 @@
 # Zippy Logitech - Development Roadmap
 
-## Milestone 1: Backend Foundation ✅ COMPLETE
+This roadmap reflects the code and documentation that are actually present in this workspace as of April 20, 2026.
 
-**Goal:** Build a FastAPI backend with PostgreSQL and vehicle models API
+## Milestone 1: Backend Foundation
 
-### Slice 1.1: Project Setup ✅
-- [x] Initialize FastAPI project structure
-- [x] Add Docker configuration
-- [x] Set up database connection
+**Status:** Complete in code presence
 
-### Slice 1.2: Database Models ✅
-- [x] Create SQLAlchemy models for vehicle_models
-- [x] Add database migrations (Alembic)
-- [x] Seed initial vehicle data (8 vehicles via init.sql)
+### Included scope
 
-### Slice 1.3: API Endpoints ✅
-- [x] GET /vehicles - List all vehicles with filters
-- [x] GET /vehicles/{id} - Get vehicle by ID
-- [x] GET /vehicles/category/{category} - Filter by category
-- [x] GET /vehicles/recommend - Recommend vehicles by payload
-- [x] GET /vehicles/manufacturer/{mfg} - Filter by manufacturer
-- [x] GET /manufacturers - List all manufacturers
-- [x] GET /categories - List all categories
+- FastAPI project structure
+- Docker-related files
+- SQLAlchemy database setup
+- Vehicle model definitions
+- Alembic migration scaffold
+- Vehicle API routes
 
-### Slice 1.4: Documentation ✅
-- [x] OpenAPI/Swagger documentation (auto-generated)
-- [x] Error handling and validation
-- [x] 9 pytest unit tests
+### Current assessment
 
-**Result:** FastAPI server runs, 11 endpoints, Docker-ready, Swagger at /docs
+Milestone 1 artifacts are present on disk and appear structurally complete.
 
----
+## Milestone 2: Order and Match Management
 
-## Milestone 2: Order & Match Management ✅ COMPLETE
+**Status:** Complete in code presence
 
-**Goal:** Create order lifecycle and vehicle-load matching endpoints
+### Included scope
 
-### Slice 2.1: Order Models ✅
-- [x] Create Order SQLAlchemy model (shipper, origin, destination, weight, status)
-- [x] Create Bid SQLAlchemy model (vehicle_id, order_id, price, eta)
-- [x] Create Match SQLAlchemy model (order_id, vehicle_id, status, score)
+- Order, bid, and match models
+- Order lifecycle endpoints
+- Match endpoints
+- Bidding endpoints
+- Rule-based pricing endpoints
+- Test modules for core flows
 
-### Slice 2.2: Order API Endpoints ✅
-- [x] POST /orders - Create new order
-- [x] GET /orders - List orders with filters
-- [x] GET /orders/{id} - Get order details
-- [x] PATCH /orders/{id} - Update order status
-- [x] POST /orders/{id}/cancel - Cancel order
-- [x] GET /orders/stats/summary - Order statistics
+### Current assessment
 
-### Slice 2.3: Matching Engine ✅
-- [x] GET /orders/{id}/match - Find best vehicles for order
-- [x] POST /matches/{id}/accept - Accept a match
-- [x] POST /matches/{id}/reject - Reject a match
-- [x] GET /matches - List all matches with status filter
-- [x] GET /matches/stats - Match statistics
+Milestone 2 artifacts are present on disk and appear structurally complete.
 
-### Slice 2.4: Bidding System ✅
-- [x] POST /orders/{id}/bids - Place a bid on an order
-- [x] GET /orders/{id}/bids - List bids for order
-- [x] POST /bids/{id}/accept - Accept a bid
-- [x] POST /bids/{id}/reject - Reject a bid
-- [x] POST /bids/{id}/counter - Counter-offer on bid
+## Milestone 3: Frontend Dashboard
 
-### Slice 2.5: Pricing Engine ✅
-- [x] POST /pricing/estimate - Dynamic price estimation (GST + surcharges)
-- [x] GET /pricing/rates - Current rate card
+**Status:** Specified, not implemented in this workspace
 
-### Slice 2.6: Testing & Migrations ✅
-- [x] 11 pytest tests for orders, matches, bids
-- [x] Alembic initial migration for all 4 tables
+### What exists
 
-**Result:** 24 total endpoints, full order lifecycle, matching algorithm, bidding system
+- Product and frontend specification content
+- Mobile and app flows documented in source material
 
----
+### What does not exist here
 
-## Milestone 3: Frontend Dashboard 🔨 SCAFFOLDED
+- No checked-in React or Vite frontend directory
+- No frontend component tree
+- No frontend build configuration in the repository root
 
-**Goal:** Build React 18 + TypeScript + Tailwind dashboard
+### Current assessment
 
-### Slice 3.1: Project Setup ✅
-- [x] Initialize Vite + React + TypeScript project
-- [x] Configure Tailwind CSS
-- [x] Set up project structure (pages, components, hooks, api)
-- [x] Configure API client (axios with proxy)
+This milestone should not be marked as scaffolded in this workspace. The work is documented, but the app code is absent.
 
-### Slice 3.2: Core Pages ✅
-- [x] Dashboard page (KPIs, summary cards)
-- [x] Vehicles list/detail pages
-- [x] Orders list/detail pages
-- [x] Pricing calculator page
-- [x] Matching/assignment page
-- [x] Analytics page
+## Milestone 4: ML and Advanced Features
 
-### Slice 3.3: Components ✅
-- [x] Layout (Sidebar, Header)
-- [x] StatusBadge, StatCard UI components
-- [x] TypeScript type definitions for all entities
-- [x] Axios API client with 7 modules covering all 24 endpoints
-- [x] Production build: 341KB JS (106KB gzipped)
+**Status:** Partially implemented in code, verification pending
 
-### Slice 3.4: Integration Testing ⏳
-- [ ] Verify frontend-backend connectivity end-to-end
-- [ ] Test all CRUD operations with live API
-- [ ] Handle loading states, error states, empty states
-- [ ] Add real-time updates (WebSocket or polling)
+### Present on disk
 
-**Success Criteria:**
-- Dashboard shows real-time KPIs from API
-- Vehicle/Order CRUD operations work end-to-end
-- Pricing estimator produces live quotes
+- `backend/app/api/ml_pricing.py`
+- `backend/app/api/routing.py`
+- `backend/app/services/pricing_service.py`
+- `backend/app/services/route_optimizer.py`
+- `backend/ml/train_pricing_model.py`
 
----
+### Not verified in this review
 
-## Milestone 4: ML & Advanced Features 📋 PLANNED
+- Model training execution
+- API runtime behavior
+- End-to-end route optimization flow
+- Production readiness
 
-**Goal:** Production ML pricing, route optimization, real-time features
+### Current assessment
 
-### Slice 4.1: ML Dynamic Pricing
-- [ ] LightGBM pricing model training pipeline
-- [ ] Feature engineering (distance, demand, vehicle type, season, fuel)
-- [ ] Real-time price adjustment based on demand/supply
-- [ ] Historical price analysis endpoints
-- [ ] A/B testing framework for pricing experiments
-- [ ] Model monitoring and drift detection
+Milestone 4 is no longer just planned. Important code artifacts exist, but they still need runtime verification before being called complete.
 
-### Slice 4.2: Route Optimization
-- [ ] OR-Tools vehicle routing solver integration
-- [ ] Multi-stop route planning API
-- [ ] GST-compliant zone segmentation
-- [ ] E-Way Bill integration hooks (NIC API)
-- [ ] Fuel cost optimization module
+## Obsidian Logistics Vault
 
-### Slice 4.3: Real-time & Infrastructure
-- [ ] WebSocket for order tracking
-- [ ] Redis pub/sub for driver notifications + caching
-- [ ] Kafka event streaming setup
-- [ ] Payment integration (Razorpay)
+**Status:** Active and substantial, but not fully link-complete
 
-### Slice 4.4: Mobile App
-- [ ] React Native driver app (Android + iOS)
-- [ ] React Native customer app
-- [ ] Push notifications
-- [ ] GPS tracking integration
+### Current vault totals
 
-**Success Criteria:**
-- Dynamic pricing improves margin by >5%
-- Route optimization reduces cost by >10%
-- Real-time updates under 500ms latency
-- 5-phase rollout: Shadow → Canary 5% → Canary 25% → Full Production
+- 98 vault notes across `00_System` to `12_Dashboards`
+- 108 markdown files in the full workspace
 
----
+### Current assessment
 
-## Knowledge Base (Obsidian) ✅ COMPLETE
+The vault is a real working knowledge base, not a placeholder. The main remaining issue is unresolved references in deeper notes and prior drift in the status docs.
 
-**31 consolidated .md files, ~8,400+ lines** covering:
-- TMS Implementation, Order Management, Pricing, Tech Stack
-- DRL4Route, Frontend Architecture, Mobile Specs
-- Payment/Compliance, Vehicle Database, Last-Mile
-- Logistics Operations, Process Decomposition
-- Hub-Spoke/RDC/GST Impact, Sustainable TMS/5G/Edge
-- TOE Framework, Growth Projections, Route/Cost Analysis
-- Infrastructure Bottlenecks, Modal Split, Government Schemes
-- Key Trading City Pairs, Strategic Ops Management (CODP/VUCA)
-- Gati Shakti National Master Plan, E-Way Bill Automation
-- 3PL Integration/Strategy, 3PL Digitalization
+## Verification Backlog
 
----
+These are the next high-value validation steps:
 
-## Technology Stack
+1. Run backend tests in an environment where Python is available.
+2. Bring up the backend locally and verify the documented routes.
+3. Decide whether to add frontend code to this workspace or keep it documentation-only.
+4. Resolve or intentionally prune the remaining planned-note wikilinks in the vault.
 
-| Layer | Technology | Status |
-|-------|-----------|--------|
-| Backend | FastAPI + SQLAlchemy | ✅ Running |
-| Database | PostgreSQL 15 | ✅ Docker |
-| Migrations | Alembic | ✅ Configured |
-| Frontend | React 18 + TypeScript + Vite | ✅ Builds |
-| Styling | Tailwind CSS | ✅ Configured |
-| API Client | Axios | ✅ All 24 endpoints |
-| ML Pricing | LightGBM | 📋 Planned |
-| Route Optim | OR-Tools | 📋 Planned |
-| Deep RL | DRL4Route | 📋 Planned |
-| Cache | Redis | 📋 Planned |
-| Streaming | Kafka | 📋 Planned |
-| Payments | Razorpay | 📋 Planned |
-| Mobile | React Native | 📋 Planned |
-| Research | Karpathy Autoresearch (CPU) | ✅ Installed |
-| Knowledge | Obsidian (31 files) | ✅ Complete |
+## Success Criteria For The Next Review
+
+- Backend test execution recorded
+- Runtime verification result documented
+- Frontend status explicitly resolved
+- Vault unresolved-link policy decided and applied

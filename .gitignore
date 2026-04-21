@@ -58,6 +58,7 @@ packages_utf8.txt
 
 # ── ML models (large binary files) ──
 backend/models/
+backend/test.db
 *.pkl
 *.joblib
 *.pt

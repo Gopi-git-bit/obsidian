@@ -2,6 +2,8 @@
 Vehicle Models SQLAlchemy Model
 """
 
+import uuid
+
 from sqlalchemy import (
     Column,
     String,
@@ -10,8 +12,8 @@ from sqlalchemy import (
     Integer,
     DateTime,
     CheckConstraint,
+    Uuid,
 )
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 
 from app.database import Base
@@ -35,7 +37,7 @@ class VehicleModel(Base):
     )
 
     # Columns
-    id = Column(UUID(as_uuid=True), primary_key=True, default=func.gen_random_uuid())
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     manufacturer = Column(String(50), nullable=False)
     model_name = Column(String(100), nullable=False)
     variant = Column(String(50))

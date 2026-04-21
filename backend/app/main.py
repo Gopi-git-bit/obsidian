@@ -21,10 +21,15 @@ from app.database import engine
 from app.models import vehicle_model, order_model
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+def init_database():
+    """Create the local schema for development and tests."""
     vehicle_model.Base.metadata.create_all(bind=engine)
     order_model.Base.metadata.create_all(bind=engine)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_database()
     yield
 
 
@@ -54,6 +59,9 @@ app.include_router(matches.router, prefix="/api/v1", tags=["Matching"])
 app.include_router(bids.router, prefix="/api/v1", tags=["Bidding"])
 app.include_router(ml_pricing.router, prefix="/api/v1", tags=["ML Pricing"])
 app.include_router(routing.router, prefix="/api/v1", tags=["Route Optimization"])
+
+# Ensure schema exists for local development and direct test imports.
+init_database()
 
 
 @app.get("/")

@@ -86,7 +86,7 @@ async def list_orders(
         total=total,
         limit=limit,
         offset=offset,
-        orders=[OrderResponse.from_orm(o) for o in orders],
+        orders=[OrderResponse.model_validate(o) for o in orders],
     )
 
 

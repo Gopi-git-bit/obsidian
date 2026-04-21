@@ -3,6 +3,7 @@ Order SQLAlchemy Model — freight transport order lifecycle
 """
 
 import enum
+import uuid
 from sqlalchemy import (
     Column,
     String,
@@ -15,8 +16,8 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     CheckConstraint,
+    Uuid,
 )
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -47,7 +48,7 @@ class Order(Base):
 
     __tablename__ = "orders"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=func.gen_random_uuid())
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     shipper_name = Column(String(150), nullable=False)
     shipper_phone = Column(String(15), nullable=False)
@@ -130,15 +131,15 @@ class Bid(Base):
 
     __tablename__ = "bids"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=func.gen_random_uuid())
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     order_id = Column(
-        UUID(as_uuid=True),
+        Uuid(as_uuid=True),
         ForeignKey("orders.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
     vehicle_id = Column(
-        UUID(as_uuid=True), ForeignKey("vehicle_models.id"), nullable=False, index=True
+        Uuid(as_uuid=True), ForeignKey("vehicle_models.id"), nullable=False, index=True
     )
 
     driver_name = Column(String(150), nullable=False)
@@ -187,18 +188,18 @@ class Match(Base):
 
     __tablename__ = "matches"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=func.gen_random_uuid())
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     order_id = Column(
-        UUID(as_uuid=True),
+        Uuid(as_uuid=True),
         ForeignKey("orders.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
     vehicle_id = Column(
-        UUID(as_uuid=True), ForeignKey("vehicle_models.id"), nullable=False, index=True
+        Uuid(as_uuid=True), ForeignKey("vehicle_models.id"), nullable=False, index=True
     )
     bid_id = Column(
-        UUID(as_uuid=True), ForeignKey("bids.id"), nullable=True, index=True
+        Uuid(as_uuid=True), ForeignKey("bids.id"), nullable=True, index=True
     )
 
     match_score = Column(Numeric(5, 2))

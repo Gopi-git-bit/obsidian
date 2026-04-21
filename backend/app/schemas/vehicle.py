@@ -4,11 +4,13 @@ Pydantic schemas for vehicle API responses
 
 from typing import Optional
 from uuid import UUID
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class VehicleResponse(BaseModel):
     """Vehicle model response schema"""
+
+    model_config = ConfigDict(from_attributes=True, protected_namespaces=())
 
     id: UUID
     manufacturer: str
@@ -36,10 +38,6 @@ class VehicleResponse(BaseModel):
     axle_config: Optional[str]
     tyres: Optional[int]
     price_ex_showroom: Optional[float]
-
-    class Config:
-        from_attributes = True
-
 
 class VehicleListResponse(BaseModel):
     """Paginated list of vehicles"""

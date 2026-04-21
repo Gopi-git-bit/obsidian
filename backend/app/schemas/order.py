@@ -5,7 +5,7 @@ Pydantic schemas for Order, Bid, and Match API endpoints
 from typing import Optional
 from datetime import datetime
 from uuid import UUID
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # ─── Order Schemas ───
@@ -58,6 +58,8 @@ class OrderUpdate(BaseModel):
 
 
 class OrderResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     shipper_name: str
     shipper_phone: str
@@ -102,10 +104,6 @@ class OrderResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
-
-
 class OrderListResponse(BaseModel):
     total: int
     limit: int
@@ -133,6 +131,8 @@ class BidCounter(BaseModel):
 
 
 class BidResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     order_id: UUID
     vehicle_id: UUID
@@ -148,10 +148,6 @@ class BidResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
-
-
 class BidListResponse(BaseModel):
     total: int
     bids: list[BidResponse]
@@ -161,6 +157,8 @@ class BidListResponse(BaseModel):
 
 
 class MatchResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: UUID
     order_id: UUID
     vehicle_id: UUID
@@ -177,10 +175,6 @@ class MatchResponse(BaseModel):
     accepted_at: Optional[datetime]
     completed_at: Optional[datetime]
     created_at: datetime
-
-    class Config:
-        from_attributes = True
-
 
 class MatchListResponse(BaseModel):
     total: int

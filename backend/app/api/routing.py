@@ -9,7 +9,7 @@ Based on BI_Tech_Stack_ML_Systems.md:
 
 from typing import Optional
 from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -66,6 +66,8 @@ class OptimizeRouteRequest(BaseModel):
 
 
 class OptimizeRouteResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     order_id: str
     routes: list
     total_distance_km: float
