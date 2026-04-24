@@ -47,12 +47,14 @@ Define how Zippy evaluates and rolls out strategic operational changes without r
 | Partnership | Performance penalties, tiered commission, onboarding support |
 | Payment terms | Cash-flow or settlement rule changes |
 | SLA | Revised thresholds, grace periods, or alert handling |
+| Revenue model | Commission mix, subscription experiments, fintech hooks, or first-mile wedges |
 
 ## Operational Value
 
 - Reduces the need for code-driven reconfiguration every time market conditions change.
 - Gives leadership a structured way to test strategic responses.
 - Creates a clearer bridge between analytics, operations, and governance.
+- Helps compare business-model shifts before committing capital or customer promises.
 
 ## Risks
 
@@ -68,10 +70,10 @@ Define how Zippy evaluates and rolls out strategic operational changes without r
 - [[Fallback & Resilience Architecture]]
 - [[Hyperparameter Tuning System]]
 - [[Authoritative Database Schema]]
+- [[Revenue Model Decision Framework]]
 - [[Operations Strategy Hub]]
 
 ## Related Hubs
 
 - [[Operations Strategy Hub]]
 - [[Technology Stack Hub]]
-

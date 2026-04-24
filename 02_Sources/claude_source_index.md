@@ -37,6 +37,14 @@ This document serves as an index for the primary source document `claude.md`.
 - [[vehicle_model_cost_source]] - Vehicle-model and operating-cost inputs for mileage, dimensions, depreciation, tolls, insurance, and regional labor assumptions
 - [[business_scope_2_source]] - Selective market and pricing signals for South India truck-rate bands, outsourced transport dependence, and dynamic-pricing inputs
 - [[chatgpt_prd_observability_source]] - Selective observability and reliability-governance extraction for dashboards, alerts, and canary safety
+- [[canonical_order_status_notification_gap_source]] - State-machine document processed to extract the missing notification-taxonomy and escalation-governance layer
+- [[revenue_model_strategy_source]] - Strategic revenue-model guidance for asset intensity, orchestration, fintech, and uncertainty-aware business-model decisions
+- [[admin_dashboard_prd_source]] - Admin dashboard PRD processed for control-tower oversight, manual review, participant governance, and AI supervision
+- [[terms_policy_source]] - Customer-facing terms and privacy-policy guidance aligned to booking, payment, ToPay consent, cancellation, POD, and data practices
+- [[python_packages_architecture_fit_source]] - Selective extraction of Python ML and forecasting packages that best fit the final deterministic logistics architecture
+- [[pain_point_logistics_source]] - Selective business-analysis extraction of vehicle-fit ambiguity, MSME credit pressure, and loading or unloading wait-time drag
+- [[demurrage_detention_source]] - Detention and demurrage extraction for dock scheduling, dwell evidence, wait-time prediction, and transparent billing
+- [[embedded_finance_strategy_source]] - Future-state embedded finance and MSME credit-enablement strategy with lender-owned risk boundaries
 
 ## Document Contents
 

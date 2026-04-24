@@ -31,6 +31,12 @@ Central hub for all vehicle types, transport modes, fleet management, and driver
 - [[LCV vs MCV vs HCV]] - Vehicle class selection and operating profile
 - [[Closed Body Vehicle]] - Enclosed-cargo fit and protection logic
 - [[Vehicle Operating Cost Model]] - Mileage, depreciation, toll, insurance, and labor cost inputs
+- [[Transport Mode Selection Framework]] - Decision framework for road, rail, air, and multimodal movement
+- [[Transport Cost Breakdown Model]] - Full trip cost decomposition beyond only fuel and distance
+- [[Transport Operations Implementation Framework]] - Practical transport operating model and system implementation guide
+- [[Fleet vs Partner Allocation Strategy]] - Decision framework for choosing own fleet versus partner capacity
+- [[Transport Fraud & Cybersecurity Framework]] - Operational fraud prevention and cyber controls for transport workflows
+- [[Lane Intelligence Model]] - Corridor-level intelligence for pricing, routing, allocation, and expansion
 
 ### Scenarios (06_Scenarios/)
 - [[Scenario - Vehicle Breakdown Mid-Route]] - Breakdown handling

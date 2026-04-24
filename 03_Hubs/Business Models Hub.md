@@ -50,6 +50,12 @@ Central hub for revenue models, pricing strategies, and financial frameworks.
 6. **Platform Fees**: Segment-based fee layer applied on top of transport services
 7. **Backhaul Discounts**: Commercial incentive to reduce deadhead on favorable return corridors
 
+## Strategic Decision Layer
+
+- [[Revenue Model Decision Framework]] - How to choose monetization structure under uncertainty
+- [[Indian Road Logistics Pain Point Map]] - Pain-point view of vehicle-fit confusion, MSME credit expectations, and wait-time productivity loss
+- [[Embedded Finance Enablement Framework]] - Partner-led credit enablement without operator-funded float
+
 ## Expansion Wedge
 
 - Tier-2 and Tier-3 South India is attractive where MSME density, warehouse growth, and deadhead inefficiency overlap.
@@ -70,6 +76,8 @@ Central hub for revenue models, pricing strategies, and financial frameworks.
 - [[Transport Company Network Model]] - Partner-led capacity expansion
 - [[Hybrid Logistics Data Architecture]] - Financial and route data separation
 - [[South India Tier 2-3 Logistics Opportunity]] - Market-growth lens for regional rollout
+- [[Revenue Model Decision Framework]] - Strategic filter for future monetization choices
+- [[Detention & Demurrage Framework]] - Wait-time monetization, free-time policy, and premium-turnaround logic
 
 ## Related Hubs
 - [[Operations Strategy Hub]] - Strategic context

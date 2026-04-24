@@ -42,6 +42,11 @@ The Platform Administration Agent handles system-level operations including user
 - Alert on system anomalies
 - Coordinate with engineering for issue resolution
 
+### Governance Console Support
+- Power the [[Admin Control Tower Architecture]] with governed review, intervention, and policy-management flows
+- Maintain manual review queues for suspicious orders, compliance cases, and AI-quality incidents
+- Ensure admin actions remain auditable and policy-bound
+
 ### Data Governance
 - Enforce data quality standards
 - Manage data retention policies
@@ -90,11 +95,13 @@ The Platform Administration Agent handles system-level operations including user
 - [[Authentication & Authorization]]
 - [[Audit & Compliance]]
 - [[Data Governance]]
+- [[Admin Control Tower Architecture]]
 
 ## Related Hub Notes
 
 - [[Technology Stack Hub]]
 - [[Compliance & Regulation Hub]]
+- [[Admin Control Tower Architecture]]
 
 ---
 

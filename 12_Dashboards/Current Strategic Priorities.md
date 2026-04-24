@@ -18,6 +18,10 @@ tags:
 
 High-level snapshot of current strategic focus areas for the logistics platform.
 
+Related dashboard note:
+
+- [[Transport Control Tower KPI Framework]]
+
 ## Active Priorities
 
 ### 1. Market Expansion
@@ -66,6 +70,7 @@ High-level snapshot of current strategic focus areas for the logistics platform.
 - [ ] Is 3PL model or aggregator model better for current stage?
 - [ ] Build own fleet or pure partner network?
 - [ ] Vertical focus (electronics) or horizontal expansion?
+- [ ] Which revenue model should lead the next phase: commission, flat fee, subscription, or fintech-linked?
 
 ## Last Review
 

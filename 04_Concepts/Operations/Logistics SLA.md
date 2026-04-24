@@ -61,6 +61,13 @@ The service-level commitment that defines expected performance for booking, pick
 - GPS silence, route deviation, and delayed movement after assignment are transportation SLAs, not just telemetry curiosities.
 - Grace periods should be explicit before emitting breach events.
 
+## Dwell-Time SLA Notes
+
+- Arrival, gate-in, service-start, and gate-out events should be treated as operational evidence, not optional metadata.
+- Repeated pickup or delivery dwell beyond policy thresholds is both an SLA and profitability problem.
+- Demurrage or detention charges should only be raised from traceable timeline evidence and explicit free-time rules.
+- High-dwell sites should influence ETA promises, dispatch sequencing, and partner review.
+
 ## Fallback-Specific SLA Notes
 
 - Degraded mode is acceptable only if it remains observable and reversible.
@@ -81,6 +88,7 @@ The service-level commitment that defines expected performance for booking, pick
 - [[TMS Execution Architecture]]
 - [[Fallback & Resilience Architecture]]
 - [[Customer App Frontend Architecture]]
+- [[Detention & Demurrage Framework]]
 - [[Scenario - Route Blocked Due to Protests]]
 - [[Scenario - Vehicle Breakdown Mid-Route]]
 - [[Customer Service Agent]]

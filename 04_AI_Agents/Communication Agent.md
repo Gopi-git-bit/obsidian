@@ -48,6 +48,12 @@ The Communication Agent manages all customer-facing and internal communications 
 - Email alerts
 - In-app notifications
 
+## Governance Layer
+
+- Use [[Notification Taxonomy & Escalation Matrix]] as the canonical routing policy for audience, channel, retry, acknowledgement, and escalation decisions.
+- Treat critical internal alerts separately from customer-facing status updates.
+- Deduplicate repeated ETA or retry noise before cross-channel escalation.
+
 ## Communication Templates
 
 ### Status Updates
@@ -115,6 +121,7 @@ Thank you for your patience.
 
 - [[Customer Problems Hub]]
 - [[AI Agents Hub]]
+- [[Notification Taxonomy & Escalation Matrix]]
 
 ---
 

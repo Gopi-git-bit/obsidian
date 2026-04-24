@@ -44,6 +44,10 @@ Central hub for all AI agent definitions, architectures, and coordination patter
 - Platform Administration Agent: Unauthorized access -> lock and alert
 - Communication Agent: Escalation trigger -> route to appropriate handler
 
+## Governance Surfaces
+
+- [[Admin Control Tower Architecture]] - Backoffice console for supervised intervention, review queues, and policy control
+
 ## Resilience Patterns
 
 - [[Fallback & Resilience Architecture]] - Shared degradation and escalation model

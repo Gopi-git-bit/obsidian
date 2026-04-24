@@ -52,6 +52,7 @@ The application architecture pattern for the customer-facing mobile app, focused
 - Keep payment fallback order explicit and visible.
 - Treat ToPay consent as a separate status flow with timeout handling.
 - Keep pricing, driver assignment, and approval logic out of the UI layer.
+- Terms, cancellation, and privacy disclosures shown in the app should match actual backend behavior and policy notes.
 
 ## Operational Features
 
@@ -62,6 +63,7 @@ The application architecture pattern for the customer-facing mobile app, focused
 | Audit event logging | Support compliance, dispute review, and debugging |
 | Feature flags | Gradual rollout of risky flows such as consent changes |
 | Error boundaries | Keep failures recoverable without silent data loss |
+| Notification preference alignment | Keeps non-critical messaging user-aware without weakening safety-critical alerts |
 
 ## Decision Impact
 
@@ -82,6 +84,8 @@ The application architecture pattern for the customer-facing mobile app, focused
 - [[Order Lifecycle]]
 - [[Logistics SLA]]
 - [[Fallback & Resilience Architecture]]
+- [[Notification Taxonomy & Escalation Matrix]]
+- [[Customer Terms & Privacy Policy Framework]]
 - [[MSME Owner Persona]]
 
 ## Related Hubs
@@ -89,4 +93,3 @@ The application architecture pattern for the customer-facing mobile app, focused
 - [[Technology Stack Hub]]
 - [[Operations Strategy Hub]]
 - [[Customer Problems Hub]]
-

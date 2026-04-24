@@ -37,6 +37,7 @@ The Payment Settlement Agent manages all financial transactions including invoic
 - Send automated payment reminders
 - Process partial payments and payment plans
 - Release driver-side advances only after required field evidence clears validation gates
+- Support partner-led pay-later and finance-linked settlement flows without taking underwriting responsibility
 
 ### Reconciliation
 - Match payments received to outstanding invoices
@@ -76,6 +77,7 @@ The Payment Settlement Agent manages all financial transactions including invoic
 - **Input**: Delivery confirmations, POD data, rate cards, verified shipment-document evidence
 - **Output**: Invoices, payment records, settlement batches
 - **Dependencies**: [[Payment Risk Logic]], [[Business Models Hub]]
+- **Future Extension**: [[Embedded Finance Enablement Framework]] for lender-linked pay-later workflows
 
 ## Settlement Cycles
 

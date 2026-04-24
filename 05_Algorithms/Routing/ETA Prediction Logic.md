@@ -104,6 +104,7 @@ Produce explainable, confidence-scored ETA updates by combining deterministic ro
 - Build features from pickup time, weekday, peak-hour signals, vehicle age, body type, route difficulty, service level, and customer tier.
 - Use native categorical handling for vehicle, cargo, zone, and payment dimensions where possible.
 - Keep training and inference feature engineering in one shared contract or mirrored implementation.
+- Favor modular feature packages such as `tsfresh`, `Featuretools`, `feature-engine`, and `statsmodels` when they improve feature quality without obscuring reasoning.
 - Save models with explicit versioning and validate them in shadow mode before traffic expansion.
 - Tune hyperparameters only after baseline feature quality and data hygiene are stable.
 - Use MAPE or comparable live-quality thresholds to decide when tuning should run.
@@ -151,6 +152,7 @@ Produce explainable, confidence-scored ETA updates by combining deterministic ro
 - [[Unified Routing & Optimization Algorithm]]
 - [[Machine Learning Models]]
 - [[Hyperparameter Tuning System]]
+- [[Python Package Fit for Final Architecture]]
 - [[TMS Execution Architecture]]
 - [[Transportation Agent]]
 - [[Order Management Agent]]

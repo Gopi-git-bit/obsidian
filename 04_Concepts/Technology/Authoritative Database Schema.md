@@ -67,6 +67,7 @@ Define the core database structure for the autonomous logistics platform so stat
 - Capture provider payment facts separately from internal settlements.
 - Treat ledger entries as the final audit-proof financial trace.
 - Enforce settlement release rules from lifecycle state and policy, not from UI assumptions.
+- Add finance-partner requests and credit metadata as separate future tables if embedded finance is introduced; do not overload core payment truth with lender workflow state.
 
 ## Implementation Guardrails
 
@@ -86,6 +87,7 @@ Define the core database structure for the autonomous logistics platform so stat
 - [[Dynamic Pricing Logic]]
 - [[Scenario Management Framework]]
 - [[Legal Compliance Framework]]
+- [[Embedded Finance Enablement Framework]]
 
 ## Related Hubs
 

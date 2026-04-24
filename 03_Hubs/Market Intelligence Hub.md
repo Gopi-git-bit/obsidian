@@ -43,6 +43,7 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 - [[Customer Segmentation Matrix]]
 - [[Customer Needs Analysis]]
 - [[Price Sensitivity Data]]
+- [[Indian Road Logistics Pain Point Map]]
 
 ## Regional Intelligence
 

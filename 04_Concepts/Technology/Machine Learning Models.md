@@ -49,6 +49,7 @@ Describe where machine-learning models fit in the Zippy stack, what they are all
 - Use a layered ETA architecture where ML acts as residual correction over deterministic and live-adjusted ETA.
 - LightGBM is a strong default for tabular logistics signals such as time, corridor, vehicle, driver, and load context.
 - Native categorical support is useful for zone, cargo, customer tier, and vehicle-type dimensions.
+- Feature engineering packages such as `tsfresh`, `Featuretools`, `feature-engine`, and `statsmodels` fit better than broad AutoML when pipelines must stay explainable and auditable.
 
 ## Common Failure Modes
 
@@ -66,6 +67,7 @@ Describe where machine-learning models fit in the Zippy stack, what they are all
 - [[Hyperparameter Tuning System]]
 - [[Hybrid Logistics Data Architecture]]
 - [[Fallback & Resilience Architecture]]
+- [[Python Package Fit for Final Architecture]]
 - [[Transportation Agent]]
 - [[Unified Routing & Optimization Algorithm]]
 

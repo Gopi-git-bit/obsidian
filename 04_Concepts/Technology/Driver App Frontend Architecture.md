@@ -62,6 +62,7 @@ The application architecture pattern for the driver-facing mobile app, focused o
 | POD evidence capture | Protect settlement and dispute workflows |
 | Driver audit logging | Support compliance, fraud review, and appeals |
 | Feature flags | Stage risky controls such as fraud checks and offline sync changes |
+| Channel-aware alerts | Keeps assignment, route, and exception alerts timely without flooding the field user |
 
 ## Decision Impact
 
@@ -82,6 +83,7 @@ The application architecture pattern for the driver-facing mobile app, focused o
 - [[Proof of Delivery]]
 - [[Driver Assignment Logic]]
 - [[Transportation Agent]]
+- [[Notification Taxonomy & Escalation Matrix]]
 - [[Fallback & Resilience Architecture]]
 
 ## Related Hubs
@@ -89,4 +91,3 @@ The application architecture pattern for the driver-facing mobile app, focused o
 - [[Technology Stack Hub]]
 - [[Fleet & Transport Hub]]
 - [[Operations Strategy Hub]]
-

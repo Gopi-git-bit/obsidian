@@ -33,6 +33,8 @@ Central hub for technology architecture, integrations, and digital infrastructur
 - [[Warehouse Management System]]
 - [[Inventory Tracking]]
 - [[Pick-pack-ship Logic]]
+- [[Warehouse Execution & Intelligence Framework]]
+- [[Inventory-Driven Resource Allocation Framework]]
 
 ## Integration Architecture
 
@@ -49,6 +51,7 @@ Central hub for technology architecture, integrations, and digital infrastructur
 - [[AI Agent Infrastructure]]
 - [[Machine Learning Models]]
 - [[Hyperparameter Tuning System]]
+- [[Python Package Fit for Final Architecture]]
 - [[Natural Language Processing]]
 - [[Predictive Analytics]]
 - Celery-driven replay, retraining, and recovery jobs
@@ -62,6 +65,7 @@ Central hub for technology architecture, integrations, and digital infrastructur
 - [[Customer Portal]]
 - [[Customer App Frontend Architecture]]
 - [[Driver App Frontend Architecture]]
+- [[Admin Control Tower Architecture]]
 
 ## Data & Analytics
 

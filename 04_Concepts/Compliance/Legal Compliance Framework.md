@@ -41,6 +41,7 @@ Capture the general legal and compliance guardrails that a logistics operator sh
 - Clarify loading, unloading, insurance, shortage, and delivery-window responsibilities.
 - Define what happens if demand cannot be met, including fallback and compensation logic.
 - Prefer simple, transparent terms for MSMEs over dense legal complexity.
+- Keep customer-facing T&C and privacy wording aligned with real booking, payment, cancellation, POD, and data-sharing behavior.
 
 ## Documentation Principles
 
@@ -71,10 +72,10 @@ Capture the general legal and compliance guardrails that a logistics operator sh
 - [[GST for Logistics]]
 - [[E-way Bill System]]
 - [[Proof of Delivery]]
+- [[Customer Terms & Privacy Policy Framework]]
 - [[Authoritative Database Schema]]
 
 ## Related Hubs
 
 - [[Compliance & Regulation Hub]]
 - [[Operations Strategy Hub]]
-

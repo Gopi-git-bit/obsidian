@@ -18,6 +18,8 @@ Central hub for customer-related issues, complaints, and resolution frameworks.
 
 ## Customer Issue Categories
 
+- [[Indian Road Logistics Pain Point Map]] - Business-level pain patterns that shape quoting, finance flexibility, and service expectations
+
 ### Service Quality Issues
 | Issue | Scenario | SOP |
 |-------|----------|-----|
