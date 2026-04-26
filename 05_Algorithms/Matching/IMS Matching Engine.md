@@ -31,6 +31,8 @@ tags:
 
 Generate vehicle candidates for OMS by applying compliance-safe hard filters, deterministic scoring, loop-aware ranking, and atomic reservation without mutating order state.
 
+This engine is also a strategic control point: it is where real-time demand visibility, structured supply data, and operational learning turn into faster and more reliable matching.
+
 ## Inputs
 
 | Input | Type | Description |
@@ -49,17 +51,65 @@ Generate vehicle candidates for OMS by applying compliance-safe hard filters, de
 - Reservations are temporary locks, not assignments.
 - Duplicate requests must remain replay-safe under the same idempotency key.
 
+## Strategic Abstractions
+
+### 1. IMS As The Seizing Layer
+
+Within the project's competitive-advantage model, IMS is the system layer that converts sensed market demand into executable capacity options.
+
+- sensing happens upstream through requests, availability signals, lane history, and partner behavior
+- IMS seizes those signals by turning them into ranked, reservation-safe candidates
+- OMS and downstream workflows decide commitment, communication, and settlement
+
+### 2. Data Advantage Through Matching
+
+The engine should not only consume data. It should improve future matching quality by producing reusable operational truth such as:
+
+- candidate quality
+- reservation conflicts
+- search exhaustion frequency
+- lane-level success patterns
+- return-loop performance
+- acceptance responsiveness by supply source
+- future supply realization accuracy
+
+These outputs create the learning loop that makes the matching system harder to imitate over time.
+
+### 3. Matching Quality Over Match Volume
+
+A weak marketplace can generate many candidate lists.
+
+A strong IMS should optimize for:
+
+- feasible matches
+- fast matches
+- economically sound matches
+- replay-safe and auditable matches
+- matches that improve future lane intelligence
+
+### 4. Multi-Echelon Fleet View
+
+IMS should treat vehicles as network inventory, not a flat list of available units.
+
+- idle vehicles are current supply
+- returning or enroute vehicles are future supply
+- corridor clusters and nearby cities form lateral supply options
+- low-demand destinations create downstream scarcity risk if no return path exists
+
+This turns IMS from a local matcher into a network-aware supply intelligence layer.
+
 ## Logic
 
 ```text
 1. APPLY hard filters for active status, compliance validity, body fit, weight, and volume
 2. IF no feasible vehicles remain, emit matching_exhausted or enter fallback ladder
 3. CHECK deterministic cache and recent lane intelligence where available
-4. SCORE feasible vehicles on proximity, driver quality, loop success, condition, and bounded RDS penalty
-5. USE ML scoring only as advisory refinement when deterministic confidence is insufficient
-6. ATTEMPT atomic reservations on top-ranked candidates with short TTL
-7. ENRICH results with return-trip or loop metadata when economically useful
-8. EMIT vehicle_candidates_found or matching_exhausted for OMS consumption
+4. CALCULATE future demand alignment for the destination and penalize dead-zone drops where return probability is weak
+5. SCORE feasible vehicles on proximity, driver quality, loop success, condition, future demand alignment, and bounded RDS penalty
+6. USE ML scoring only as advisory refinement when deterministic confidence is insufficient
+7. ATTEMPT atomic reservations on top-ranked candidates with short TTL
+8. ENRICH results with return-trip or loop metadata when economically useful
+9. EMIT vehicle_candidates_found or matching_exhausted for OMS consumption
 ```
 
 ## Deterministic Fallback Ladder
@@ -72,6 +122,28 @@ Generate vehicle candidates for OMS by applying compliance-safe hard filters, de
 | 4 | Trigger RAG or broadcast fallback | Surface scarce demand to wider pool |
 | 5 | Emit exhaustion event | Let OMS notify and escalate |
 
+## Network-Aware Supply Model
+
+Useful IMS supply should include more than currently idle vehicles:
+
+```text
+future_supply = idle + enroute_arrivals + returning_vehicles + predicted_reactivation
+```
+
+Where the platform has enough signal quality, IMS should keep this view by city or corridor cluster so matching and fallback can use nearby future capacity instead of treating every city as isolated.
+
+## Rebalancing Trigger
+
+IMS should not directly dispatch vehicles between cities, but it should emit rebalancing signals when local imbalance is persistent.
+
+Example triggers:
+
+- demand materially exceeds feasible supply in a target city or corridor
+- nearby cities show surplus idle or returning capacity
+- repeated exhaustion events indicate structural shortage, not one-off noise
+
+Those signals can feed planning, partner outreach, or a downstream rebalancing service.
+
 ## Reservation Rules
 
 - Reservation TTL should be short, explicit, and observable.
@@ -79,11 +151,32 @@ Generate vehicle candidates for OMS by applying compliance-safe hard filters, de
 - Reservations should block concurrent duplicate use of the same vehicle.
 - OMS remains responsible for final assignment after reservation success.
 
+## Technical Implications For Defensibility
+
+- Persist matching events so lane intelligence and return-loop models can improve over time.
+- Track supply responsiveness by vehicle, owner, and partner pool rather than only trip completion.
+- Keep deterministic features queryable for audit, debugging, and model refinement.
+- Add new external or predictive signals only when they measurably improve candidate quality or exhaustion rate.
+- Protect ranking quality and reservation correctness because these are part of the platform moat, not just implementation detail.
+- Model corridor clusters and future supply explicitly before adding more advanced ML or optimization layers.
+- Keep any ML, OR, or RL layer advisory-first with clear fallback and constraint enforcement.
+
 ## Loop and Return Logic
 
 - Prefer candidates with strong loop-success history when all else is comparable.
 - Emit `loop_group_id` or return-potential metadata as advisory context only.
 - Keep discounting and settlement decisions downstream in OMS and FIN.
+- Penalize assignments into low-demand destinations when loop recovery is consistently weak.
+
+## Driver And Corridor Intelligence
+
+Where the data exists, IMS scoring can benefit from:
+
+- route familiarity
+- state permit compatibility
+- regional or language fit when it affects execution reliability
+
+These should remain bounded scoring features or eligibility checks, not opaque overrides.
 
 ## Edge Cases
 
@@ -94,6 +187,19 @@ Generate vehicle candidates for OMS by applying compliance-safe hard filters, de
 | Compliance record stale | Treat as ineligible until refreshed |
 | Exhaustion after all steps | Emit explicit no-match event with attempted fallbacks |
 
+## Strategic Metrics
+
+| Metric | Why It Matters |
+|--------|----------------|
+| matching lead-time | shows how quickly demand becomes candidate capacity |
+| exhaustion rate | reveals supply gaps or poor visibility by lane |
+| reservation conflict rate | exposes concurrency pressure and stale availability |
+| candidate-to-assignment conversion | shows whether ranking quality is actually useful downstream |
+| idle vehicle age before match | reflects how well IMS converts visible supply into revenue |
+| loop-success contribution | shows whether matching is reducing empty-run leakage |
+| future supply accuracy | shows whether predicted arrivals and returns are operationally useful |
+| rebalance signal hit rate | shows whether scarcity signals correctly predict downstream shortages |
+
 ## Related Notes
 
 - [[Load Matching Algorithm]]
@@ -101,10 +207,11 @@ Generate vehicle candidates for OMS by applying compliance-safe hard filters, de
 - [[Return Load Optimization]]
 - [[Resource Management Agent]]
 - [[Fallback & Resilience Architecture]]
+- [[Lane Intelligence Model]]
+- [[Competitive Advantage Framework]]
 
 ## Related Hubs
 
 - [[Algorithms Hub]]
 - [[Fleet & Transport Hub]]
 - [[Operations Strategy Hub]]
-

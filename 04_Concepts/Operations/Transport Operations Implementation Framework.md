@@ -40,6 +40,7 @@ In practice, it is the discipline of making sure the right vehicle, driver, rout
 | Delivery proof | Capture POD, images, signature, and timestamps |
 | Settlement | Reconcile freight, charges, commission, and payment status |
 | Learning loop | Review KPIs, failed trips, pricing gaps, and route quality |
+| Last-mile control | Manage delivery windows, pre-alerts, doorstep attempts, retry decisions, and failed-attempt cost |
 
 ## How To Practice Transport Operations
 
@@ -110,6 +111,8 @@ Minimum transport scorecard:
 | POD submission time | closure discipline |
 | exception rate | operational stability |
 | claim/fraud incidents | control weakness |
+| first-attempt delivery success | last-mile execution quality |
+| failed delivery reason mix | address, payment, consignee, access, or route improvement signal |
 
 ## How To Implement A Transport System
 
@@ -252,6 +255,9 @@ If either journey is weak, transport operations become unreliable.
 - [[Fleet Utilization]]
 - [[Vehicle Operating Cost Model]]
 - [[Line Haul vs Last Mile]]
+- [[Last-Mile Delivery Execution]]
+- [[Delivery Attempt Management]]
+- [[Failed Delivery Handling]]
 - [[E-way Bill System]]
 - [[Fallback & Resilience Architecture]]
 - [[Logistics SLA]]

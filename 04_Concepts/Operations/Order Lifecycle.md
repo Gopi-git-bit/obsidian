@@ -1,4 +1,4 @@
----
+﻿---
 type: concept
 domain: operations
 decision_value: high
@@ -20,9 +20,64 @@ The complete journey of a shipment from initial inquiry to final delivery and pa
 ## Stages
 
 ```
-Inquiry → Booking → Confirmation → Pickup → In Transit → Delivered → POD → Invoice → Payment
+Inquiry â†’ Booking â†’ Confirmation â†’ Pickup â†’ In Transit â†’ Delivered â†’ POD â†’ Invoice â†’ Payment
 ```
 
+## OMS Control Principle
+
+The OMS should be treated as the lifecycle command center: every operational system can execute a part of the job, but the OMS owns the canonical order record, allowed state transitions, exception holds, and customer-visible order truth.
+
+| Layer | OMS responsibility | Execution partner |
+|-------|--------------------|-------------------|
+| Demand capture | Create inquiry, draft, quote, booking, and order ID | Customer app, web, WhatsApp, API |
+| Validation | Check serviceability, address quality, cargo rules, payment readiness, and duplicate risk | Pricing engine, maps, payment gateway |
+| Allocation | Trigger load matching, capacity checks, fallback queues, and assignment approval | [[Load Matching Algorithm]], fleet/partner systems |
+| Execution | Control pickup, dispatch, transit, delivery, and exception state changes | TMS, driver app, tracking layer |
+| Evidence | Attach document scans, POD, GPS traces, timestamps, and consent records | Driver app, document store |
+| Settlement | Trigger invoice, payment reconciliation, and provider settlement workflows | Payment gateway, [[Payment Settlement Agent]] |
+
+## Lifecycle Gates
+
+Use gates to prevent an order from moving forward before the required business truth exists.
+
+| Gate | Required before transition | Failure handling |
+|------|----------------------------|------------------|
+| Booking gate | Customer, route, cargo, schedule, vehicle need, and contact details are complete | Save as draft or send to customer support |
+| Validation gate | Address serviceability, restricted cargo, duplicate order, and feasibility checks pass | Reject, request correction, or create manual review |
+| Payment/consent gate | Payment mode, advance condition, ToPay consent, and outstanding dues policy are resolved | Hold order and notify customer/admin |
+| Allocation gate | Vehicle/provider capacity is feasible and assignment is idempotent | Retry matching, partner fallback, or escalation |
+| Pickup gate | Driver arrival, goods inspection, document capture, and loading confirmation are recorded | Hold advance release or create damage/document exception |
+| Transit gate | GPS stream, ETA confidence, route adherence, and delay alerts remain observable | Trigger deviation, delay, or safety workflow |
+| Delivery gate | Recipient validation, OTP/signature, unloading status, and POD quality are captured | Block completion until evidence is corrected or reviewed |
+| Settlement gate | Invoice, payment ledger, provider settlement, and audit trail are consistent | Reconcile before marking financial completion |
+
+## Strategy Layer: CODP for Logistics OMS
+
+Customer Order Decoupling Point logic helps the OMS decide how much work should be pre-planned versus triggered only after a specific customer order exists.
+
+| Scenario | OMS strategy | Practical rule |
+|----------|--------------|----------------|
+| Standard, repeatable lane with predictable demand | Make-to-stock equivalent | Pre-build lane rates, vehicle pools, SLA promises, and dispatch cut-offs |
+| High-variety shipment with common components | Assemble-to-order equivalent | Pre-plan reusable route, vehicle, partner, and document templates, then finalize per order |
+| Customized cargo, special handling, risky location, or perishable goods | Make-to-order equivalent | Do not confirm until requirements, capacity, risk, and customer consent are explicit |
+| Highly complex enterprise movement | Engineer-to-order equivalent | Route to operations planning before quote, assignment, or SLA commitment |
+
+## Enhanced OMS Loop
+
+```
+Capture -> Validate -> Price -> Confirm -> Allocate -> Dispatch -> Track -> Deliver -> Evidence -> Bill -> Settle -> Learn
+```
+
+- Capture should support drafts, retries, and duplicate prevention across app, API, phone, and WhatsApp channels.
+- Validate should combine customer eligibility, lane feasibility, cargo compatibility, address quality, and payment policy.
+- Price should show the customer-facing estimate while preserving internal cost, commission, and provider payout logic separately.
+- Confirm should lock the customer-visible promise only after payment/consent and feasibility gates pass.
+- Allocate should use deterministic idempotency so retries do not create duplicate vehicle or provider assignments.
+- Dispatch should respect cut-off windows, route plans, vehicle readiness, and document prerequisites.
+- Track should store events from GPS, driver app updates, customer communication, and exception detectors.
+- Deliver should capture OTP/signature, recipient identity, unloading completion, and POD evidence.
+- Bill and settle should separate invoices, payment attempts, ledger entries, and provider settlement.
+- Learn should feed future pricing, ETA, carrier scoring, customer risk, and SOP improvements.
 ### 1. Inquiry
 - Customer requests quote
 - [[Dynamic Pricing Logic]] generates estimate
@@ -88,12 +143,35 @@ Inquiry → Booking → Confirmation → Pickup → In Transit → Delivered →
 - Route distance
 - Urgency level
 - Customer payment terms
+- Customer eligibility and outstanding dues status
+- Address quality and serviceability confidence
+- Cargo risk, document requirements, and special handling needs
+- Capacity availability across own fleet, driver network, and partners
+- Payment mode: full, part payment, ToPay, or controlled offline follow-up
+- ETA confidence, route risk, and exception severity
+- POD evidence quality and dispute probability
+
+## Control KPIs
+
+| KPI | Why it matters |
+|-----|----------------|
+| Order validation time | Shows whether booking can move quickly without support intervention |
+| Validation accuracy | Prevents bad addresses, restricted cargo, duplicate orders, and wrong commitments |
+| Allocation time | Measures how fast confirmed demand becomes executable capacity |
+| On-time dispatch rate | Shows whether pickup and vehicle readiness are controlled |
+| On-time delivery rate | Measures customer promise reliability |
+| Exception recovery rate | Shows whether fallback workflows actually restore the lifecycle |
+| POD acceptance rate | Reduces disputes and delayed billing |
+| Billing accuracy | Protects customer trust and settlement integrity |
+| Failed delivery rate | Reveals consignee, address, timing, and communication issues |
 
 ## Decision Impact
 
 - Affects [[Fleet Utilization]]
 - Drives [[Load Matching Algorithm]]
 - Triggers [[Communication Agent]]
+- Defines when [[Fallback & Resilience Architecture]] should take over from automated execution
+- Provides event inputs to [[Transport Control Tower KPI Framework]]
 
 ## Risks
 
@@ -104,6 +182,10 @@ Inquiry → Booking → Confirmation → Pickup → In Transit → Delivered →
 - Duplicate routing or assignment attempts without idempotency controls
 - Unsafe fallback execution that bypasses explicit transition controls
 - Weak-connectivity drop-off during booking or payment
+- Premature confirmation before serviceability, capacity, payment, or ToPay consent is resolved
+- Missing document/POD evidence that blocks billing or creates disputes
+- Treating UI-visible payment status as the ledger source of truth
+- Manual exception handling that does not emit auditable lifecycle events
 
 ## Related Notes
 
@@ -116,3 +198,5 @@ Inquiry → Booking → Confirmation → Pickup → In Transit → Delivered →
 - [[Customer App Frontend Architecture]]
 - [[Driver App Frontend Architecture]]
 - [[Authoritative Database Schema]]
+
+- [[OMS Lifecycle Enhancement Source]]

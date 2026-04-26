@@ -59,10 +59,27 @@ Fleet Utilization % = (Revenue-Generating Hours / Total Available Hours) × 100
 2. **Route clustering** - Group nearby deliveries
 3. **Flexible vehicle mix** - Match vehicle to load
 4. **Real-time matching** - Quick turnaround
+5. **Forecast capacity, execute demand** - Plan aggregate vehicle availability by lane or region, but commit exact vehicles only when live demand appears
+6. **Idle-age escalation** - Alert operations when an available vehicle remains unmatched beyond the target threshold
+
+## Demand-Driven Utilization Principle
+
+Do not improve utilization by locking vehicles into weak assumptions too early.
+
+Use [[Demand-Driven Logistics Blueprint]] logic:
+
+- keep capacity visible and flexible
+- monitor demand by lane and pincode cluster
+- move vehicles toward probable demand where confidence is high
+- finalize assignment only after request, timing, cargo fit, and owner response are confirmed
+
+This reduces empty movement while protecting responsiveness on uncertain lanes.
 
 ## Related Notes
 
 - [[Transport Company Network Model]]
 - [[Load Matching Algorithm]]
 - [[Fleet Allocation Algorithm]]
+- [[Demand-Driven Logistics Blueprint]]
+- [[Collaborative Planning and Forecasting for Logistics]]
 - [[Scenario - No Own Fleet Available]]

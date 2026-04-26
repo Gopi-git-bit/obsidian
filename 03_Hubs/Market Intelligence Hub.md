@@ -41,6 +41,7 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 ## Customer Intelligence
 
 - [[Customer Segmentation Matrix]]
+- [[Tamil Nadu Customer Segmentation and GTM Plan]]
 - [[Customer Needs Analysis]]
 - [[Price Sensitivity Data]]
 - [[Indian Road Logistics Pain Point Map]]
@@ -49,6 +50,7 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 
 ### Tamil Nadu
 - [[Tamil Nadu Industrial Corridors]]
+- [[Tamil Nadu Warehouse and Logistics Market Scan]]
 - [[Chennai Logistics Hub]]
 - [[Tier 2 City Opportunities]]
 - [[South India Tier 2-3 Logistics Opportunity]]

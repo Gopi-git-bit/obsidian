@@ -56,6 +56,10 @@ Final leg of delivery from local hub to end recipient, typically under 50 km.
 - First-attempt success
 - Time windows honored
 - Cost per delivery
+- Failed delivery rate
+- Cost per successful delivery
+- Stop density per route
+- ETA accuracy and notification response rate
 
 ## Comparison
 
@@ -82,15 +86,22 @@ Shipper → [Line Haul] → Regional Hub → [Last Mile] → Recipient
 - Different vehicle types
 - Different pricing models
 - Different SLA expectations
+- Different failure economics: one bad address or absent consignee can erase the margin of a route
+- Different customer impact: last-mile experience shapes trust more directly than upstream movement
 
 ## Decision Impact
 
 - [[Load Matching Algorithm]] must consider leg type
 - [[Fleet Utilization]] calculation differs
 - [[Dynamic Pricing Logic]] varies by leg
+- [[Route Optimization Logic]] must use delivery windows, stop density, consignee availability, and failed-attempt risk for last-mile routes
+- [[Delivery Attempt Management]] should be treated as a control layer, not only a driver task
 
 ## Related Notes
 
 - [[LCV vs MCV vs HCV]]
 - [[Fleet Utilization]]
 - [[Return Load Economics]]
+- [[Last-Mile Delivery Execution]]
+- [[Delivery Attempt Management]]
+- [[Failed Delivery Handling]]

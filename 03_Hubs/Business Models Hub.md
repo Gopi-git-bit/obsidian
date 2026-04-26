@@ -53,6 +53,8 @@ Central hub for revenue models, pricing strategies, and financial frameworks.
 ## Strategic Decision Layer
 
 - [[Revenue Model Decision Framework]] - How to choose monetization structure under uncertainty
+- [[Tamil Nadu Customer Segmentation and GTM Plan]] - Segment pricing, launch sequencing, and GTM revenue assumptions for Tamil Nadu
+- [[Competitive Advantage Framework]] - Why the platform can build a defensible moat beyond pricing and brokerage
 - [[Indian Road Logistics Pain Point Map]] - Pain-point view of vehicle-fit confusion, MSME credit expectations, and wait-time productivity loss
 - [[Embedded Finance Enablement Framework]] - Partner-led credit enablement without operator-funded float
 

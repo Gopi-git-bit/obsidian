@@ -21,6 +21,9 @@ This source refines the Zippy IMS architecture around:
 - explicit fallback cascades for exhausted searches
 - loop-aware matching to reduce empty miles
 - compliance-first dispatch eligibility
+- multi-echelon fleet thinking where enroute and returning vehicles count as future supply
+- destination-aware scoring so weak-return corridors are penalized when demand alignment is poor
+- advisory-first roadmap for ML and optimization layers with strict safety and fallback controls
 
 ## Core Takeaways
 
@@ -51,6 +54,24 @@ This source refines the Zippy IMS architecture around:
 - No-match cases should trigger a deterministic escalation ladder.
 - Fallbacks should be observable, time-bounded, and event-driven.
 
+### 6. IMS Should Model Future Supply
+
+- Vehicle inventory is not only idle stock.
+- Enroute arrivals, returning vehicles, and predictable reactivations should inform supply visibility.
+- Corridor-level or city-cluster supply gives better matching and escalation decisions than isolated city snapshots.
+
+### 7. Destination Quality Matters
+
+- A match should consider what happens after delivery, not only whether the current order fits.
+- Low-demand destinations with poor return history should receive a penalty unless the economics justify the move.
+- Future demand alignment belongs in scoring before advanced optimization is attempted.
+
+### 8. Intelligence Layers Need Safety
+
+- ML, optimization, or RL should begin as advisory layers.
+- Hard constraints for compliance, pricing, SLA, and assignment correctness must stay outside learned models.
+- Fallback to deterministic logic must remain available at all times.
+
 ## Derived Notes
 
 - [[IMS Matching Engine]]
@@ -64,4 +85,3 @@ This source refines the Zippy IMS architecture around:
 - [[unified_routing_optimization_source]]
 - [[pricing_engine_architecture_source]]
 - [[grok_algo_source_reference]]
-

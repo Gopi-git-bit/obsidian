@@ -67,6 +67,8 @@ Split metrics into:
 | KPI | Meaning | Suggested Alert |
 |-----|---------|-----------------|
 | assignment response time | time from confirmed order to vehicle assignment | >15 min for urgent loads |
+| matching lead-time | time from validated demand to match proposal | above lane SLA |
+| unmatched request age | oldest open demand signal without a viable match | any breach of target window |
 | driver acknowledgment time | time from assignment to driver acceptance | >10 min |
 | assignment failure rate | percent of orders requiring reassignment | >5% |
 | own-fleet assignment ratio | percent assigned to internal fleet | trend depends on strategy |
@@ -80,6 +82,7 @@ Split metrics into:
 | empty km percentage | unproductive kilometers | >25% |
 | trips per vehicle per day | asset throughput | falling trend |
 | idle vehicle count | available but unused vehicles | rising trend |
+| idle vehicle age | time since a vehicle became available without earning assignment | >48 hr or lane-specific threshold |
 | breakdown rate | percent of trips disrupted by vehicle failure | >2% |
 
 ### 4. Tracking And Execution Control
@@ -139,6 +142,9 @@ Split metrics into:
 These help prevent failure before delivery misses happen:
 
 - assignment response time
+- matching lead-time
+- unmatched request age
+- idle vehicle age
 - driver acknowledgment time
 - GPS freshness
 - stalled-trip count
@@ -261,16 +267,19 @@ If starting small, begin with these 10 KPIs:
 2. on-time pickup rate
 3. on-time delivery rate
 4. assignment response time
-5. GPS freshness breach count
-6. route deviation count
-7. vehicle utilization
-8. empty km percentage
-9. POD pending after delivery
-10. realized margin per trip
+5. matching lead-time
+6. unmatched request age
+7. GPS freshness breach count
+8. route deviation count
+9. vehicle utilization
+10. empty km percentage
 
 ## Related Notes
 
 - [[Transport Operations Implementation Framework]]
+- [[Demand-Driven Logistics Blueprint]]
+- [[Strategic Lead-Time Management]]
+- [[Collaborative Planning and Forecasting for Logistics]]
 - [[Transport Cost Breakdown Model]]
 - [[Operational Observability Architecture]]
 - [[Fleet Utilization]]

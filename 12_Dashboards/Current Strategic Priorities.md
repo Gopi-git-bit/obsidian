@@ -21,6 +21,7 @@ High-level snapshot of current strategic focus areas for the logistics platform.
 Related dashboard note:
 
 - [[Transport Control Tower KPI Framework]]
+- [[Competitive Advantage Framework]]
 
 ## Active Priorities
 

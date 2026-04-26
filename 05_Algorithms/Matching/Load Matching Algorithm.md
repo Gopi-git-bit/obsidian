@@ -30,6 +30,8 @@ tags:
 
 Match available vehicle capacity with incoming shipment requirements to optimize feasibility, service quality, and trip economics.
 
+The algorithm should follow the [[Demand-Driven Logistics Blueprint]] principle: forecast capacity at the lane or region level, but execute assignment against live customer demand and confirmed vehicle availability.
+
 ## Inputs
 
 | Input | Type | Description |
@@ -56,7 +58,9 @@ Match available vehicle capacity with incoming shipment requirements to optimize
 9. WEIGHTED_SCORE = route + capacity + timing + reliability + return potential + packing
 10. STABLE-MATCH top candidates where return-trip optimization matters
 11. ATTEMPT candidate reservation or reservation hinting where concurrency risk exists
-12. SELECT top candidate above threshold and keep alternates
+12. TRACK matching lead-time from validation to match proposal
+13. SELECT top candidate above threshold and keep alternates
+14. IF request remains unmatched beyond SLA, trigger radius expansion, partner fallback, or dispatcher escalation
 ```
 
 ### Default Weights
@@ -92,6 +96,8 @@ In mature deployments, timing can be upgraded from a rules-based score to predic
 - Partner reliability score > 3.5
 - Route deadhead minimization
 - Higher return-trip probability preferred on long-haul lanes
+- Prefer flexible capacity pools over early hard pre-allocation on volatile lanes
+- Favor candidates that can respond within the target acceptance window
 
 ## Edge Cases
 
@@ -102,6 +108,7 @@ In mature deployments, timing can be upgraded from a rules-based score to predic
 | Urgent with no capacity | Trigger [[SOP - Handle Urgent Request]] |
 | Special cargo (hazmat) | Verify certifications first |
 | Weak match confidence | Keep alternates and route to manual dispatch review |
+| Request aging beyond SLA | Trigger [[Strategic Lead-Time Management]] escalation rule |
 
 ## Related Notes
 
@@ -111,3 +118,5 @@ In mature deployments, timing can be upgraded from a rules-based score to predic
 - [[Fleet Allocation Algorithm]]
 - [[Return Load Optimization]]
 - [[Scenario - No Own Fleet Available]]
+- [[Demand-Driven Logistics Blueprint]]
+- [[Strategic Lead-Time Management]]

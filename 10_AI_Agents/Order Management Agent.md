@@ -1,4 +1,4 @@
----
+﻿---
 type: concept
 domain: ai-agents
 decision_value: high
@@ -19,6 +19,15 @@ AI agent responsible for end-to-end order lifecycle management, from booking to 
 
 ## Capabilities
 
+### Lifecycle Governance
+
+| Capability | Description |
+|------------|-------------|
+| Canonical state control | Own allowed order-state transitions instead of letting apps infer lifecycle truth |
+| Gate enforcement | Block progress when validation, payment/consent, allocation, pickup evidence, POD, or settlement prerequisites are missing |
+| Idempotency protection | Prevent duplicate bookings, assignments, notifications, and payment-triggered transitions during retries |
+| Exception holds | Move risky orders into controlled review queues without losing audit history |
+| Audit event emission | Record who/what moved the order, when, why, and with which evidence |
 ### Order Creation
 
 | Capability | Description |
@@ -64,6 +73,9 @@ AI agent responsible for end-to-end order lifecycle management, from booking to 
 - Customer Service Agent inputs
 - Transportation Agent updates
 - ETA recalculation events with confidence and factor summaries
+- Payment/ToPay consent and outstanding dues checks
+- Document scan, cargo inspection, POD, and recipient validation events
+- Address quality, serviceability, cargo-risk, and restricted-item checks
 
 ## Output Actions
 
@@ -72,6 +84,8 @@ AI agent responsible for end-to-end order lifecycle management, from booking to 
 - Trigger vehicle assignment
 - Generate invoices
 - Update dashboards
+- Place orders on validation, payment, allocation, document, delivery, or settlement hold
+- Emit lifecycle events for replay, audit, analytics, and fallback recovery
 
 ## Key Integrations
 
@@ -86,10 +100,20 @@ AI agent responsible for end-to-end order lifecycle management, from booking to 
 ## State Management
 
 ```
-States: CREATED → CONFIRMED → PICKED_UP → IN_TRANSIT → 
-        OUT_FOR_DELIVERY → DELIVERED → COMPLETED
+States: CREATED â†’ CONFIRMED â†’ PICKED_UP â†’ IN_TRANSIT â†’ 
+        OUT_FOR_DELIVERY â†’ DELIVERED â†’ COMPLETED
         (also: CANCELLED, EXCEPTION)
 ```
+
+### Suggested Holds
+
+| Hold state | Used when |
+|------------|-----------|
+| VALIDATION_HOLD | Address, cargo, customer, duplicate, or serviceability checks need correction |
+| PAYMENT_HOLD | Advance payment, ToPay consent, or outstanding dues policy is unresolved |
+| ALLOCATION_HOLD | Own fleet and partner capacity cannot satisfy the order safely |
+| DOCUMENT_HOLD | Required shipment documents, inspection proof, or POD evidence is missing/low quality |
+| SETTLEMENT_HOLD | Invoice, ledger, gateway, or provider settlement records disagree |
 
 ## Escalation Triggers
 
@@ -111,6 +135,11 @@ States: CREATED → CONFIRMED → PICKED_UP → IN_TRANSIT →
 - Order-to-pickup time
 - Exception rate
 - Customer feedback score
+- Gate pass rate by lifecycle stage
+- Allocation retry rate
+- Duplicate transition prevention count
+- POD acceptance rate
+- Billing reconciliation time
 
 ## Related Agents
 
@@ -125,3 +154,5 @@ States: CREATED → CONFIRMED → PICKED_UP → IN_TRANSIT →
 - [[Order Lifecycle]]
 - [[Order Priority Scoring]]
 - [[Exception Escalation]]
+
+- [[OMS Lifecycle Enhancement Source]]

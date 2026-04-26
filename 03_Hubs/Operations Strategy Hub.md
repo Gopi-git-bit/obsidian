@@ -29,6 +29,9 @@ Central hub for core logistics operations: order management, dispatch, tracking,
 - [[Vehicle Assignment Logic]]
 - [[Load Planning]]
 - [[Transport Operations Implementation Framework]]
+- [[Demand-Driven Logistics Blueprint]]
+- [[Strategic Lead-Time Management]]
+- [[Collaborative Planning and Forecasting for Logistics]]
 - [[Fleet vs Partner Allocation Strategy]]
 - [[Lane Intelligence Model]]
 - [[Transport Mode Selection Framework]]
@@ -36,6 +39,7 @@ Central hub for core logistics operations: order management, dispatch, tracking,
 - [[Inventory-Driven Resource Allocation Framework]]
 
 ### Delivery Operations
+- [[Last-Mile Delivery Execution]]
 - [[Proof of Delivery]]
 - [[Delivery Attempt Management]]
 - [[Failed Delivery Handling]]
@@ -72,6 +76,12 @@ Central hub for core logistics operations: order management, dispatch, tracking,
 - [[Transport Control Tower KPI Framework]]
 - On-time delivery rate
 - Order-to-delivery cycle time
+- Matching lead-time
+- Throughput efficiency
+- Same-day match rate
+- Unmatched request age
+- First-attempt delivery success rate
+- Failed delivery reason mix
 - Exception rate
 - POD submission time
 - Fallback activation rate
