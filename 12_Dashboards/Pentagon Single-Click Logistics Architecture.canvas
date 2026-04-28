@@ -1,0 +1,214 @@
+{
+  "nodes": [
+    {
+      "id": "source",
+      "type": "file",
+      "file": "02_Sources/architect_single_click_logistics_source.md",
+      "x": -700,
+      "y": -420,
+      "width": 360,
+      "height": 220,
+      "color": "1"
+    },
+    {
+      "id": "pentagon",
+      "type": "text",
+      "text": "# Pentagon Single-Click Logistics\n\nCustomer clicks once. The system handles delegation, SLA monitoring, fallback, and customer-visible calm.",
+      "x": -260,
+      "y": -420,
+      "width": 430,
+      "height": 220,
+      "color": "4"
+    },
+    {
+      "id": "core-architecture",
+      "type": "file",
+      "file": "04_Concepts/Technology/Autonomous Logistics Execution Architecture.md",
+      "x": 260,
+      "y": -420,
+      "width": 420,
+      "height": 220,
+      "color": "3"
+    },
+    {
+      "id": "subfunctions",
+      "type": "text",
+      "text": "## Central Hub Delegates To\n\n- Finance\n- Inventory\n- Dispatch\n- Route\n- Support\n\nEach sub-function gets clear state, event, SLA, and fallback ownership.",
+      "x": -700,
+      "y": -100,
+      "width": 360,
+      "height": 260,
+      "color": "2"
+    },
+    {
+      "id": "sequence",
+      "type": "text",
+      "text": "# Execution Wiring\n\n```text\nRole -> Event -> SLA -> Fallback -> Fallback Role\n```\n\nNo orphaned events. No unowned recovery paths.",
+      "x": -260,
+      "y": -100,
+      "width": 430,
+      "height": 260,
+      "color": "5"
+    },
+    {
+      "id": "order-lifecycle",
+      "type": "file",
+      "file": "04_Concepts/Operations/Order Lifecycle.md",
+      "x": 260,
+      "y": -100,
+      "width": 420,
+      "height": 260,
+      "color": "3"
+    },
+    {
+      "id": "event-sla",
+      "type": "text",
+      "text": "## SLA As Heartbeat\n\n- Event starts the timer\n- SLA defines expected state\n- At-risk state triggers early warning\n- Breach triggers fallback\n- Outcome feeds learning loop",
+      "x": -700,
+      "y": 250,
+      "width": 360,
+      "height": 250,
+      "color": "6"
+    },
+    {
+      "id": "sla-note",
+      "type": "file",
+      "file": "04_Concepts/Operations/Logistics SLA.md",
+      "x": -260,
+      "y": 250,
+      "width": 430,
+      "height": 250,
+      "color": "6"
+    },
+    {
+      "id": "fallback-note",
+      "type": "file",
+      "file": "04_Concepts/Operations/Fallback & Resilience Architecture.md",
+      "x": 260,
+      "y": 250,
+      "width": 420,
+      "height": 250,
+      "color": "1"
+    },
+    {
+      "id": "instant-pickup",
+      "type": "text",
+      "text": "# Instant Pickup Scenario\n\n1. Role: courier assigned\n2. Event: pickup task accepted\n3. SLA: arrive in 15 minutes\n4. Fallback: reassign if no movement\n5. Owner: AI navigator or support guardian",
+      "x": -700,
+      "y": 590,
+      "width": 360,
+      "height": 260,
+      "color": "4"
+    },
+    {
+      "id": "observability",
+      "type": "file",
+      "file": "04_Concepts/Technology/Operational Observability Architecture.md",
+      "x": -260,
+      "y": 590,
+      "width": 430,
+      "height": 260,
+      "color": "2"
+    },
+    {
+      "id": "transport-ops",
+      "type": "file",
+      "file": "04_Concepts/Operations/Transport Operations Implementation Framework.md",
+      "x": 260,
+      "y": 590,
+      "width": 420,
+      "height": 260,
+      "color": "3"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-source-pentagon",
+      "fromNode": "source",
+      "fromSide": "right",
+      "toNode": "pentagon",
+      "toSide": "left",
+      "label": "source synthesis"
+    },
+    {
+      "id": "e-pentagon-core",
+      "fromNode": "pentagon",
+      "fromSide": "right",
+      "toNode": "core-architecture",
+      "toSide": "left",
+      "label": "architecture note"
+    },
+    {
+      "id": "e-pentagon-subfunctions",
+      "fromNode": "pentagon",
+      "fromSide": "bottom",
+      "toNode": "subfunctions",
+      "toSide": "top",
+      "label": "delegates"
+    },
+    {
+      "id": "e-subfunctions-sequence",
+      "fromNode": "subfunctions",
+      "fromSide": "right",
+      "toNode": "sequence",
+      "toSide": "left",
+      "label": "wired as"
+    },
+    {
+      "id": "e-sequence-lifecycle",
+      "fromNode": "sequence",
+      "fromSide": "right",
+      "toNode": "order-lifecycle",
+      "toSide": "left",
+      "label": "state machine"
+    },
+    {
+      "id": "e-sequence-event-sla",
+      "fromNode": "sequence",
+      "fromSide": "bottom",
+      "toNode": "event-sla",
+      "toSide": "top",
+      "label": "timer discipline"
+    },
+    {
+      "id": "e-event-sla-note",
+      "fromNode": "event-sla",
+      "fromSide": "right",
+      "toNode": "sla-note",
+      "toSide": "left",
+      "label": "SLA rules"
+    },
+    {
+      "id": "e-sla-fallback",
+      "fromNode": "sla-note",
+      "fromSide": "right",
+      "toNode": "fallback-note",
+      "toSide": "left",
+      "label": "breach triggers"
+    },
+    {
+      "id": "e-fallback-scenario",
+      "fromNode": "fallback-note",
+      "fromSide": "bottom",
+      "toNode": "instant-pickup",
+      "toSide": "top",
+      "label": "example"
+    },
+    {
+      "id": "e-scenario-observability",
+      "fromNode": "instant-pickup",
+      "fromSide": "right",
+      "toNode": "observability",
+      "toSide": "left",
+      "label": "measure events"
+    },
+    {
+      "id": "e-observability-ops",
+      "fromNode": "observability",
+      "fromSide": "right",
+      "toNode": "transport-ops",
+      "toSide": "left",
+      "label": "operationalize"
+    }
+  ]
+}
