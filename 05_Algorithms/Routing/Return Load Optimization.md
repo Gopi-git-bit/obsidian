@@ -31,6 +31,10 @@ tags:
 
 Reduce empty return miles by pairing completed outbound trips with feasible backhaul demand, reposition opportunities, or open-route continuations.
 
+## Strategic Relevance
+
+India-scale freight efficiency depends heavily on reducing empty running. Return-trip probability should feed allocation, pricing, corridor planning, and the 2050 roadmap goal of lowering unnecessary vehicular freight activity.
+
 ## Inputs
 
 | Input | Type | Description |
@@ -97,6 +101,8 @@ Only promote return-trip options when PCR clears the configured threshold.
 - [[Load Matching Algorithm]]
 - [[Fleet Utilization]]
 - [[Scenario - Excess Capacity from Partner]]
+- [[India Freight 2050 Strategic Roadmap]]
+- [[Autonomous Logistics Execution Architecture]]
 
 ## Related Hubs
 

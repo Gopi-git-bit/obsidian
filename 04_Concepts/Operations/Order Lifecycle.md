@@ -62,6 +62,13 @@ Customer Order Decoupling Point logic helps the OMS decide how much work should 
 | Customized cargo, special handling, risky location, or perishable goods | Make-to-order equivalent | Do not confirm until requirements, capacity, risk, and customer consent are explicit |
 | Highly complex enterprise movement | Engineer-to-order equivalent | Route to operations planning before quote, assignment, or SLA commitment |
 
+| Strategy | Logistics Reading | Tradeoff |
+|----------|-------------------|----------|
+| MTS | Forecast-driven standard products or repeat lanes with pre-positioned capacity | Short delivery time and high utilization, but inventory/capacity risk if forecast is wrong |
+| MTO | Customer-order-driven movement with individualized requirements, lower stock cost, and variable lot size | Reduced stock risk, but longer lead time and heavier validation |
+| ATO | Standard components assembled into a customized service | Good fit for reusable lane, vehicle, document, pricing, and partner templates |
+| ETO | Individual design or enterprise movement planned from scratch | Highest fit quality, but slowest and most operations-heavy |
+
 ## Enhanced OMS Loop
 
 ```
@@ -198,5 +205,6 @@ Capture -> Validate -> Price -> Confirm -> Allocate -> Dispatch -> Track -> Deli
 - [[Customer App Frontend Architecture]]
 - [[Driver App Frontend Architecture]]
 - [[Authoritative Database Schema]]
+- [[Order Processing and Transportation Management Knowledge Map]]
 
 - [[OMS Lifecycle Enhancement Source]]

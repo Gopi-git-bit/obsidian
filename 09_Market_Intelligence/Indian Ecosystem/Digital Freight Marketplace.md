@@ -74,6 +74,20 @@ Shipper → Platform → Verified Truck Owner
 - E-way bill automation
 - Payment gateway integration
 - AI-based matching
+- Consignment booking flow with draft, confirmation, assignment, and tracking states
+- Route optimization and ETA refresh tied to TMS execution events
+- Big data analytics for lane, carrier, demand, and disruption patterns
+- Automation for document, notification, billing, and exception workflows
+
+## Smart Logistics Layer
+
+| Capability | Marketplace Impact |
+|------------|--------------------|
+| IoT and GPS telemetry | Improves tracking, ETA, route deviation alerts, and dispute evidence |
+| Artificial intelligence | Supports matching, pricing, ETA, anomaly detection, and support triage |
+| Big data analytics | Turns booking, lane, carrier, and payment history into planning intelligence |
+| TMS software | Connects route optimization, e-way bill automation, consignment booking, and live tracking |
+| Automation | Reduces manual handoffs across booking, dispatch, document, and settlement workflows |
 
 ## Challenges
 
@@ -87,6 +101,7 @@ Shipper → Platform → Verified Truck Owner
 
 - [[Truck Aggregator Model]]
 - [[Indian Road Freight Fragmentation]]
+- [[Order Processing and Transportation Management Knowledge Map]]
 
 ## Related Hubs
 

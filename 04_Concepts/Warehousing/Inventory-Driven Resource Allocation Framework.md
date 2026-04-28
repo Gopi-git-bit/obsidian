@@ -46,6 +46,8 @@ Use inventory and sync signals such as:
 - sync latency
 - turnover rate
 - peak or seasonality multiplier
+- inventory centralization or decentralization strategy
+- specialized storage capacity, such as cold chain, bonded, hazardous, or secure zones
 
 ## Practical Trigger Logic
 
@@ -55,6 +57,8 @@ Example reading:
 - high dock queue + active inbound wave -> buffer-yard or dock-swap logic
 - high sync latency -> conservative planning mode
 - high turnover SKU -> stronger resource reservation and pick priority
+- centralized inventory + regional demand spike -> evaluate cross-dock or intermodal replenishment
+- temperature-sensitive stock + weak reefer availability -> raise early capacity-risk alert
 
 ## Resource Layers Affected
 
@@ -155,6 +159,7 @@ Track:
 ## Related Notes
 
 - [[Warehouse Execution & Intelligence Framework]]
+- [[Transport Logistics and Warehousing Knowledge Map]]
 - [[Transport Control Tower KPI Framework]]
 - [[Fleet vs Partner Allocation Strategy]]
 - [[Lane Intelligence Model]]

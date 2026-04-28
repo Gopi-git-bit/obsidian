@@ -62,6 +62,16 @@ Micro, Small, and Medium Enterprises (MSMEs) in India face unique logistics chal
 | Payments | Credit facility + digital payments |
 | Reliability | SLA-backed service |
 
+## Segment And Infrastructure Lens
+
+Indian logistics planning should account for:
+
+- infrastructure: national highways, rail and CONCOR-linked freight movement, seaport/Sagarmala corridors, and air cargo hubs
+- key demand segments: automotive, pharmaceutical, retail/FMCG, and electronics/IT
+- regulatory factors: GST compliance, FDI policy, and historical tax friction such as VAT/Octroi
+
+MSME workflows need simple frontends, but the backend must still preserve these corridor, segment, and compliance realities.
+
 ## Pricing Model for MSMEs
 
 | Order Size | Pricing Approach |
@@ -75,6 +85,7 @@ Micro, Small, and Medium Enterprises (MSMEs) in India face unique logistics chal
 
 - [[MSME Shipper Pain Points]]
 - [[MSME Owner Persona]]
+- [[Order Processing and Transportation Management Knowledge Map]]
 
 ## Related Hubs
 

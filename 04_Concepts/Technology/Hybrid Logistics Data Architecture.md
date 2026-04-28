@@ -33,6 +33,8 @@ A system design pattern that splits logistics data across specialized stores, ty
 | Neo4j / graph | Network intelligence | Routes, nearby alternatives, driver familiarity, backhaul detection |
 | GraphQL gateway | Orchestration | Unified API for pricing, fleet, and route decisions |
 | Supabase/PostgreSQL + PostGIS | Operational system of record | Identity, orders, events, fleet, telemetry, settlement, spatial search |
+| Redis | Hot coordination cache | Availability, rate limits, dispatch locks, and short-lived routing/session state |
+| Event stream | Cross-system movement truth | OMS, IMS, TMS, notification, and agent events with replayable envelopes |
 
 ## Design Principles
 
@@ -41,6 +43,8 @@ A system design pattern that splits logistics data across specialized stores, ty
 3. Persist graph-derived discounts and signals back into relational audit records.
 4. Centralize configuration so pricing rules can be tuned without full redeploys.
 5. Preserve an event log for lifecycle truth and a spatial layer for corridor-aware operations.
+6. Treat WhatsApp, Telegram, and other bot interfaces as channels over the same event/state model, not separate systems of record.
+7. Use orchestration tools such as n8n only for controlled workflows with idempotent checkpoints.
 
 ## Decision Impact
 
@@ -63,6 +67,7 @@ A system design pattern that splits logistics data across specialized stores, ty
 - [[Dynamic Pricing Logic]]
 - [[Return Load Optimization]]
 - [[Digital Freight Marketplace]]
+- [[Autonomous Logistics Execution Architecture]]
 
 ## Related Hubs
 

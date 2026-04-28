@@ -89,9 +89,19 @@ Strategic outsourcing of logistics management to an external expert who orchestr
 | Be 4PL | Scalable, tech focus | Less control, reliance |
 | Hybrid | Best of both | Complexity |
 
+## Outsourcing Trend Lens
+
+Outsourcing should be evaluated by separating execution responsibility from orchestration responsibility:
+
+- 3PL is strongest where physical transport, warehousing, handling, and fulfillment execution need accountable operators.
+- 4PL is strongest where the customer needs network design, partner coordination, visibility, and service governance across multiple providers.
+- Hybrid models can work when the platform owns the control layer while selectively using owned fleet, partner transporters, warehouse operators, and specialist service providers.
+- Outsourcing should not remove operational visibility; WMS, TMS, EDI, document, and settlement data still need to feed the control tower.
+
 ## Related Notes
 
 - [[Truck Aggregator Model]]
 - [[Managed Fleet Model]]
 - [[Asset-Light Transport Model]]
 - [[MSME Logistics Market]]
+- [[Transport Logistics and Warehousing Knowledge Map]]

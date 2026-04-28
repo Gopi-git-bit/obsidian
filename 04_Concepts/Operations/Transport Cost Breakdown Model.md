@@ -27,6 +27,8 @@ Transport cost is not one number. It is a stack of cost layers that appear befor
 
 If the system prices only by `distance x rate`, it will underprice difficult lanes and misread profitable ones.
 
+In the Indian logistics landscape, high logistics cost and infrastructure limitations make this decomposition especially important. Corridor-level pricing should preserve visibility into tax/compliance cost, access friction, waiting time, empty kilometres, and disruption risk rather than hiding them inside a flat rate.
+
 ## Total Transport Cost Structure
 
 ```text

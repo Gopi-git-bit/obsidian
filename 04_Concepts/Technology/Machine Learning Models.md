@@ -33,6 +33,17 @@ Describe where machine-learning models fit in the Zippy stack, what they are all
 | Candidate ranking | Refine order-to-vehicle prioritization after hard filters |
 | Risk detection | Flag anomalies, fraud, or delayed-execution patterns |
 | Demand forecasting | Support staffing, capacity, and pricing preparation |
+| Route optimization support | Score route alternatives and predict delay exposure before TMS selects a plan |
+| Predictive maintenance | Flag vehicles likely to fail or miss readiness windows based on usage and history |
+
+## AI Application Layer
+
+AI applications should be treated as decision support for logistics execution:
+
+- route optimization helps compare route options, but final routing must still respect truck feasibility, safety, and compliance.
+- predictive maintenance reduces breakdown risk by using vehicle history, utilization, and inspection signals.
+- demand forecasting prepares capacity, pricing, staffing, and partner outreach before confirmed orders arrive.
+- AI outputs should feed deterministic OMS, IMS, and TMS rules instead of silently replacing them.
 
 ## Deployment Guardrails
 
@@ -70,6 +81,7 @@ Describe where machine-learning models fit in the Zippy stack, what they are all
 - [[Python Package Fit for Final Architecture]]
 - [[Transportation Agent]]
 - [[Unified Routing & Optimization Algorithm]]
+- [[Order Processing and Transportation Management Knowledge Map]]
 
 ## Related Hubs
 

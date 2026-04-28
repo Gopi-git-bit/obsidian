@@ -26,13 +26,18 @@ except ImportError:
 # SECURITY: Use environment variables for credentials. Never hardcode passwords.
 import os
 
-DB_CONFIG = {
-    "host": os.getenv("DB_HOST", "localhost"),
-    "port": int(os.getenv("DB_PORT", "5432")),
-    "database": os.getenv("DB_NAME", "zippy_logistics"),
-    "user": os.getenv("DB_USER", "zippy"),
-    "password": os.getenv("DB_PASSWORD", ""),  # REQUIRED: set DB_PASSWORD env var
-}
+DB_URL = os.getenv("DATABASE_URL")
+
+if DB_URL:
+    DB_CONFIG = DB_URL
+else:
+    DB_CONFIG = {
+        "host": os.getenv("DB_HOST", "localhost"),
+        "port": int(os.getenv("DB_PORT", "5432")),
+        "database": os.getenv("DB_NAME", "zippy_logistics"),
+        "user": os.getenv("DB_USER", "zippy"),
+        "password": os.getenv("DB_PASSWORD", ""),
+    }
 
 # Major Indian cities list
 INDIAN_CITIES = [
@@ -195,7 +200,10 @@ LOGISTICS_KEYWORDS = [
 def connect_to_db():
     """Establish database connection"""
     try:
-        conn = psycopg2.connect(**DB_CONFIG)
+        if isinstance(DB_CONFIG, str):
+            conn = psycopg2.connect(DB_CONFIG)
+        else:
+            conn = psycopg2.connect(**DB_CONFIG)
         print("[OK] Successfully connected to PostgreSQL database")
         return conn
     except Exception as e:

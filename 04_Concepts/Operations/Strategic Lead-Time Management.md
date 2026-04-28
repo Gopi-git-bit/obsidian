@@ -78,6 +78,8 @@ In weak logistics processes, most time is consumed by waiting. A platform should
 - Use escalation rules for delayed acceptance and unassigned requests.
 - Remove sequential handoffs that can safely run in parallel.
 - Track waiting states as first-class operational events.
+- Connect WMS and TMS events so warehouse readiness, dock release, dispatch, ETA, POD, and settlement are measured as one pipeline.
+- Use cross-docking only when scan confidence, dock discipline, and outbound capacity are strong enough to avoid hidden delay.
 
 ## Control Rule
 
@@ -103,6 +105,7 @@ No customer requirement should remain unmatched beyond the target SLA without on
 - [[Load Matching Algorithm]]
 - [[Logistics SLA]]
 - [[Operational Observability Architecture]]
+- [[Transport Logistics and Warehousing Knowledge Map]]
 
 ## Source Seed
 

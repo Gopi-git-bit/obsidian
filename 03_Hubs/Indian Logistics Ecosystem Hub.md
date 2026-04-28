@@ -23,6 +23,8 @@ Central hub for understanding India's complex logistics landscape, regulatory en
 - [[Tamil Nadu Industrial Corridors]] - Key industrial zones and logistics hubs
 - [[Indian MSME Logistics Model]] - Logistics needs of small manufacturers
 - [[Digital Freight Marketplace]] - Platform-based freight matching
+- [[Order Processing and Transportation Management Knowledge Map]] - Logistics strategy map across order processing, smart TMS, infrastructure, segments, and regulation
+- [[India Freight 2050 Strategic Roadmap]] - Strategic roadmap toward a 10% logistics-to-GDP paradigm
 - [[GST for Logistics]] - Tax implications and compliance
 - [[South India Tier 2-3 Logistics Opportunity]] - Growth thesis for non-metro South Indian corridors
 
@@ -40,6 +42,10 @@ Central hub for understanding India's complex logistics landscape, regulatory en
 | MSME Focus | Bulk of logistics demand | [[Indian MSME Logistics Model]] |
 | Regional Corridors | Strategic location advantages | [[Tamil Nadu Industrial Corridors]] |
 | Tier-2/3 growth | Expansion wedge outside metros | [[South India Tier 2-3 Logistics Opportunity]] |
+| High logistics cost | Raises importance of utilization, pricing discipline, and delay control | [[Transport Cost Breakdown Model]] |
+| Infrastructure limits | Causes lane-level variability across highways, railways, and seaport access | [[Indian Road Freight Fragmentation]] |
+| Multimodal transition | Requires MMLPs, DFCs, rail-linked corridors, and first/last-mile integration | [[India Freight 2050 Strategic Roadmap]] |
+| Green logistics | EV route-fit and fleet transition become cost-control levers | [[Last-Mile Delivery Execution]] |
 
 ---
 

@@ -145,6 +145,18 @@ Limits:
 - more handoff risk
 - dependence on terminal discipline and visibility
 
+### Distribution Strategy Extensions
+
+Distribution design should evaluate more than the main mode:
+
+| Strategy | Best Fit | Watchouts |
+|----------|----------|-----------|
+| cross-docking | Fast-moving or pre-matched inbound-to-outbound freight | Requires dock discipline, scan accuracy, and low dwell time |
+| intermodal transport | Long-haul lanes where line-haul scale and local flexibility both matter | Handoff visibility and terminal reliability must be strong |
+| network optimization | Repeat lanes, dense corridors, and multi-node distribution | Needs lane data, service constraints, and cost-to-serve clarity |
+| lead-time compression | SLA-sensitive customers or stockout prevention | Avoid compressing time by hiding risk or skipping validation |
+| site selection | Warehouse, hub, or partner-location planning | Must account for road access, labor, dock capacity, demand density, and compliance |
+
 ## Specialized Movement Overrides
 
 Mode choice can be overridden by cargo constraints:
@@ -372,6 +384,7 @@ Reason:
 - [[LCV vs MCV vs HCV]]
 - [[Closed Body Vehicle]]
 - [[Transport Fraud & Cybersecurity Framework]]
+- [[Transport Logistics and Warehousing Knowledge Map]]
 
 ## Related Hubs
 

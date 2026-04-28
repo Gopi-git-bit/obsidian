@@ -67,6 +67,7 @@ For each facility, capture:
 - dock slot assigned
 - gate and yard congestion monitored
 - unloading or staging controlled
+- received goods inspected, documented, and routed to putaway, quarantine, cross-dock, or return flow
 
 ### Outbound
 
@@ -75,6 +76,7 @@ For each facility, capture:
 - dock assigned
 - loading completed
 - dispatch released
+- gate-out document readiness confirmed before shipment leaves the facility
 
 ### Reverse Logistics
 
@@ -91,6 +93,16 @@ Key patterns from the source material:
 - cross-docking for high-velocity or pre-matched outbound flows
 - wave or batch processing for corridor-level shipments
 - MHE-aware loading rules based on cargo and vehicle type
+- temperature-controlled, bonded, hazardous, and security-sensitive storage rules for specialized cargo
+
+## Specialized Storage Classes
+
+| Storage Class | Control Requirement | Transport Implication |
+|---------------|---------------------|-----------------------|
+| temperature-controlled / cold chain | Temperature logs, reefer readiness, tight dwell-time control | Match to reefer-capable vehicle and monitor SLA continuously |
+| bonded warehouse | Customs or duty status, restricted release controls, document traceability | Do not dispatch until compliance release and billing state are clear |
+| hazardous or security-sensitive items | Segregation, permits, restricted handling, access control | Require compliant vehicle, driver eligibility, insurance, and route guardrails |
+| e-commerce fulfillment | High pick frequency, returns handling, scan discipline | Prioritize fast loading, scan-to-dispatch visibility, and last-mile handoff quality |
 
 ## Distribution Models
 
@@ -143,6 +155,14 @@ The platform should ingest:
 - billing and compliance state
 - forecast and seasonal signals
 
+Technology patterns to support the operating loop:
+
+- WMS integration for stock, staging, dock, and scan events
+- ICT/EDI exchange for ASN, order, invoice, and shipment-status messages
+- intelligent transport system signals for live route, ETA, and congestion control
+- MHE and robotics readiness signals for loading speed and handling constraints
+- e-commerce event feeds for fulfillment, cancellation, and return waves
+
 ## Strategic Use
 
 Warehouse intelligence should improve:
@@ -175,6 +195,7 @@ Warehouse intelligence should improve:
 - [[Transport Cost Breakdown Model]]
 - [[Transport Control Tower KPI Framework]]
 - [[Inventory-Driven Resource Allocation Framework]]
+- [[Transport Logistics and Warehousing Knowledge Map]]
 
 ## Related Hubs
 

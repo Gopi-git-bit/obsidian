@@ -60,6 +60,14 @@ A control framework that lets logistics workflows degrade safely under outages, 
 | Routing timeout spike | TMS should switch to degraded route mode |
 | Payment cascade failure | Finance workflow should enter controlled offline mode |
 
+## External Disruption Factors
+
+| Disruption | Operational Concern | Safe Response |
+|------------|---------------------|---------------|
+| pandemic or health emergency | Driver availability, border restrictions, customer demand shocks | Scenario mode, capacity rationing, revised SLA promises |
+| geopolitical conflict or war | Route risk, fuel volatility, insurance and compliance uncertainty | Risk-based routing, pricing buffer, supervisor review |
+| canal, port, or corridor blockade | Long detours, port congestion, lead-time uncertainty | Alternate corridor planning, customer updates, mode reassessment |
+
 ## Observability Rule
 
 - Reliability dashboards should expose fallback rate, retry exhaustion, DLQ depth, and audit-critical failures separately so degraded mode does not look like normal uptime.
@@ -92,6 +100,7 @@ A control framework that lets logistics workflows degrade safely under outages, 
 - [[Order Management Agent]]
 - [[Transportation Agent]]
 - [[Operational Observability Architecture]]
+- [[Order Processing and Transportation Management Knowledge Map]]
 
 ## Related Hubs
 

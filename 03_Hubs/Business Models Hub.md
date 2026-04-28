@@ -52,11 +52,16 @@ Central hub for revenue models, pricing strategies, and financial frameworks.
 
 ## Strategic Decision Layer
 
+- [[3PL vs 4PL]] - Outsourcing lens for physical execution versus logistics orchestration
 - [[Revenue Model Decision Framework]] - How to choose monetization structure under uncertainty
+- [[Order Processing and Transportation Management Knowledge Map]] - Logistics taxonomy connecting order strategy, TMS, smart tech, India market factors, and monetization
+- [[Autonomous Logistics Execution Architecture]] - Execution moat connecting OMS, IMS, TMS, AI agents, pricing, and stakeholder channels
 - [[Tamil Nadu Customer Segmentation and GTM Plan]] - Segment pricing, launch sequencing, and GTM revenue assumptions for Tamil Nadu
 - [[Competitive Advantage Framework]] - Why the platform can build a defensible moat beyond pricing and brokerage
+- [[India Freight 2050 Strategic Roadmap]] - National efficiency, multimodal, EV, and technology-enabled integration thesis
 - [[Indian Road Logistics Pain Point Map]] - Pain-point view of vehicle-fit confusion, MSME credit expectations, and wait-time productivity loss
 - [[Embedded Finance Enablement Framework]] - Partner-led credit enablement without operator-funded float
+- [[Transport Logistics and Warehousing Knowledge Map]] - Operating taxonomy connecting warehousing, distribution, technology, outsourcing, and policy
 
 ## Expansion Wedge
 

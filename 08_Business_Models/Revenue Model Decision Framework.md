@@ -39,6 +39,8 @@ Provide a structured way to choose and evolve revenue models when market conditi
 | Brokerage or commission | Fast to launch and asset-light | Margin pressure and weak moat |
 | Bundled 3PL services | More wallet share and stickiness | Operational complexity |
 | 4PL or orchestration | Strong strategic position and neutral coordination value | Requires trust, data, and execution discipline |
+| 4PL integrator | Coordinates multiple carriers, warehouses, technology layers, and service governance | Depends on partner data quality and strong exception control |
+| Logistics-as-a-Service | Packages booking, tracking, compliance, and workflow as an operating service | Requires reliable execution depth and clear service boundaries |
 | SaaS or platform subscription | Predictable recurring revenue | Harder to prove value early |
 | Fintech-integrated model | Deep retention through cash-flow utility | Credit, compliance, and risk complexity |
 | Performance-based or savings-share | Strong alignment with customer value | Hard measurement and longer sales cycles |
@@ -88,6 +90,7 @@ Provide a structured way to choose and evolve revenue models when market conditi
 - [[Embedded Finance Enablement Framework]]
 - [[Scenario Management Framework]]
 - [[Current Strategic Priorities]]
+- [[Order Processing and Transportation Management Knowledge Map]]
 
 ## Related Hubs
 

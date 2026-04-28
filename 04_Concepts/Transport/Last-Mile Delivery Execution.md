@@ -45,6 +45,18 @@ The last mile is where logistics becomes visible to the customer. A weak line ha
 | Scheduled route batch | B2B drops, MSME deliveries, repeat lanes | Fixed windows and repeatable route patterns |
 | Dedicated express | High-value or time-definite shipments | Priority route, higher tracking frequency, tighter escalation |
 
+## Quick-Commerce Fit
+
+10-30 minute delivery promises should be reserved for dense hyperlocal zones where:
+
+- SKU profile fits fast-moving essentials or fresh produce
+- micro-fulfillment or dark-store inventory is close enough to demand
+- 2W/3W or e-bike routes have range, payload, and charging fit
+- cold-chain handling is available where fresh or perishable goods are involved
+- first-attempt success and evidence capture remain reliable
+
+Speed should not override precision. In most logistics flows, predictable delivery windows are more valuable than fragile speed promises.
+
 ## Execution Flow
 
 ```text
@@ -114,4 +126,5 @@ Hub release
 - [[Route Optimization Logic]]
 - [[Order Lifecycle]]
 - [[Transport Operations Implementation Framework]]
+- [[India Freight 2050 Strategic Roadmap]]
 - [[Last-Mile Delivery Strategies and Execution Source]]

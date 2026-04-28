@@ -65,6 +65,7 @@ Central hub for Indian logistics compliance, legal requirements, and regulatory 
 - [[Documentation Audit Trail]]
 - [[Legal Compliance Framework]]
 - [[Transport Fraud & Cybersecurity Framework]]
+- [[Transport Logistics and Warehousing Knowledge Map]]
 
 ## Related Hubs
 

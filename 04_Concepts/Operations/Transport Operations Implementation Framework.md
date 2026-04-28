@@ -130,9 +130,19 @@ A practical transport stack usually needs these layers:
 | notification layer | driver, customer, admin communication |
 | security layer | identity checks, audit logs, fraud controls |
 
+### Autonomous Execution View
+
+| System | Autonomous Role | Guardrail |
+|--------|-----------------|-----------|
+| OMS | strategic strategy selection, validation logic, scenario-based decisions | owns canonical state and allowed transitions |
+| IMS | fleet digital twin, multi-echelon coordination, supply-demand resilience | owns reservation truth and feasibility confidence |
+| TMS | route optimization, load consolidation, real-time traceability | owns movement intelligence but not order-state mutation |
+| AI agents | intent interpretation, route correction suggestions, exception triage | bounded by rules, audit logs, and fallback paths |
+
 See also:
 
 - [[TMS Execution Architecture]]
+- [[Autonomous Logistics Execution Architecture]]
 - [[Admin Control Tower Architecture]]
 - [[Authoritative Database Schema]]
 - [[Operational Observability Architecture]]
@@ -258,6 +268,7 @@ If either journey is weak, transport operations become unreliable.
 - [[Last-Mile Delivery Execution]]
 - [[Delivery Attempt Management]]
 - [[Failed Delivery Handling]]
+- [[Autonomous Logistics Execution Architecture]]
 - [[E-way Bill System]]
 - [[Fallback & Resilience Architecture]]
 - [[Logistics SLA]]

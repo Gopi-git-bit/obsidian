@@ -51,11 +51,21 @@ The Indian road freight market is highly fragmented with millions of individual 
 | Limited tracking | GPS + transparency |
 | Variable quality | Quality verification |
 
+## Indian Logistics Landscape Challenges
+
+| Challenge | Operating Impact |
+|-----------|------------------|
+| Complex tax and compliance environment | Requires reliable GST, document, invoice, and state/corridor compliance workflows |
+| High logistics cost, often cited around 13% of GDP | Makes empty-mile reduction, utilization, pricing discipline, and delay control commercially important |
+| Infrastructure limitations | Creates lane-level variability in transit time, vehicle fit, loading access, and exception risk |
+| Highway, railway, and seaport dependency | Corridor strategy must account for NHDP road corridors, Indian Railways freight options, and major seaport access |
+
 ## Related Notes
 
 - [[Digital Freight Marketplace]]
 - [[Truck Aggregator Model]]
 - [[Return Load Economics]]
+- [[Order Processing and Transportation Management Knowledge Map]]
 
 ## Related Hubs
 

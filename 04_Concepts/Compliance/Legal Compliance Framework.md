@@ -66,6 +66,15 @@ Capture the general legal and compliance guardrails that a logistics operator sh
 | FIN | Maintain invoice, tax, and settlement evidence cleanly |
 | Supervisor | Review escalated compliance and policy exceptions |
 
+## Policy And Training Layer
+
+Transport logistics and warehousing scale better when policy, infrastructure, and skills mature together:
+
+- regulatory harmonization reduces state-to-state ambiguity for documentation, vehicle movement, warehouse operations, and specialized cargo.
+- public-private partnership models, including PFI/BOT-style infrastructure, can improve logistics parks, truck terminals, parking, cold-chain capacity, and multimodal nodes.
+- skills and certification should cover dispatch, documentation, hazmat screening, cold-chain handling, warehouse safety, equipment operation, and digital system usage.
+- infrastructure finance should be tracked as a strategic constraint for warehouses, docks, MHE, truck lay-bys, charging/fuel infrastructure, and multimodal connectors.
+
 ## Related Notes
 
 - [[Compliance & Regulation Hub]]
@@ -74,6 +83,7 @@ Capture the general legal and compliance guardrails that a logistics operator sh
 - [[Proof of Delivery]]
 - [[Customer Terms & Privacy Policy Framework]]
 - [[Authoritative Database Schema]]
+- [[Transport Logistics and Warehousing Knowledge Map]]
 
 ## Related Hubs
 

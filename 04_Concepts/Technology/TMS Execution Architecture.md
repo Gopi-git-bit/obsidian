@@ -31,6 +31,15 @@ Define how the transportation-management layer executes routing, ETA, telemetry 
 | IMS | Vehicle and driver matching, reservation, loop discovery | Must not track live movement |
 | Supervisor | Escalation, policy review, emergency override | Must not bypass state machine casually |
 
+## Transportation Management Process
+
+| Stage | TMS Responsibility | Output |
+|-------|--------------------|--------|
+| requirements analysis | Read order constraints, cargo profile, vehicle need, SLA, documents, and payment mode | Feasible transport requirement and risk flags |
+| transport planning | Choose route, mode, ETA, vehicle class, assignment constraints, and contingency plan | Executable plan with reason codes |
+| departure handling | Confirm driver readiness, vehicle readiness, pickup/gate events, and departure timestamp | Dispatch released and observable movement started |
+| arrival handling | Confirm arrival, unloading status, POD trigger, delay reason, and closure evidence | Delivery evidence ready for OMS settlement gates |
+
 ## Routing Hierarchy
 
 | Priority | Engine | Use |
@@ -84,6 +93,7 @@ Define how the transportation-management layer executes routing, ETA, telemetry 
 - [[Logistics SLA]]
 - [[Fallback & Resilience Architecture]]
 - [[Operational Observability Architecture]]
+- [[Order Processing and Transportation Management Knowledge Map]]
 
 ## Related Hubs
 

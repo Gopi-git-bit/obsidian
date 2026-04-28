@@ -19,6 +19,7 @@ Central hub for technology architecture, integrations, and digital infrastructur
 - [[Order Management System]]
 - [[OMS Integration APIs]]
 - [[Order Lifecycle Automation]]
+- [[Autonomous Logistics Execution Architecture]]
 
 ### Transportation Management
 - [[Transportation Management System (TMS)]]
@@ -26,6 +27,7 @@ Central hub for technology architecture, integrations, and digital infrastructur
 - [[Fleet Tracking System]]
 - [[ETA Prediction Logic]]
 - [[TMS Execution Architecture]]
+- [[Order Processing and Transportation Management Knowledge Map]]
 - Valhalla for truck-aware runtime routing
 - OR-Tools for VRP, PDP, and backhaul sequencing
 
@@ -35,6 +37,7 @@ Central hub for technology architecture, integrations, and digital infrastructur
 - [[Pick-pack-ship Logic]]
 - [[Warehouse Execution & Intelligence Framework]]
 - [[Inventory-Driven Resource Allocation Framework]]
+- WMS, ICT/EDI, intelligent transport systems, MHE/robotics, and e-commerce event feeds should be treated as one warehouse-to-transport visibility layer.
 
 ## Integration Architecture
 
@@ -45,6 +48,8 @@ Central hub for technology architecture, integrations, and digital infrastructur
 - [[Third-party API Connectors]]
 - [[Data Synchronization Patterns]]
 - [[Operational Observability Architecture]]
+- [[Transport Logistics and Warehousing Knowledge Map]]
+- [[India Freight 2050 Strategic Roadmap]]
 
 ## AI & Automation
 
@@ -57,6 +62,8 @@ Central hub for technology architecture, integrations, and digital infrastructur
 - Celery-driven replay, retraining, and recovery jobs
 - LightGBM for ETA residual prediction and tabular routing forecasts
 - Optuna and Ray Tune for controlled model search and tuning workflows
+- AI application focus: route optimization, predictive maintenance, and demand forecasting
+- Automation focus: e-way bill automation, consignment booking, and real-time GPS tracking
 
 ## Frontend & Mobile
 

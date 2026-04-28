@@ -67,6 +67,20 @@ The project needs three repeating behaviors:
 | seizing | respond with better matching, faster alerts, and pricing or allocation changes |
 | transforming | improve schema, prompts, rules, incentives, and workflows as the network learns |
 
+## Technology-Enabled Integration
+
+Competitive advantage depends on sharing the right operational data without exposing proprietary strategy.
+
+| Data Type | Shareability | Strategic Use |
+|-----------|--------------|---------------|
+| shipment status | fungible coordination data | Improves customer and partner synchronization |
+| delivery windows | fungible coordination data | Reduces failed attempts and support load |
+| lane performance history | protected strategic data | Improves pricing, allocation, and expansion |
+| partner reliability signals | protected strategic data | Improves scoring and negotiation leverage |
+| pricing logic | proprietary | Protects margin and market strategy |
+
+The goal is not maximum data sharing. The goal is enough trusted data exchange to create precision-speed advantages across the network.
+
 ## Practical Moat For This Project
 
 The moat is not a single feature.
@@ -244,6 +258,8 @@ This protects the moat by keeping liquidity concentrated where the platform can 
 - [[Demand-Driven Logistics Blueprint]]
 - [[Collaborative Planning and Forecasting for Logistics]]
 - [[Current Strategic Priorities]]
+- [[Autonomous Logistics Execution Architecture]]
+- [[India Freight 2050 Strategic Roadmap]]
 
 ## Related Hubs
 
