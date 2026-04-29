@@ -25,6 +25,8 @@ Define how warehouses should be modeled as operational customers and execution n
 
 A warehouse is not just a pickup or drop point.
 
+For Indian operations, warehouse modeling should include the government-standard layer from [[Government Warehousing Standards Compliance Layer]]. The platform can still use A/B/C as operating profiles, but compliance and readiness should be scored through infrastructure, dock, palletization, racking, MHE, product-specific standards, transportation standards, technology, and sustainability.
+
 It is a live operating node with its own:
 
 - handling capability
@@ -58,6 +60,7 @@ For each facility, capture:
 - API/webhook readiness
 - monthly order volume
 - peak calendar and seasonality behavior
+- aisle width class and MHE model availability
 
 ## Core Operational Loops
 
@@ -94,6 +97,21 @@ Key patterns from the source material:
 - wave or batch processing for corridor-level shipments
 - MHE-aware loading rules based on cargo and vehicle type
 - temperature-controlled, bonded, hazardous, and security-sensitive storage rules for specialized cargo
+
+## Warehouse Vehicle And MHE Fit
+
+Warehouse profiling should distinguish internal handling equipment from road freight vehicles. A site may be reachable by an HCV but still unable to unload heavy palletized cargo quickly if it lacks the right forklift, reach truck, dock equipment, or trained operator.
+
+| MHE / Vehicle Class | Warehouse Signal | Dispatch Implication |
+|---------------------|------------------|----------------------|
+| Wide aisle forklift / counter-balanced lift truck | Standard pallet handling in aisles wider than 11 ft | Suitable for general loading/unloading and standard pallet flows |
+| Narrow aisle reach truck / double-deep reach truck | 8-10 ft aisle operations and higher storage density | Loading TAT depends on reach capability and retrieval sequence |
+| Very narrow aisle / turret / order picker | Less than 6 ft aisle and guided high-density picking | Requires trained operators, guidance system readiness, and tighter dock scheduling |
+| Pallet jack / hand truck / walkie stacker | Manual or low-capital warehouse handling | Good for small warehouses but limited for heavy/high-throughput dispatch |
+| AGV / ASRS / rack-entry vehicle | Automated WCS/WMS-driven flow | High integration maturity, but dispatch must respect automation availability and queue state |
+| Crane or container-handling equipment | Heavy, oversized, or containerized movement | Needed for CFS, port-linked, heavy industrial, or special cargo flows |
+
+Use [[Warehouse Vehicle and MHE Model Taxonomy]] as the detailed model list when designing warehouse data fields, dock readiness checks, and vehicle assignment rules.
 
 ## Specialized Storage Classes
 
@@ -181,6 +199,11 @@ Warehouse intelligence should improve:
 - `dock_count`
 - `yard_capacity`
 - `mhe_capability`
+- `aisle_width_class`
+- `mhe_types_available`
+- `forklift_capacity_kg`
+- `automation_level`
+- `container_handling_ready`
 - `api_ready`
 - `avg_loading_tat_minutes`
 - `monthly_order_volume`

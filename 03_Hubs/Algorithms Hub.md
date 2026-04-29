@@ -45,6 +45,7 @@ Central hub for all algorithmic logic, decision-making frameworks, and optimizat
 | [[Vehicle Assignment Logic]] | Select best-fit vehicle for an order | Cargo fit, confidence, fallback path |
 | [[Driver Assignment Logic]] | Match drivers to vehicles | Skills, hours, performance |
 | [[Multi-Objective Vehicle Scoring]] | Rank candidates across cost and service dimensions | Cost, familiarity, reliability, utilization |
+| [[Warehouse Transport Correlation Algorithm]] | Select warehouse-aware distribution and vehicle plan | Warehouse grade, material type, handling fit, lane risk |
 
 ### Partner Selection
 | Algorithm | Purpose | Key Variables |

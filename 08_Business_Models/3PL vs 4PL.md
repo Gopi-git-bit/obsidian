@@ -95,6 +95,7 @@ Outsourcing should be evaluated by separating execution responsibility from orch
 
 - 3PL is strongest where physical transport, warehousing, handling, and fulfillment execution need accountable operators.
 - 4PL is strongest where the customer needs network design, partner coordination, visibility, and service governance across multiple providers.
+- Intermodal transport increases the value of 3PL/4PL integration because road, rail, sea, air, CFS, terminal, customs, and warehouse handoffs need one accountable coordination layer.
 - Hybrid models can work when the platform owns the control layer while selectively using owned fleet, partner transporters, warehouse operators, and specialist service providers.
 - Outsourcing should not remove operational visibility; WMS, TMS, EDI, document, and settlement data still need to feed the control tower.
 
@@ -105,3 +106,4 @@ Outsourcing should be evaluated by separating execution responsibility from orch
 - [[Asset-Light Transport Model]]
 - [[MSME Logistics Market]]
 - [[Transport Logistics and Warehousing Knowledge Map]]
+- [[Intermodal Transport Framework]]

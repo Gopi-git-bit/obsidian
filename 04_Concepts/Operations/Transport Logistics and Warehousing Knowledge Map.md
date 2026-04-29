@@ -38,8 +38,9 @@ Transport logistics and warehousing should be treated as one connected system:
 |--------|------------------|---------------|
 | global logistics trends | External forces shaping service expectations, cost pressure, and integration depth | [[3PL vs 4PL]], [[Strategic Lead-Time Management]] |
 | warehouse operations | Facility-level execution from inbound receipt to outbound dispatch | [[Warehouse Execution & Intelligence Framework]], [[Inventory-Driven Resource Allocation Framework]] |
+| warehouse vehicle and MHE fit | Forklifts, aisle trucks, stackers, AGVs, cranes, dock equipment, and container-handling readiness | [[Warehouse Vehicle and MHE Model Taxonomy]], [[Warehouse Execution & Intelligence Framework]] |
 | technology and systems | WMS, TMS, ITS, ICT/EDI, robotics, and e-commerce visibility patterns | [[Technology Stack Hub]], [[TMS Execution Architecture]] |
-| distribution strategy | Cross-docking, intermodal transport, network optimization, lead-time, and site selection | [[Transport Mode Selection Framework]], [[Lane Intelligence Model]] |
+| distribution strategy | Cross-docking, intermodal transport, network optimization, lead-time, and site selection | [[Transport Mode Selection Framework]], [[Intermodal Transport Framework]], [[Lane Intelligence Model]] |
 | specialized storage | Cold chain, bonded, hazardous, and security-sensitive storage controls | [[Warehouse Execution & Intelligence Framework]], [[Legal Compliance Framework]] |
 | policy and training | Regulatory alignment, PPP infrastructure, certification, and finance readiness | [[Legal Compliance Framework]], [[Skills Hub]] |
 
@@ -57,6 +58,8 @@ Use this map when deciding whether a feature, SOP, or algorithm belongs to:
 
 - Customer, driver, transport-company, and admin apps should expose warehouse readiness and shipment readiness as operational states, not only addresses.
 - TMS decisions should consider WMS, dock, inventory, and special-storage signals before assignment.
+- Vehicle assignment should check warehouse MHE readiness, aisle/dock constraints, yard access, and container/CFS readiness before accepting a load.
+- Intermodal decisions should model nodes, transshipment cost, standardized load units, customs/document readiness, and tracking continuity across handoffs.
 - 3PL/4PL partner logic should distinguish physical execution from orchestration responsibility.
 - Lead-time compression should be measured across the full warehouse-to-delivery pipeline.
 - Specialized cargo should trigger storage, vehicle, document, insurance, and route controls together.
@@ -64,8 +67,10 @@ Use this map when deciding whether a feature, SOP, or algorithm belongs to:
 ## Related Notes
 
 - [[Warehouse Execution & Intelligence Framework]]
+- [[Warehouse Vehicle and MHE Model Taxonomy]]
 - [[Inventory-Driven Resource Allocation Framework]]
 - [[Transport Mode Selection Framework]]
+- [[Intermodal Transport Framework]]
 - [[Strategic Lead-Time Management]]
 - [[3PL vs 4PL]]
 - [[Legal Compliance Framework]]

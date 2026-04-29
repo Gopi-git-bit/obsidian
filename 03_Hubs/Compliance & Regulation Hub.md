@@ -21,6 +21,7 @@ Central hub for Indian logistics compliance, legal requirements, and regulatory 
 - [[Proof of Delivery]]
 - [[LR/GR Document Management]]
 - [[Legal Compliance Framework]]
+- [[Government Warehousing Standards Compliance Layer]]
 
 ### Vehicle Compliance
 - [[Vehicle Registration Requirements]]
@@ -66,6 +67,7 @@ Central hub for Indian logistics compliance, legal requirements, and regulatory 
 - [[Legal Compliance Framework]]
 - [[Transport Fraud & Cybersecurity Framework]]
 - [[Transport Logistics and Warehousing Knowledge Map]]
+- [[DPIIT-WAI e-Handbook on Warehousing Standards 2025 Source]]
 
 ## Related Hubs
 

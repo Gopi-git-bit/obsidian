@@ -50,6 +50,7 @@ Central hub for technology architecture, integrations, and digital infrastructur
 - [[Operational Observability Architecture]]
 - [[Transport Logistics and Warehousing Knowledge Map]]
 - [[India Freight 2050 Strategic Roadmap]]
+- [[National Logistics Master Plan]]
 
 ## AI & Automation
 

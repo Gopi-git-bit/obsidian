@@ -3,7 +3,7 @@ type: hub
 domain: market-intelligence
 scope: strategic
 status: active
-last_updated: 2026-04-16
+last_updated: 2026-04-28
 related_hubs:
   - Indian Logistics Ecosystem Hub
   - Customer Problems Hub
@@ -49,18 +49,25 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 ## Regional Intelligence
 
 ### Tamil Nadu
-- [[Tamil Nadu Industrial Corridors]]
-- [[Tamil Nadu Warehouse and Logistics Market Scan]]
-- [[Chennai Logistics Hub]]
+- [[Tamil Nadu Industrial Corridors]] - Corridor priorities, Chennai-region cluster economics, district-density signals, and operating wedges
+- [[Tamil Nadu Warehouse and Logistics Market Scan]] - Apr 26 warehouse, logistics park, pricing, facility, policy-corridor, and local transport research
+- [[Chennai Logistics Hub]] - Sriperumbudur, Redhills, Poonamallee, Koyambedu/Madhavaram, and south-Chennai operating distinctions
 - [[Tier 2 City Opportunities]]
 - [[South India Tier 2-3 Logistics Opportunity]]
 - [[South India Local Truck Rate Bands]]
+
+### Tamil Nadu Launch Signals
+- P1 corridors: Hosur-Chennai, Chennai-Oragadam-Sriperumbudur, Redhills/Thiruvallur, Poonamallee-Irungattukottai, Coimbatore-Tuticorin via Madurai, and Hosur-Coimbatore.
+- Chennai density should split into warehouse/distribution, industrial B2B, gateway staging, urban transporter supply, and south-Chennai support zones.
+- District-density sequencing should separate mature account-based markets from low-density discovery markets.
 
 ### Other Regions
 - [[Metro City Logistics]]
 - [[Tier 2/3 City Potential]]
 - [[Rural Logistics Challenges]]
 - [[South India Tier 2-3 Logistics Opportunity]]
+- [[Indian State Logistics Policy Comparison]]
+- [[National Logistics Master Plan]]
 
 ## Industry Vertical Analysis
 
@@ -81,6 +88,8 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 - [[Market Research Reports]]
 - [[Government Data Sources]]
 - [[Industry Publications]]
+- [[Indian State Logistics Policy Briefs Source]]
+- [[National Logistics Policy RSM 2024 Source]]
 
 ## Related Hubs
 

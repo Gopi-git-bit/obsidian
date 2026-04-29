@@ -48,11 +48,13 @@ India cannot reach its 2050 logistics ambition through business-as-usual road fr
 
 | Anchor | Strategic Role |
 |--------|----------------|
+| National Logistics Policy | National operating framework for cost reduction, standardization, digital integration, and multimodal logistics |
 | LEEP | Policy push for logistics efficiency and multimodal integration |
 | GST consolidation | Removes border friction and supports larger regional warehouse networks |
 | MMLPs | Consolidate loads, reduce empty running, and connect first/last mile to efficient middle-mile rail |
 | DFCs | Improve long-haul freight speed, double-stacking potential, and rail reliability |
 | Grade-A facilities | Support high-throughput regional distribution and technology-enabled handling |
+| Intermodal nodes | Ports, CFSs, ICDs, railheads, and terminals must reduce transshipment friction rather than becoming visibility gaps |
 
 ## Electrification Mandate
 
@@ -93,6 +95,7 @@ The roadmap requires technology-enabled integration rather than isolated apps:
 ## Product Implications For Zippy
 
 - Model MMLPs, DFCs, rail-linked corridors, and city micro-hubs as nodes in lane intelligence.
+- Treat intermodal mode shift as viable only when distance, volume, standardized load units, terminal access, customs/document flow, and tracking continuity beat direct road on total outcome.
 - Add EV route-fit scoring before assigning 2W/3W, vans, or heavy-duty trucks.
 - Use return-trip probability and empty-running risk in pricing and allocation.
 - Support hyperlocal quick-commerce only where density, SKU profile, and cold-chain readiness justify it.
@@ -102,12 +105,14 @@ The roadmap requires technology-enabled integration rather than isolated apps:
 
 - [[Autonomous Logistics Execution Architecture]]
 - [[Transport Mode Selection Framework]]
+- [[Intermodal Transport Framework]]
 - [[Lane Intelligence Model]]
 - [[Return Load Optimization]]
 - [[Last-Mile Delivery Execution]]
 - [[Inventory-Driven Resource Allocation Framework]]
 - [[Competitive Advantage Framework]]
 - [[Indian Road Freight Fragmentation]]
+- [[National Logistics Master Plan]]
 
 ## Related Hubs
 

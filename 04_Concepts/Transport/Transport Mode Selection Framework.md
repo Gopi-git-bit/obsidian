@@ -132,18 +132,22 @@ Best when:
 - the lane benefits from combining long-haul efficiency with local flexibility
 - hub-and-spoke design improves economics
 - the shipment can tolerate handoffs without unacceptable risk
+- standardized pallets or containers allow clean transfer across modes
+- node quality, tracking continuity, and documentation readiness are strong enough
 
 Strengths:
 
 - balances cost and reach
 - useful for regional network design
 - can improve scale when volume is structured well
+- can reduce road congestion and emissions when freight is genuinely consolidated
 
 Limits:
 
 - higher coordination complexity
 - more handoff risk
 - dependence on terminal discipline and visibility
+- transshipment cost can erase benefits on short or weakly planned lanes
 
 ### Distribution Strategy Extensions
 
@@ -152,7 +156,7 @@ Distribution design should evaluate more than the main mode:
 | Strategy | Best Fit | Watchouts |
 |----------|----------|-----------|
 | cross-docking | Fast-moving or pre-matched inbound-to-outbound freight | Requires dock discipline, scan accuracy, and low dwell time |
-| intermodal transport | Long-haul lanes where line-haul scale and local flexibility both matter | Handoff visibility and terminal reliability must be strong |
+| intermodal transport | Long-haul lanes where line-haul scale and local flexibility both matter | Handoff visibility, terminal reliability, standard load units, and document readiness must be strong |
 | network optimization | Repeat lanes, dense corridors, and multi-node distribution | Needs lane data, service constraints, and cost-to-serve clarity |
 | lead-time compression | SLA-sensitive customers or stockout prevention | Avoid compressing time by hiding risk or skipping validation |
 | site selection | Warehouse, hub, or partner-location planning | Must account for road access, labor, dock capacity, demand density, and compliance |
@@ -197,6 +201,10 @@ The wrong equipment can invalidate an otherwise correct mode choice.
 - line-haul and last-mile economics are very different
 - regional hub structure is already in place
 - visibility and coordination are strong enough to manage handoffs
+- lane distance and volume justify transshipment cost
+- CFS, ICD, port, railhead, or terminal nodes have reliable access and dwell control
+
+Use [[Intermodal Transport Framework]] before recommending intermodal for short or middle-distance lanes.
 
 ## Decision Matrix
 
@@ -373,6 +381,10 @@ Reason:
 - `mode_cost_estimate`
 - `mode_eta_estimate`
 - `mode_risk_score`
+- `intermodal_candidate`
+- `mode_chain`
+- `terminal_dwell_estimate`
+- `tracking_continuity_score`
 
 ## Related Notes
 
@@ -385,6 +397,7 @@ Reason:
 - [[Closed Body Vehicle]]
 - [[Transport Fraud & Cybersecurity Framework]]
 - [[Transport Logistics and Warehousing Knowledge Map]]
+- [[Intermodal Transport Framework]]
 
 ## Related Hubs
 

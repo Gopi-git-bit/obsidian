@@ -82,6 +82,21 @@ tags:
 - Cost optimization
 - FTL (Full Truck Load)
 
+## Warehouse Interface Fit
+
+Vehicle class selection should account for the warehouse's physical and handling constraints, not only payload and distance.
+
+| External Vehicle | Warehouse Fit Check | Common Warehouse Use |
+|------------------|---------------------|----------------------|
+| LCV | Small dock access, city restrictions, manual loading tolerance | Small godowns, urban distribution, parcel/carton movement |
+| MCV | Dock height/yard access, pallet handling, mixed load staging | Regional warehouse replenishment and medium-load dispatch |
+| HCV | Yard turning radius, dock capacity, forklift/crane availability, road access | FTL, bulk, long-haul, industrial and Grade A warehouse lanes |
+| Trailer / container truck | Container yard, CFS readiness, loading equipment, bonded-document flow | Port-linked, CFS, export/import, large consolidated loads |
+| Reefer | Cold dock readiness, dwell-time control, temperature proof | Pharma, dairy, seafood, frozen food, perishables |
+| Tanker / specialized | Safety zone, liquid/hazmat handling, permits | Chemicals, edible oils, hazardous or regulated cargo |
+
+If the warehouse lacks forklift or pallet-handling support, vehicle assignment should either require shipper-side loading support or avoid heavy palletized cargo. See [[Warehouse Vehicle and MHE Model Taxonomy]].
+
 ## Decision Tree
 
 ```text
@@ -104,6 +119,7 @@ Special Requirements?
 ## Related Notes
 
 - [[Closed Body Vehicle]]
+- [[Warehouse Vehicle and MHE Model Taxonomy]]
 - [[Line Haul vs Last Mile]]
 - [[Load Matching Algorithm]]
 - [[Vehicle Operating Cost Model]]

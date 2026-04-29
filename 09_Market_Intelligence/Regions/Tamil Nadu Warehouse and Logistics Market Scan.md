@@ -530,6 +530,8 @@ This batch adds the unorganized and semi-organized carrier ecosystem that sits u
 ## Related Notes
 
 - [[Tamil Nadu Industrial Corridors]]
+- [[Chennai Logistics Hub]]
+- [[Tamil Nadu Customer Segmentation and GTM Plan]]
 - [[South India Tier 2-3 Logistics Opportunity]]
 - [[South India Local Truck Rate Bands]]
 - [[Indian Road Logistics Pain Point Map]]

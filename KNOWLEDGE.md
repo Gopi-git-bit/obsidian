@@ -3,9 +3,14 @@
 ## India Logistics Context
 
 ### Market Statistics
-- **Logistics Cost:** 8-9% of GDP (target: 5-6%)
-- **Road Modal Share:** 68%
-- **Rail Modal Share:** 30-32%
+- **Logistics Cost:** 7.97% of GDP in 2023-24 per DPIIT/NCAER assessment; older 13-14% figures should be treated as legacy/external estimates
+- **Freight Modal Share (2025 est.):** Road 66%, rail 22%, waterways 8%, pipelines ~3.6-4%, air ~0.06%
+- **Passenger Modal Share (2025 est.):** Road 78%, rail 17%, air 4%, metro ~1%
+- **Policy Direction:** PM GatiShakti, National Logistics Policy, DFCs, MMLPs, Gati Shakti Cargo Terminals, rail/water modal shift, and clean-fuel corridors
+- **Port Infrastructure:** Use official figures for exact cargo volumes; PIB reported major ports grew from ~819 MT in FY 2023-24 to ~855 MT in FY 2024-25
+- **Infrastructure Intelligence File:** `india-logistics-infrastructure-ports-intermodal.md`
+- **Truck Operations File:** `india-truck-operations-playbook.md`
+- **Agriculture Harvest Logistics File:** `agriculture-seasonality-harvest-logistics.md`
 - **Empty Running:** 28-43% (target: 20%)
 
 ### Cost Benchmarks

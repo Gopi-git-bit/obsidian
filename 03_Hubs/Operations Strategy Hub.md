@@ -41,6 +41,8 @@ Central hub for core logistics operations: order management, dispatch, tracking,
 - [[Transport Mode Selection Framework]]
 - [[Warehouse Execution & Intelligence Framework]]
 - [[Inventory-Driven Resource Allocation Framework]]
+- [[Warehouse Customer Strategy Canvas]]
+- [[Government Warehousing Standards Compliance Layer]]
 
 ### Delivery Operations
 - [[Last-Mile Delivery Execution]]
@@ -61,6 +63,7 @@ Central hub for core logistics operations: order management, dispatch, tracking,
 - [[Load Matching Algorithm]]
 - [[ETA Prediction Logic]]
 - [[Carrier Scoring Algorithm]]
+- [[Warehouse Transport Correlation Algorithm]]
 
 ## SOPs
 
