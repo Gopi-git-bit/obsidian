@@ -1,0 +1,41 @@
+﻿{
+  "name": "Zippy Corridor Performance",
+  "dataColors": [
+    "#2ECC71",
+    "#F1C40F",
+    "#E67E22",
+    "#E74C3C",
+    "#3498DB",
+    "#34495E",
+    "#16A085",
+    "#95A5A6"
+  ],
+  "background": "#F7F8F4",
+  "foreground": "#17212B",
+  "tableAccent": "#3498DB",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "fontFamily": "Aptos",
+        "color": [{ "solid": { "color": "#17212B" } }]
+      }
+    }
+  },
+  "textClasses": {
+    "title": {
+      "fontSize": 14,
+      "fontFace": "Aptos Display",
+      "color": "#17212B"
+    },
+    "label": {
+      "fontSize": 10,
+      "fontFace": "Aptos",
+      "color": "#34495E"
+    },
+    "callout": {
+      "fontSize": 28,
+      "fontFace": "Aptos Display",
+      "color": "#17212B"
+    }
+  }
+}

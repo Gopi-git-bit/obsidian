@@ -24,6 +24,8 @@ Use this canvas to connect warehouse grade, material type, handling capability, 
 
 The warehouse is the target customer. The startup should not sell only "truck booking"; it should sell a warehouse-specific operating layer that helps each warehouse reduce dispatch friction, improve vehicle fit, control damage, increase lane reliability, and choose the correct distribution model.
 
+Use [[Customer Segment Value Creation Framework]] to connect this warehouse canvas to buying behavior, service tier, value driver, KPI target, and cost-to-serve. A Grade A, B, or C warehouse is not only a facility type; it is also a customer segment with different expectations and willingness to pay.
+
 ## Core Thesis
 
 Different warehouse grades behave like different logistics operating systems.
@@ -51,6 +53,16 @@ The best vehicle is not chosen only from weight and distance. It is chosen from 
 | Grade A | Modern 3PL, ecommerce FC, pharma/cold-chain DC, export/import DC, large manufacturer | High dock readiness, WMS, racking, forklifts/reach trucks, scanning, CCTV, yard control, fire/safety systems | High throughput, scheduled docks, SLA-driven dispatch, pallet/container movement, data visibility | Control tower, dock scheduling, route optimization, carrier scorecards, API/WMS/TMS integration |
 | Grade B | Regional warehouse, mid-size distributor, industrial supplier, FMCG/retail stock point | Partial racking, forklifts or pallet jacks, basic ERP/WMS, mixed manual and system process | Mixed pallet/carton dispatch, regional routes, variable pickup readiness, medium SLA pressure | Vehicle recommendation, dispatch calendar, partner fleet pool, payment/document/POD discipline |
 | Grade C | Small godown, local trader, MSME stock room, unorganized storage point | Manual handling, limited dock/yard space, weak records, limited equipment, lower process control | Ad hoc dispatch, small loads, city/regional movement, high loading uncertainty, strong broker dependence | Assisted booking, verified vehicle network, loading checklist, weight validation, simple inventory-to-dispatch workflow |
+
+## Warehouse Segment Value Map
+
+| Warehouse Segment | Dominant Value Driver | Service Tier Fit | KPI Promise |
+|-------------------|-----------------------|------------------|-------------|
+| Grade A 3PL / ecommerce / pharma | reliability, visibility, integration | Premium / Dedicated | dock-slot adherence, ETA accuracy, POD speed, exception recovery |
+| Grade B distributor / regional stock point | vehicle fit, dispatch predictability, documentation | Express / Standard Plus | matching time, correct vehicle rate, pickup readiness, damage-free rate |
+| Grade C godown / MSME stock room | simplicity, trust, price clarity | Standard / Assisted | no wrong vehicle, transparent quote, checklist completion, support response |
+| Cold-chain warehouse | risk control and temperature proof | Premium specialized | temperature excursion rate, cold dwell time, reefer availability |
+| Port/CFS/ICD warehouse | detention and document control | Dedicated specialized | gate timing, document completeness, detention/demurrage avoidance |
 
 ## Material Type Canvas
 
@@ -172,6 +184,7 @@ The algorithm should use this order:
 ## Related Notes
 
 - [[Warehouse Execution & Intelligence Framework]]
+- [[Customer Segment Value Creation Framework]]
 - [[Warehouse Vehicle and MHE Model Taxonomy]]
 - [[Inventory-Driven Resource Allocation Framework]]
 - [[LCV vs MCV vs HCV]]

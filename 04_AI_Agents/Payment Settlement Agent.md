@@ -43,6 +43,8 @@ The Payment Settlement Agent manages all financial transactions including invoic
 - Match payments received to outstanding invoices
 - Handle TDS (Tax Deducted at Source) calculations
 - Reconcile with transporter settlements
+- Support collaborative settlement where revenue share, cost allocation, and partner payouts are governed by an agreement ID
+- Calculate contribution-based partner share using [[Strategic Profit Sharing Framework]] when partnership economics are variable
 
 ### Dispute Resolution
 - Investigate billing discrepancies
@@ -58,6 +60,10 @@ The Payment Settlement Agent manages all financial transactions including invoic
 | Amount mismatch | Hold settlement, request POD verification |
 | Customer dispute | Engage [[Communication Agent]] for resolution |
 | Field evidence incomplete | Hold advance or final release until verification succeeds |
+| Collaborative order settlement | Apply agreement-level revenue share, cost allocation, and dispute hold rules from [[Collaborative Logistics Network Framework]] |
+| Collaboration financial risk rising | Use [[Collaboration Risk Opportunity Balance Framework]] to trigger exposure caps, escrow, or settlement review |
+| Partnership agreement active | Read payment cycle, escrow, exposure cap, payout hold, and reconciliation cadence from [[PartnershipAgreement.yaml]] |
+| Profit-sharing partnership | Apply active rule from [[Strategic Profit Sharing Framework]], enforce margin protection, and emit audit hash |
 
 ## GST & Compliance
 
@@ -75,7 +81,7 @@ The Payment Settlement Agent manages all financial transactions including invoic
 ## Integration Points
 
 - **Input**: Delivery confirmations, POD data, rate cards, verified shipment-document evidence
-- **Output**: Invoices, payment records, settlement batches
+- **Output**: Invoices, payment records, settlement batches, collaboration settlement reports
 - **Dependencies**: [[Payment Risk Logic]], [[Business Models Hub]]
 - **Future Extension**: [[Embedded Finance Enablement Framework]] for lender-linked pay-later workflows
 
@@ -93,6 +99,10 @@ The Payment Settlement Agent manages all financial transactions including invoic
 - [[Distance Based Pricing]]
 - [[Payment Risk Logic]]
 - [[Proof of Delivery]]
+- [[Collaborative Logistics Network Framework]]
+- [[Collaboration Risk Opportunity Balance Framework]]
+- [[Strategic Profit Sharing Framework]]
+- [[PartnershipAgreement.yaml]]
 
 ## Related SOPs
 

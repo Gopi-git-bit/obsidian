@@ -1,0 +1,6 @@
+﻿lane_id,origin_city,destination_city,distance_km,primary_cargo,monthly_truckloads,backhaul_fill_rate,reliability_score,avg_delay_min,p90_delay_min,on_time_pct
+chennai:coimbatore:textiles,Chennai,Coimbatore,500,Textiles,9500,0.70,78.4,78.5,185.0,82.1
+tiruppur:chennai:garments,Tiruppur,Chennai,450,Garments,11000,0.60,62.8,112.3,285.0,72.4
+vizag:vijayawada:port,Vizag,Vijayawada,350,Port Cargo,9800,0.72,88.2,42.1,95.0,90.0
+bengaluru:hosur:auto,Bengaluru,Hosur,40,Auto Parts,18000,0.82,94.1,18.2,45.0,93.5
+coimbatore:tiruppur:textiles,Coimbatore,Tiruppur,50,Textiles,12000,0.65,71.2,65.4,150.0,76.8

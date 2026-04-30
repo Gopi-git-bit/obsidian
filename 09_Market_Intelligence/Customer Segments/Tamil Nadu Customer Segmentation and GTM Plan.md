@@ -36,6 +36,8 @@ Personal phone numbers and direct contacts are intentionally not repeated in thi
 | Growth Potential | Low, medium, high | 20% |
 | Digital Openness | Resistant, neutral, early adopter | 10% |
 
+Use [[Customer Segment Value Creation Framework]] to convert these GTM segments into executable service configs. The launch segment should determine matching timeout, ETA confidence, communication channel, support priority, evidence requirement, and cost-to-serve target.
+
 ## Customer Segments Database Layer
 
 This batch creates a `customer_segments` table that turns the GTM strategy into queryable launch data by district, tier, segment, fleet estimate, outreach channel, policy phase, launch week, and revenue potential.
@@ -113,6 +115,18 @@ This batch creates a `customer_segments` table that turns the GTM strategy into 
 | Hazardous/fireworks | Compliance, seasonality, fire safety | Licensed-operator validation and separate hazardous-goods workflow |
 | Cold-chain/floriculture | Temperature sensitivity, perishability, seasonal demand | Reefer matching, IoT temperature proof, cold-chain SLA tracking |
 | Enterprise 3PL/warehouse | Utilization, forecasting, automation | Optimization layer, dashboards, API/WMS/TMS integration |
+
+## Value Creation Overlay
+
+| Segment Group | Primary Value Driver | Service Design Signal |
+|---------------|----------------------|-----------------------|
+| Micro fleet / fleet owners | utilization and payment trust | return-load matching, settlement proof, simple WhatsApp onboarding |
+| Textile transport/export | handling care and export timing | clean-truck tagging, pickup scheduling, document support |
+| Industrial/heavy cargo | vehicle capability and reliability | vehicle fit scoring, route risk, loading readiness |
+| Port/container logistics | document and detention control | container workflow, gate alerts, demurrage prevention |
+| Hazardous/fireworks | compliance and safety | licensed carrier workflow, evidence and permit gate |
+| Cold-chain/floriculture | temperature protection | reefer matching, telemetry proof, short dwell windows |
+| Enterprise 3PL/warehouse | visibility and optimization | dashboards, API integration, SLA governance |
 
 ## Outreach Plan
 

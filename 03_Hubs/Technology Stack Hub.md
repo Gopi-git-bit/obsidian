@@ -20,6 +20,7 @@ Central hub for technology architecture, integrations, and digital infrastructur
 - [[OMS Integration APIs]]
 - [[Order Lifecycle Automation]]
 - [[Autonomous Logistics Execution Architecture]]
+- [[Customer Segment Value Creation Framework]]
 
 ### Transportation Management
 - [[Transportation Management System (TMS)]]
@@ -49,8 +50,17 @@ Central hub for technology architecture, integrations, and digital infrastructur
 - [[Data Synchronization Patterns]]
 - [[Operational Observability Architecture]]
 - [[Transport Logistics and Warehousing Knowledge Map]]
+- [[Logistics Network Implementation Roadmap]]
+- [[Collaborative Logistics Network Framework]]
+- [[Partnership-Led Market Entry Framework]]
+- [[Collaboration Risk Opportunity Balance Framework]]
+- [[Partnership Health Score Calculator]]
+- [[PartnershipAgreement.yaml]]
 - [[India Freight 2050 Strategic Roadmap]]
 - [[National Logistics Master Plan]]
+- [[Cainiao Strategy Patterns for Zippy]]
+- [[Cainiao Post Campus Case Source]]
+- [[Reverse Logistics and Return Policy Framework]]
 
 ## AI & Automation
 

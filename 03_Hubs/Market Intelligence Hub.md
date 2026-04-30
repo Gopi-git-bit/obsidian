@@ -3,7 +3,7 @@ type: hub
 domain: market-intelligence
 scope: strategic
 status: active
-last_updated: 2026-04-28
+last_updated: 2026-04-29
 related_hubs:
   - Indian Logistics Ecosystem Hub
   - Customer Problems Hub
@@ -41,6 +41,9 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 ## Customer Intelligence
 
 - [[Customer Segmentation Matrix]]
+- [[Customer Segment Value Creation Framework]]
+- [[Partnership-Led Market Entry Framework]]
+- [[Collaboration Risk Opportunity Balance Framework]]
 - [[Tamil Nadu Customer Segmentation and GTM Plan]]
 - [[Customer Needs Analysis]]
 - [[Price Sensitivity Data]]
@@ -48,13 +51,17 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 
 ## Regional Intelligence
 
+### South India
+- [[South India Logistics and Transportation Market Research]] - Completed GLM/Z.ai market research with city-pair priorities, state opportunity matrix, sector flows, ports, air cargo, and Zippy GTM sequencing
+- [[Tier 2-3 Delivery Reliability Playbook]] - Location, last-mile, reverse logistics, partner-quality, and exception-management playbook for non-metro delivery reliability
+- [[South India Tier 2-3 Logistics Opportunity]]
+- [[South India Local Truck Rate Bands]]
+
 ### Tamil Nadu
 - [[Tamil Nadu Industrial Corridors]] - Corridor priorities, Chennai-region cluster economics, district-density signals, and operating wedges
 - [[Tamil Nadu Warehouse and Logistics Market Scan]] - Apr 26 warehouse, logistics park, pricing, facility, policy-corridor, and local transport research
 - [[Chennai Logistics Hub]] - Sriperumbudur, Redhills, Poonamallee, Koyambedu/Madhavaram, and south-Chennai operating distinctions
 - [[Tier 2 City Opportunities]]
-- [[South India Tier 2-3 Logistics Opportunity]]
-- [[South India Local Truck Rate Bands]]
 
 ### Tamil Nadu Launch Signals
 - P1 corridors: Hosur-Chennai, Chennai-Oragadam-Sriperumbudur, Redhills/Thiruvallur, Poonamallee-Irungattukottai, Coimbatore-Tuticorin via Madurai, and Hosur-Coimbatore.
@@ -65,7 +72,6 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 - [[Metro City Logistics]]
 - [[Tier 2/3 City Potential]]
 - [[Rural Logistics Challenges]]
-- [[South India Tier 2-3 Logistics Opportunity]]
 - [[Indian State Logistics Policy Comparison]]
 - [[National Logistics Master Plan]]
 
@@ -90,6 +96,8 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 - [[Industry Publications]]
 - [[Indian State Logistics Policy Briefs Source]]
 - [[National Logistics Policy RSM 2024 Source]]
+- [[Customer-First Logistics Segmentation Source]]
+- [[Early-Stage Partnership Market Entry Source]]
 
 ## Related Hubs
 

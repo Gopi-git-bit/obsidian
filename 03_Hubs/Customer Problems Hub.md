@@ -16,6 +16,8 @@ updated: 2025-01-15
 
 Central hub for customer-related issues, complaints, and resolution frameworks.
 
+Use [[Customer Segment Value Creation Framework]] to separate customer pain by value driver. A price-sensitive customer, speed-sensitive SME, compliance-heavy warehouse, and visibility-sensitive enterprise account should not receive the same service promise or escalation pattern.
+
 ## Customer Issue Categories
 
 - [[Indian Road Logistics Pain Point Map]] - Business-level pain patterns that shape quoting, finance flexibility, and service expectations
@@ -26,6 +28,7 @@ Central hub for customer-related issues, complaints, and resolution frameworks.
 | Delayed Delivery | [[Scenario - Delayed POD Submission]] | [[SOP - Handle Delayed Shipment]] |
 | No Delivery | [[Scenario - Customer Cancels Order]] | [[SOP - Handle Urgent Request]] |
 | Damaged Cargo | [[Scenario - Fragile Cargo Handling Required]] | [[SOP - Handle Customer Complaint]] |
+| Return / Rejection Request | [[Scenario - Customer Cancels Order]] | [[Reverse Logistics and Return Policy Framework]] |
 
 ### Communication Issues
 | Issue | Agent | Resolution |
@@ -40,6 +43,7 @@ Central hub for customer-related issues, complaints, and resolution frameworks.
 | Overcharging | [[Scenario - Payment Dispute]] | [[SOP - Handle POD Disputes]] |
 | POD Not Received | [[Scenario - Delayed POD Submission]] | [[SOP - Handle POD Disputes]] |
 | Refund Pending | [[Scenario - Customer Cancels Order]] | [[SOP - Handle Customer Complaint]] |
+| Return Cost Dispute | [[Reverse Logistics and Return Policy Framework]] | [[SOP - Handle Customer Complaint]] |
 
 ## Escalation Matrix
 
@@ -70,6 +74,11 @@ Level 4: Senior Management
 - [[SOP - Customer Communication]]
 - [[SOP - Handle Delayed Shipment]]
 - [[SOP - Handle POD Disputes]]
+- [[Reverse Logistics and Return Policy Framework]]
+
+## Related Sources
+- [[Tmall Mart Reverse Logistics Source]]
+- [[Customer-First Logistics Segmentation Source]]
 
 ## Related Agents
 - [[Communication Agent]] - Notifications

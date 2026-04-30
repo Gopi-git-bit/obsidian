@@ -20,6 +20,7 @@ This source refines the Zippy IMS architecture around:
 - atomic vehicle reservation with bounded TTL
 - explicit fallback cascades for exhausted searches
 - loop-aware matching to reduce empty miles
+- hub-aware return-trip matching where network topology provides corridor signal
 - compliance-first dispatch eligibility
 - multi-echelon fleet thinking where enroute and returning vehicles count as future supply
 - destination-aware scoring so weak-return corridors are penalized when demand alignment is poor
@@ -48,6 +49,8 @@ This source refines the Zippy IMS architecture around:
 
 - Vehicles with stronger loop or return-trip history should be favored where commercially valid.
 - Loop metadata can enrich OMS and FIN without merging settlement flows.
+- In hub-and-spoke networks, return-trip matching should consider same-hub pickup, adjacent spokes, corridor ID, hub capacity, and empty-leg saved km.
+- Hub-aware matching must fall back to radius-based behavior when hub context is unavailable.
 
 ### 5. Exhaustion Is a First-Class Outcome
 
@@ -75,6 +78,7 @@ This source refines the Zippy IMS architecture around:
 ## Derived Notes
 
 - [[IMS Matching Engine]]
+- [[Hub-Aware Return Trip Matching]]
 - [[Load Matching Algorithm]]
 - [[Vehicle Assignment Logic]]
 - [[Resource Management Agent]]

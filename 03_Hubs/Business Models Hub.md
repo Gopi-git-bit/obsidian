@@ -24,6 +24,7 @@ Central hub for revenue models, pricing strategies, and financial frameworks.
 | Urgency Pricing | Time premiums | [[Urgency Surcharge Logic]] | Additional |
 | Dynamic Quote Engine | Cost-plus adaptive pricing | [[Dynamic Pricing Logic]] | Mixed |
 | Partner Fees | Service charges | [[Carrier Selection Algorithm]] | Flat rate |
+| Strategic Profit Sharing | Contribution-based partner economics | [[Strategic Profit Sharing Framework]] | Variable |
 
 ## Commission Structure
 
@@ -58,10 +59,18 @@ Central hub for revenue models, pricing strategies, and financial frameworks.
 - [[Autonomous Logistics Execution Architecture]] - Execution moat connecting OMS, IMS, TMS, AI agents, pricing, and stakeholder channels
 - [[Tamil Nadu Customer Segmentation and GTM Plan]] - Segment pricing, launch sequencing, and GTM revenue assumptions for Tamil Nadu
 - [[Competitive Advantage Framework]] - Why the platform can build a defensible moat beyond pricing and brokerage
+- [[Cainiao Strategy Patterns for Zippy]] - Benchmark for 4PL orchestration, control-tower moat, partner SLA governance, selective asset ownership, and dense-node desk operations
 - [[India Freight 2050 Strategic Roadmap]] - National efficiency, multimodal, EV, and technology-enabled integration thesis
 - [[Indian Road Logistics Pain Point Map]] - Pain-point view of vehicle-fit confusion, MSME credit expectations, and wait-time productivity loss
 - [[Embedded Finance Enablement Framework]] - Partner-led credit enablement without operator-funded float
 - [[Transport Logistics and Warehousing Knowledge Map]] - Operating taxonomy connecting warehousing, distribution, technology, outsourcing, and policy
+- [[Customer Segment Value Creation Framework]] - Turns customer value drivers into service tiers, pricing, support priority, and cost-to-serve rules
+- [[Logistics Network Implementation Roadmap]] - Startup roadmap from strategy and compliance to topology, tech stack, partners, and optimization
+- [[Collaborative Logistics Network Framework]] - Formal partner collaboration model for shared capacity, data, revenue, governance, and exit rules
+- [[Partnership-Led Market Entry Framework]] - Early-stage partnership playbook for capacity, demand, tech, compliance, and strategic alliances
+- [[Collaboration Risk Opportunity Balance Framework]] - Decide whether to expand, pilot, maintain, reduce, or exit collaborations
+- [[PartnershipAgreement.yaml]] - Machine-readable partner agreement template for economics, rollout gates, risk controls, and exit clauses
+- [[Strategic Profit Sharing Framework]] - Contribution-weighted, tiered-volume, and dynamic-margin rules for fair partner settlement
 
 ## Expansion Wedge
 
@@ -74,6 +83,7 @@ Central hub for revenue models, pricing strategies, and financial frameworks.
 - [[Urgency Surcharge Logic]]
 - [[Payment Risk Logic]]
 - [[Dynamic Pricing Logic]]
+- [[Strategic Profit Sharing Framework]]
 
 ## Related AI Agents
 - [[Payment Settlement Agent]] - Financial operations
@@ -85,6 +95,19 @@ Central hub for revenue models, pricing strategies, and financial frameworks.
 - [[South India Tier 2-3 Logistics Opportunity]] - Market-growth lens for regional rollout
 - [[Revenue Model Decision Framework]] - Strategic filter for future monetization choices
 - [[Detention & Demurrage Framework]] - Wait-time monetization, free-time policy, and premium-turnaround logic
+- [[Reverse Logistics and Return Policy Framework]] - Return cost ownership, 3PL SLA discipline, refund holds, and reusable packaging recovery
+
+## Related Sources
+- [[Cainiao Smart Logistics Strategy Source]]
+- [[Cainiao Post Campus Case Source]]
+- [[Tmall Mart Reverse Logistics Source]]
+- [[Customer-First Logistics Segmentation Source]]
+- [[Logistics Network Implementation Source]]
+- [[Collaborative Logistics Networks Source]]
+- [[Early-Stage Partnership Market Entry Source]]
+- [[Collaboration Risk Opportunity Balance Source]]
+- [[Partnership Agreement Template Source]]
+- [[Strategic Profit Sharing Framework Source]]
 
 ## Related Hubs
 - [[Operations Strategy Hub]] - Strategic context

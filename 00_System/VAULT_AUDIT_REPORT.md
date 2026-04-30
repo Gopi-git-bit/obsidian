@@ -1,4 +1,4 @@
----
+﻿---
 type: audit_report
 domain: vault_management
 status: active
@@ -7,134 +7,134 @@ tags:
   - report
   - logistics-brain
 created: 2025-01-15
-updated: 2026-04-20
+updated: 2026-04-30
 ---
 
 # Logistics Brain Vault - Alignment Audit Report
 
-**Audit Date:** April 20, 2026  
+**Audit Date:** April 30, 2026  
 **Vault Location:** `MiniMax Agent_ Minimize Effort, Maximize Intelligence_files`  
-**Audit Goal:** align vault-facing documentation with the files actually present in the workspace
+**Audit Goal:** check whether recently added Obsidian-style docs are positioned correctly and indexed linearly
 
 ---
 
 ## Summary
 
-The vault is substantial and usable, but the documentation around it had drifted. Older notes disagreed on vault size, milestone state, and link completeness. This audit aligned the core system and project status files to the current filesystem.
+The vault has grown from a general logistics knowledge base into a multi-layer operating architecture for Zippy Logistics.
 
-This report does **not** claim that every note link in the vault is resolved. Some deeper notes still point to planned notes that have not been created yet.
+The newly added return-trip, lane reliability, dashboard and data-model documents are mostly positioned in the correct folders. The main gap was navigation: the master index was outdated and there was no single linear reading path through the new material.
+
+This pass updated the master index and added a dedicated linear execution index.
 
 ---
 
 ## Current Metrics
 
 | Metric | Count |
-|--------|-------|
-| Total markdown files in workspace | 108 |
-| Vault notes (`00_` to `12_`) | 98 |
-| System notes | 5 |
-| Source notes | 3 |
-| Hub notes | 13 |
-| Platform AI agent notes | 5 |
-| Concept notes | 11 |
-| Algorithm notes | 12 |
-| Scenario notes | 23 |
-| SOP notes | 12 |
-| Business model notes | 4 |
-| Market intelligence notes | 5 |
-| Concept-level AI agent notes | 2 |
-| Persona notes | 2 |
-| Dashboard notes | 1 |
+|---|---:|
+| Vault markdown notes across `00_` to `12_` folders | 282 |
+| SQL files in `10_Data_Model/SQL` | 5 |
+| Dashboard asset files in `12_Dashboards` | 9 |
+| System notes/templates | 17 |
+| AI agent architecture notes | 7 |
+| Concept notes | 61 |
+| Algorithm notes | 33 |
+| SOP notes | 15 |
+| Business model notes | 11 |
+| Market intelligence notes | 31 |
+| Dashboard notes | 14 |
 
 ---
 
-## What Was Aligned
+## Current Folder Structure Check
 
-### 1. Top-Level Status Files
-
-- `PROJECT.md`
-- `PROJECT_STATUS.md`
-- `ROADMAP.md`
-
-These files now describe the same workspace reality:
-
-- the Obsidian-style vault is present and active
-- backend implementation files exist
-- frontend specifications exist, but frontend app code is not present in this workspace
-- runtime verification remains pending in this review session
-
-### 2. System Navigation Files
-
-- `Logistics Brain - Master Index.md`
-- `Note Templates.md`
-- `Linking Rules.md`
-
-These were updated to:
-
-- use current counts
-- remove clearly broken system-level links
-- stop pointing readers to missing template/system notes
-- document the actual review standard for unresolved links
+| Folder | Status | Notes |
+|---|---|---|
+| `00_System` | Good | System index, templates and audit notes live here |
+| `04_AI_Agents` | Good | Active finance/payment/event agent docs are here |
+| `04_Concepts` | Good | Analogy, architecture and conceptual operating models are here |
+| `05_Algorithms` | Good | Backhaul, delay, matching, pricing and route logic are here |
+| `07_SOPs` | Good | Operational procedures are here |
+| `08_Business_Models` | Good | Partnership, revenue and warehouse placement strategy are here |
+| `09_Market_Intelligence` | Good | Corridors, hubs, lanes, warehouses and industry maps are here |
+| `10_Data_Model` | Good | SQL and schema documentation are here |
+| `12_Dashboards` | Good | Dashboard specs, Tableau package, Power BI theme and samples are here |
+| `10_AI_Agents` | Legacy/reference | Contains older concept-level agent notes; avoid adding new architecture here |
 
 ---
 
-## Current Vault Structure
+## Linear Index Status
+
+Created:
+
+- [[Logistics Brain - Linear Execution Index]]
+
+Updated:
+
+- [[Logistics Brain - Master Index]]
+
+The new linear path follows this order:
 
 ```text
-00_System                 5
-01_Inbox                  0
-02_Sources                3
-03_Hubs                  13
-04_AI_Agents              5
-04_Concepts              11
-05_Algorithms            12
-06_Scenarios             23
-07_SOPs                  12
-08_Business_Models        4
-09_Market_Intelligence    5
-10_AI_Agents              2
-11_People_Roles           2
-12_Dashboards             1
+Market lanes
+-> Directed demand
+-> Return-trip / triangle engine
+-> Hub and cargo compatibility
+-> Delay and reliability gates
+-> Finance and invoice lifecycle
+-> Data model
+-> Dashboards
+-> SOP execution
 ```
 
 ---
 
-## Review Findings
+## Placement Assessment for Recent Docs
 
-### Resolved in this alignment pass
-
-- conflicting counts across summary documents
-- outdated milestone wording
-- broken system-note links in the master index and templates
-- overconfident audit language that claimed full link resolution
-- encoding-damaged rewritten files at the system and project-status layer
-
-### Still remaining
-
-- many deeper vault notes contain unresolved wikilinks to planned notes
-- backend runtime and tests were not executed from this shell
-- frontend implementation status remains documentation-only in this repository
+| Recent Layer | Placement | Assessment |
+|---|---|---|
+| Return-trip analogy | `04_Concepts` | Correct |
+| Triangle/deadhead algorithms | `05_Algorithms/Backhaul` | Correct |
+| Hub/warehouse/city intelligence | `09_Market_Intelligence` | Correct |
+| Finance + invoice event layer | `04_AI_Agents` | Correct |
+| Delay metrics and delay-to-action | `05_Algorithms/Backhaul` | Correct |
+| Analytics SQL schema | `10_Data_Model/SQL` | Correct |
+| Data model docs | `10_Data_Model/Docs` | Correct |
+| Tableau/Power BI dashboard specs | `12_Dashboards` | Correct |
+| Tableau sample data/theme/README | `12_Dashboards/Tableau` | Correct |
 
 ---
 
-## Current Interpretation
+## Known Issues
 
-The Obsidian logistics project is in an **advanced documentation and partial implementation** state:
-
-- advanced as a logistics knowledge vault
-- meaningful backend implementation exists
-- incomplete as a fully verified application workspace
-- incomplete as a fully normalized, fully resolved Obsidian graph
+1. Some older notes may still contain unresolved wikilinks to planned notes.
+2. `10_AI_Agents` is a legacy/reference folder while `04_AI_Agents` is active.
+3. This workspace contains caches and app/project files outside the Obsidian-style vault, so broad recursive scans are noisy.
+4. Some old notes have encoding artifacts from prior generations, for example arrow symbols rendered incorrectly. Newly created docs use ASCII arrows to avoid this.
+5. SQL files have not been executed against a live database in this audit pass.
 
 ---
 
 ## Recommended Next Actions
 
-1. Run backend tests in a Python-enabled environment.
-2. Decide whether missing linked notes should be created or pruned.
-3. Treat unresolved links in deeper notes as backlog until they are intentionally resolved.
-4. Keep this report and `PROJECT_STATUS.md` updated together after future changes.
+1. Use [[Logistics Brain - Linear Execution Index]] as the main onboarding/read path.
+2. Add future return-trip, delay, scorecard and dashboard docs to the linear index immediately.
+3. Keep new architecture agent notes in `04_AI_Agents`, not `10_AI_Agents`.
+4. Later, run a wikilink resolution audit and decide whether to create or prune missing notes.
+5. Later, execute SQL scripts in Supabase/PostgreSQL and mark data-model docs as tested.
 
 ---
 
-*This vault is no longer undocumented. It is now aligned, but it is not finished.*
+## Current Interpretation
+
+The vault is now indexed enough to work as a product brain.
+
+It is not just a research attic anymore. It has a usable spine:
+
+```text
+Corridor intelligence -> Route intelligence -> Reliability intelligence -> Financial trust layer -> Analytics cockpit
+```
+
+---
+
+*This audit confirms the new documents are broadly in the right place. The major improvement made in this pass was linear navigation.*

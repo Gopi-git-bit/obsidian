@@ -44,6 +44,9 @@ External vehicle assignment should be checked against warehouse-side equipment a
 - [[Transport Operations Implementation Framework]] - Practical transport operating model and system implementation guide
 - [[Last-Mile Delivery Execution]] - Final-leg operating model for density, delivery-window precision, failed-attempt control, and customer-visible delivery execution
 - [[Fleet vs Partner Allocation Strategy]] - Decision framework for choosing own fleet versus partner capacity
+- [[Collaborative Logistics Network Framework]] - Formal model for shared partner capacity, collaboration pools, and joint governance
+- [[Partnership-Led Market Entry Framework]] - Early capacity and corridor-entry partnership strategy
+- [[Collaboration Risk Opportunity Balance Framework]] - Controls when partner scope should expand, hold, shrink, or exit
 - [[Transport Fraud & Cybersecurity Framework]] - Operational fraud prevention and cyber controls for transport workflows
 - [[Lane Intelligence Model]] - Corridor-level intelligence for pricing, routing, allocation, and expansion
 
@@ -63,6 +66,8 @@ External vehicle assignment should be checked against warehouse-side equipment a
 - [[Fleet Allocation Algorithm]] - Vehicle-to-order matching
 - [[Driver Assignment Logic]] - Driver-to-vehicle matching
 - [[Route Optimization Logic]] - Route planning
+- [[Return Load Optimization]] - Reduce empty return miles
+- [[Hub-Aware Return Trip Matching]] - Hub/spoke-aware IMS return-load matching with loop metadata
 - [[Warehouse Transport Correlation Algorithm]] - Correlate warehouse grade, material, lane, network strategy, and vehicle choice
 - [[Delivery Attempt Management]] - Doorstep attempt readiness, recipient communication, and proof capture control
 - [[IMS Matching Engine]] - Inventory-side candidate generation and reservation

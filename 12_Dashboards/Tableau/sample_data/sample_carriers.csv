@@ -1,0 +1,6 @@
+﻿carrier_id,carrier_name,fleet_size,on_time_pct,avg_delay_min,damage_rate,gps_coverage_pct,reliability_rating
+CR-101,South Express Logistics,45,88.2,65.3,1.2,96.5,4.2
+CR-102,TN Textile Transport,32,76.4,98.7,2.8,89.1,3.6
+CR-103,Coastal Freight Solutions,68,91.5,42.1,0.8,98.2,4.7
+CR-104,Deccan Auto Carriers,28,94.1,28.4,0.5,99.1,4.9
+CR-105,Western TN Roadlines,52,84.7,58.9,1.5,94.8,4.1

@@ -38,6 +38,7 @@ Logistics performance depends on matching order-processing strategy to transport
 | order processing strategies | Decide where forecast-driven planning ends and order-specific execution begins | [[Order Lifecycle]], [[Strategic Lead-Time Management]] |
 | logistic models and curves | Balance throughput time, WIP, output rate, stock level, service level, and delivery delay | [[Logistics SLA]], [[Inventory-Driven Resource Allocation Framework]] |
 | transportation management | Convert requirements into planning, departure handling, transit control, and arrival handling | [[TMS Execution Architecture]], [[Transport Operations Implementation Framework]] |
+| inbound logistics | Coordinate supplier pickup, hybrid fleet sourcing, receiving readiness, and quality handoff into inventory | [[Inbound Logistics Operating Framework]], [[Warehouse Execution & Intelligence Framework]] |
 | disruption factors | Prepare operations for pandemic, war, canal/blockade, and infrastructure shock scenarios | [[Fallback & Resilience Architecture]], [[Scenario Management Framework]] |
 | smart logistics technology | Use IoT, AI, big data, automation, TMS, e-way bill automation, tracking, and booking systems | [[Technology Stack Hub]], [[Operational Observability Architecture]] |
 | revenue models | Select asset-based, non-asset-based, Logistics-as-a-Service, or SaaS subscription economics | [[Revenue Model Decision Framework]], [[Digital Freight Marketplace]] |
@@ -77,6 +78,7 @@ The logistics-landscape version of this map highlights a slightly different emph
 - [[Indian MSME Logistics Model]]
 - [[Machine Learning Models]]
 - [[Transport Cost Breakdown Model]]
+- [[Inbound Logistics Operating Framework]]
 
 ## Related Hubs
 

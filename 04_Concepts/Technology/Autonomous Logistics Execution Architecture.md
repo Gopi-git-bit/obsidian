@@ -74,6 +74,8 @@ The architecture becomes defensible when it compounds:
 - dynamic capabilities: sensing disruptions, seizing return-load opportunities, transforming network design
 - technology-enabled integration: shared shipment status, delivery windows, event streams, and partner coordination data
 
+The Cainiao benchmark in [[Cainiao Strategy Patterns for Zippy]] reinforces that autonomy should coordinate a partner ecosystem through standards, visibility, SLA scoring, and selective control of critical nodes rather than defaulting to full asset ownership.
+
 ## India Execution Focus
 
 The architecture should prioritize:
@@ -94,6 +96,7 @@ The architecture should prioritize:
 - [[Machine Learning Models]]
 - [[Competitive Advantage Framework]]
 - [[Return Load Optimization]]
+- [[Cainiao Strategy Patterns for Zippy]]
 
 ## Related Hubs
 

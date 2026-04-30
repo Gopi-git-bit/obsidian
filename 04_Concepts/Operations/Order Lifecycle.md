@@ -20,7 +20,8 @@ The complete journey of a shipment from initial inquiry to final delivery and pa
 ## Stages
 
 ```
-Inquiry â†’ Booking â†’ Confirmation â†’ Pickup â†’ In Transit â†’ Delivered â†’ POD â†’ Invoice â†’ Payment
+Inquiry -> Booking -> Confirmation -> Pickup -> In Transit -> Delivered -> POD -> Invoice -> Payment
+                                      \-> Reverse / Return / Reattempt -> Evidence -> Settlement
 ```
 
 ## OMS Control Principle
@@ -35,6 +36,7 @@ The OMS should be treated as the lifecycle command center: every operational sys
 | Execution | Control pickup, dispatch, transit, delivery, and exception state changes | TMS, driver app, tracking layer |
 | Evidence | Attach document scans, POD, GPS traces, timestamps, and consent records | Driver app, document store |
 | Settlement | Trigger invoice, payment reconciliation, and provider settlement workflows | Payment gateway, [[Payment Settlement Agent]] |
+| Reverse logistics | Control return request, evidence capture, reverse pickup/drop-off, refund/claim hold, and settlement closure | [[Reverse Logistics and Return Policy Framework]], 3PL partners, warehouse desks |
 
 ## Lifecycle Gates
 
@@ -50,6 +52,7 @@ Use gates to prevent an order from moving forward before the required business t
 | Transit gate | GPS stream, ETA confidence, route adherence, and delay alerts remain observable | Trigger deviation, delay, or safety workflow |
 | Delivery gate | Recipient validation, OTP/signature, unloading status, and POD quality are captured | Block completion until evidence is corrected or reviewed |
 | Settlement gate | Invoice, payment ledger, provider settlement, and audit trail are consistent | Reconcile before marking financial completion |
+| Return gate | Return reason, evidence, cost owner, reverse destination, and 3PL responsibility are explicit | Hold refund/settlement, create reverse order, or escalate to operations |
 
 ## Strategy Layer: CODP for Logistics OMS
 
@@ -84,7 +87,7 @@ Capture -> Validate -> Price -> Confirm -> Allocate -> Dispatch -> Track -> Deli
 - Track should store events from GPS, driver app updates, customer communication, and exception detectors.
 - Deliver should capture OTP/signature, recipient identity, unloading completion, and POD evidence.
 - Bill and settle should separate invoices, payment attempts, ledger entries, and provider settlement.
-- Learn should feed future pricing, ETA, carrier scoring, customer risk, and SOP improvements.
+- Learn should feed future pricing, ETA, carrier scoring, customer risk, return-policy tuning, and SOP improvements.
 ### 1. Inquiry
 - Customer requests quote
 - [[Dynamic Pricing Logic]] generates estimate
@@ -143,6 +146,11 @@ Capture -> Validate -> Price -> Confirm -> Allocate -> Dispatch -> Track -> Deli
 - Gateway failures may temporarily move payment handling into controlled offline follow-up
 - Ledger and settlement records should stay separate from UI-visible payment attempts
 
+### 10. Reverse / Return / Reattempt
+- Return or reverse movement may be triggered by cancellation, failed delivery, consignee rejection, damaged cargo, wrong vehicle fit, excess material, or reusable packaging recovery.
+- [[Reverse Logistics and Return Policy Framework]] should create a reverse order ID instead of hiding the work inside support notes.
+- Refund, claim, or provider settlement should remain on hold until evidence, cost owner, and reverse receipt are resolved.
+
 ## Key Variables
 
 - Order priority level
@@ -155,6 +163,7 @@ Capture -> Validate -> Price -> Confirm -> Allocate -> Dispatch -> Track -> Deli
 - Cargo risk, document requirements, and special handling needs
 - Capacity availability across own fleet, driver network, and partners
 - Payment mode: full, part payment, ToPay, or controlled offline follow-up
+- Return reason, reverse destination, return evidence, cost owner, and reverse pickup/drop-off mode
 - ETA confidence, route risk, and exception severity
 - POD evidence quality and dispute probability
 

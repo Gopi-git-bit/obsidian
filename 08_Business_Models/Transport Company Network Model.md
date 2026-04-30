@@ -19,6 +19,12 @@ tags:
 
 A network-based operating model where the platform combines its own execution capability with verified partner transport companies to expand capacity, geographic reach, and service reliability without owning all fleet capacity directly.
 
+Use [[Collaborative Logistics Network Framework]] when the partner relationship goes beyond spot sourcing into shared capacity, shared data, formal revenue/cost allocation, joint KPIs, or cross-company return-trip matching.
+
+Use [[Partnership-Led Market Entry Framework]] when entering a new corridor and deciding which partner type removes the first blocker: capacity, demand, compliance, technology, or trust.
+
+Use [[Collaboration Risk Opportunity Balance Framework]] before increasing partner volume, adding corridors, deepening data access, or moving from preferred partner to collaboration pool.
+
 ## Why It Exists
 
 - Own fleet capacity is limited
@@ -53,6 +59,15 @@ A network-based operating model where the platform combines its own execution ca
 | Communication layer | Keep customer and partner aligned |
 | Performance review | Improve network quality over time |
 
+## Collaboration Upgrade Path
+
+| Relationship Level | Meaning | Governance Need |
+|--------------------|---------|-----------------|
+| spot partner | used for occasional capacity gaps | verification and assignment SOP |
+| preferred partner | repeated corridor/cargo relationship | SLA, scorecard, rate card |
+| collaboration pool | shared vehicles/orders/data under defined scope | agreement ID, pool ID, shared KPIs, dispute path |
+| strategic network partner | joint planning and capacity commitments | joint business review, revenue share, exit mechanism |
+
 ## Economics
 
 | Driver | Impact |
@@ -74,6 +89,9 @@ A network-based operating model where the platform combines its own execution ca
 - [[Fleet Utilization]]
 - [[Truck Aggregator Model]]
 - [[Carrier Scoring Algorithm]]
+- [[Collaborative Logistics Network Framework]]
+- [[Partnership-Led Market Entry Framework]]
+- [[Collaboration Risk Opportunity Balance Framework]]
 - [[Scenario - Partner Network Utilization]]
 - [[Scenario - Partner Transporter Failure]]
 - [[SOP - Handle Partner Transporter]]

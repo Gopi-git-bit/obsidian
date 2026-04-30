@@ -1,0 +1,6 @@
+﻿lane_id,calculation_date,total_shipments,on_time_count,on_time_pct,avg_delay_min,p90_delay_min,p95_delay_min,delay_stddev_min,reliability_score,reliability_grade,recommended_sla_window_hours,requires_backup_carrier,requires_premium_buffer,backhaul_fill_rate
+chennai:coimbatore:textiles,2026-04-23,150,123,82.0,78.5,185.0,240.0,45.2,76.4,B,4.5,true,false,0.68
+tiruppur:chennai:garments,2026-04-23,98,71,72.4,112.3,285.0,360.0,68.1,62.8,C,8.0,true,true,0.52
+vizag:vijayawada:port,2026-04-23,210,189,90.0,42.1,95.0,120.0,28.4,88.2,A,2.0,false,false,0.82
+bengaluru:hosur:auto,2026-04-23,340,318,93.5,18.2,45.0,60.0,12.8,94.1,A,2.0,false,false,0.91
+coimbatore:tiruppur:textiles,2026-04-23,185,142,76.8,65.4,150.0,195.0,38.9,71.2,B,4.5,true,false,0.74

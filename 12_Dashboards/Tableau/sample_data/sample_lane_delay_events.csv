@@ -1,0 +1,6 @@
+﻿shipment_id,lane_id,origin_city,destination_city,cargo_type,shipment_date,scheduled_pickup,actual_pickup,scheduled_delivery,actual_delivery,total_delay_min,pickup_delay_min,transit_delay_min,terminal_dwell_delay_min,documentation_delay_min,last_mile_delay_min,delivered_on_time,otif_status,carrier_id,vehicle_type,gps_coverage_pct,exception_count,resolution_time_min
+SHP-001,chennai:coimbatore:textiles,Chennai,Coimbatore,Textiles,2026-04-01,2026-04-01 06:00,2026-04-01 06:15,2026-04-01 18:00,2026-04-01 19:30,90,15,45,20,5,5,false,false,CR-101,20-ft,98.5,1,25
+SHP-002,chennai:coimbatore:textiles,Chennai,Coimbatore,Textiles,2026-04-01,2026-04-01 08:00,2026-04-01 08:00,2026-04-01 20:00,2026-04-01 20:45,45,0,30,10,3,2,true,true,CR-102,14-ft,95.2,0,0
+SHP-003,tiruppur:chennai:garments,Tiruppur,Chennai,Garments,2026-04-02,2026-04-02 05:00,2026-04-02 05:30,2026-04-02 15:00,2026-04-02 17:15,135,30,60,30,10,5,false,false,CR-103,20-ft,99.1,2,45
+SHP-004,vizag:vijayawada:port,Vizag,Vijayawada,Port Cargo,2026-04-02,2026-04-02 07:00,2026-04-02 07:00,2026-04-02 14:00,2026-04-02 14:20,20,0,15,0,3,2,true,true,CR-104,32-ft,97.8,0,0
+SHP-005,bengaluru:hosur:auto,Bengaluru,Hosur,Auto Parts,2026-04-03,2026-04-03 09:00,2026-04-03 09:10,2026-04-03 10:30,2026-04-03 10:25,-5,10,-20,0,3,2,true,true,CR-105,14-ft,100.0,0,0

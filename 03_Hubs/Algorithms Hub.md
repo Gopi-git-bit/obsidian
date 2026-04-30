@@ -31,17 +31,20 @@ Central hub for all algorithmic logic, decision-making frameworks, and optimizat
 |-----------|---------|---------------|
 | [[Load Matching Algorithm]] | Match shipments to feasible vehicles | Capacity, compatibility, ETA, return probability |
 | [[IMS Matching Engine]] | Generate candidate vehicles without mutating state | Hard filters, reservations, fallback path |
+| [[Hub-Aware Return Trip Matching]] | Match completed hub-corridor deliveries to return loads | Hub context, spoke adjacency, capacity, saved km |
 
 ### Pricing & Commercial
 | Algorithm | Purpose | Key Variables |
 |-----------|---------|---------------|
 | [[Distance Based Pricing]] | Calculate shipment costs | Distance, vehicle type, cargo |
 | [[Urgency Surcharge Logic]] | Apply time premiums | Urgency level, deadline proximity |
+| [[Strategic Profit Sharing Framework]] | Calculate contribution-based partner share and Zippy retained margin | Capacity, revenue, risk, strategic value, margin cap |
 
 ### Resource Allocation
 | Algorithm | Purpose | Key Variables |
 |-----------|---------|---------------|
 | [[Fleet Allocation Algorithm]] | Assign vehicles to orders | Capacity, location, availability |
+| [[Hub-and-Spoke Network Design Algorithm]] | Select hubs, spokes, corridors, and routing topology | Demand clusters, facility candidates, carrier density, SLA, cost |
 | [[Vehicle Assignment Logic]] | Select best-fit vehicle for an order | Cargo fit, confidence, fallback path |
 | [[Driver Assignment Logic]] | Match drivers to vehicles | Skills, hours, performance |
 | [[Multi-Objective Vehicle Scoring]] | Rank candidates across cost and service dimensions | Cost, familiarity, reliability, utilization |
@@ -57,6 +60,13 @@ Central hub for all algorithmic logic, decision-making frameworks, and optimizat
 | Algorithm | Purpose | Key Variables |
 |-----------|---------|---------------|
 | [[Payment Risk Logic]] | Assess payment risk | Customer history, order value |
+| [[Strategic Profit Sharing Framework]] | Automate fair settlement for partnership economics | Rule model, contribution metrics, margin protection, audit hash |
+
+### Risk & Governance
+| Algorithm | Purpose | Key Variables |
+|-----------|---------|---------------|
+| [[Collaboration Risk Scoring Algorithm]] | Decide expand, pilot, maintain, reduce, or exit collaboration | Risk score, opportunity score, balance score |
+| [[Partnership Health Score Calculator]] | Convert live partner metrics into expand, maintain, reduce, or exit actions | Operational, financial, compliance, relationship metrics |
 
 ## Algorithm Decision Tree
 

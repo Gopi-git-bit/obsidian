@@ -21,6 +21,8 @@ tags:
 
 Turn transport theory into an operating model that can be practiced by a team and implemented as a usable transportation system.
 
+Use [[Logistics Network Implementation Roadmap]] as the broader startup-level roadmap that wraps this transport execution layer with business model choice, compliance foundation, network topology, technology stack, partnerships, and continuous optimization.
+
 ## Definition
 
 Transport operations is the execution layer that moves freight from origin to destination while balancing service, cost, risk, compliance, and visibility.
@@ -146,6 +148,7 @@ See also:
 - [[Admin Control Tower Architecture]]
 - [[Authoritative Database Schema]]
 - [[Operational Observability Architecture]]
+- [[Logistics Network Implementation Roadmap]]
 
 ### Core Workflow
 
@@ -249,6 +252,7 @@ Use it to connect:
 - `Lane Intelligence Model`
 - `Transport Control Tower KPI Framework`
 - `Reshoring Logistics Opportunity Model`
+- `Logistics Network Implementation Roadmap`
 
 ## Recommended Operating Principle
 

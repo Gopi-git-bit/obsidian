@@ -98,6 +98,24 @@ IMS should treat vehicles as network inventory, not a flat list of available uni
 
 This turns IMS from a local matcher into a network-aware supply intelligence layer.
 
+### 5. Hub-Aware Return Trips
+
+When hub-and-spoke topology exists, IMS should use [[Hub-Aware Return Trip Matching]] to enrich return-load suggestions with hub context.
+
+- Prefer same-hub, adjacent-spoke, and corridor-aligned return orders.
+- Preserve radius-based fallback for non-hub orders.
+- Keep `loop_group_id`, corridor ID, outbound hub, return hub, and empty-leg saved km as advisory metadata.
+- Do not mutate order state or apply financial discounts inside IMS.
+
+### 6. Collaborative Pool Matching
+
+When an order carries a `collaboration_pool_id`, IMS may search approved partner capacity under the agreement scope.
+
+- Partner fleet access must be authorized by agreement ID and partner token.
+- Sensitive customer/order data should follow the data-sharing level in [[Collaborative Logistics Network Framework]].
+- IMS should emit partner candidate metadata, but OMS still commits assignment.
+- Partner matching should be auditable by partner ID, agreement ID, and pool ID.
+
 ## Logic
 
 ```text
@@ -167,6 +185,8 @@ Those signals can feed planning, partner outreach, or a downstream rebalancing s
 - Emit `loop_group_id` or return-potential metadata as advisory context only.
 - Keep discounting and settlement decisions downstream in OMS and FIN.
 - Penalize assignments into low-demand destinations when loop recovery is consistently weak.
+- Use [[Hub-Aware Return Trip Matching]] when a completed delivery falls inside an active hub/spoke service radius.
+- Hub-aware matching may score hub capacity, but it must not force a return through an overloaded hub.
 
 ## Driver And Corridor Intelligence
 
@@ -205,6 +225,9 @@ These should remain bounded scoring features or eligibility checks, not opaque o
 - [[Load Matching Algorithm]]
 - [[Vehicle Assignment Logic]]
 - [[Return Load Optimization]]
+- [[Hub-Aware Return Trip Matching]]
+- [[Hub-and-Spoke Network Design Algorithm]]
+- [[Collaborative Logistics Network Framework]]
 - [[Resource Management Agent]]
 - [[Fallback & Resilience Architecture]]
 - [[Lane Intelligence Model]]

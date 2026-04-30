@@ -89,6 +89,22 @@ Strategic outsourcing of logistics management to an external expert who orchestr
 | Be 4PL | Scalable, tech focus | Less control, reliance |
 | Hybrid | Best of both | Complexity |
 
+## Cainiao Pattern
+
+[[Cainiao Strategy Patterns for Zippy]] is the strongest benchmark for a modern hybrid 4PL model.
+
+Cainiao's lesson is:
+
+```text
+own the digital standard and control tower first,
+orchestrate partner capacity at scale,
+then selectively own or control critical nodes where SLA requires it.
+```
+
+For Zippy, this supports a warehouse-first 4PL model with selective premium capacity rather than early broad fleet ownership.
+
+See [[Logistics Network Implementation Roadmap]] for the practical startup build sequence: strategy, compliance, topology, technology stack, operations, partnerships, and optimization.
+
 ## Outsourcing Trend Lens
 
 Outsourcing should be evaluated by separating execution responsibility from orchestration responsibility:
@@ -107,3 +123,5 @@ Outsourcing should be evaluated by separating execution responsibility from orch
 - [[MSME Logistics Market]]
 - [[Transport Logistics and Warehousing Knowledge Map]]
 - [[Intermodal Transport Framework]]
+- [[Cainiao Strategy Patterns for Zippy]]
+- [[Logistics Network Implementation Roadmap]]

@@ -95,6 +95,23 @@ It is the compounding effect of:
 
 This creates a loop that weak manual brokers and shallow marketplaces struggle to copy.
 
+## Cainiao-Style Moat Pattern
+
+[[Cainiao Strategy Patterns for Zippy]] shows how a logistics platform can build power without owning every physical asset.
+
+The defensible pattern is:
+
+```text
+standardized events
++ partner performance data
++ control tower visibility
++ warehouse/node integration
++ algorithmic volume allocation
+= ecosystem control without full asset ownership
+```
+
+For Zippy, the Cainiao-style moat should emerge from digital LR/POD/gate standards, warehouse readiness scoring, carrier lead priority, lane history, and selective premium partner pools.
+
 ## Strategic Implications
 
 - Technology should be treated as an enabler of coordination, not as the whole strategy.

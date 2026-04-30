@@ -40,6 +40,11 @@ Central hub for all standard operating procedures and response protocols.
 | [[SOP - Handle POD Disputes]] | POD mismatch or delay | Verify documents, contact parties, reconcile | [[Payment Settlement Agent]] |
 | [[SOP - Escalate Delayed Shipment]] | Critical delay | Assess impact, notify stakeholders, document | [[Platform Administration Agent]] |
 
+### Partnership Templates
+| Template | Trigger | Key Controls | Escalation |
+|----------|---------|--------------|------------|
+| [[PartnershipAgreement.yaml]] | New partner pilot or collaboration pool | Scope, economics, API access, risk controls, rollout phases, exit workflow | [[Collaboration Risk Opportunity Balance Framework]] |
+
 ## SOP Trigger Map
 
 ```

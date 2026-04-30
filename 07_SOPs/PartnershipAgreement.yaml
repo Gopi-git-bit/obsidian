@@ -1,0 +1,231 @@
+# ==============================================================================
+# PARTNERSHIP AGREEMENT TEMPLATE (ZIPPY LOGISTICS)
+# Version: 1.0
+# Type: Horizontal / Vertical / Diagonal collaboration
+# Governance: OMS / IMS / TMS / FIN + Supervisor Agent
+# ==============================================================================
+
+metadata:
+  agreement_id: "PARTNER-2025-001"
+  version: "1.0"
+  effective_date: "2025-06-01T00:00:00Z"
+  expiration_date: "2026-06-01T00:00:00Z"
+  auto_renew: false
+  parties:
+    zippy_logistics:
+      legal_entity: "Zippy Logistics Pvt. Ltd."
+      jurisdiction: "India"
+      contact: "partnerships@zippy.in"
+    partner:
+      legal_entity: "[Partner Legal Name]"
+      jurisdiction: "[Partner Jurisdiction]"
+      contact: "[Partner Contact]"
+  collaboration_type: "horizontal" # horizontal | vertical | diagonal
+  status: "draft" # draft | pilot | active | suspended | terminated
+
+scope:
+  geographic_corridors:
+    - "chennai-bangalore"
+    - "hyderabad-pune"
+  vehicle_types:
+    - "LCV"
+    - "MCV"
+  service_tiers:
+    - "standard"
+    - "express"
+  integration_depth: "api_v1" # api_v1 | portal_only | edi
+  data_sharing_scope:
+    order_metadata: true
+    live_gps: false
+    pod_documents: false
+    customer_pii: false
+  success_objectives:
+    - "Reduce empty-leg km by >=20%"
+    - "Maintain SLA on-time delivery >=92%"
+    - "Achieve settlement accuracy >=99.5%"
+
+economic_terms:
+  revenue_sharing:
+    model: "proportional_capacity_contributed"
+    zippy_commission_pct: 15
+    partner_payout_pct: 85
+  payment_terms:
+    cycle: "weekly"
+    net_days: 7
+    escrow_required: true
+    escrow_release_threshold: "95% settlement accuracy over 30 days"
+  financial_exposure_cap:
+    max_unsettled_amount_inr: 500000
+    auto_hold_trigger_pct: 0.10
+  tax_compliance:
+    gst_applicable: true
+    invoice_format: "IRN-compliant"
+    reconciliation_frequency: "daily"
+
+technical_integration:
+  api_version: "v1"
+  auth_method: "oauth2_jwt"
+  rate_limits:
+    orders_per_minute: 50
+    telemetry_per_minute: 200
+  idempotency:
+    required: true
+    ttl_seconds: 86400
+  circuit_breaker_config:
+    error_threshold_pct: 50
+    reset_timeout_seconds: 300
+    fallback_strategy: "queue_and_retry"
+  state_machine_access:
+    read_only: true
+    write_path: "/api/v1/transition"
+    metadata_binding_only: true
+  data_isolation:
+    row_level_security: true
+    pii_redaction: "hash_only"
+    audit_log_retention_days: 365
+
+risk_controls:
+  financial_guardrails:
+    max_daily_payout_inr: 100000
+    duplicate_refund_block: true
+    gst_mismatch_auto_hold: true
+  operational_guardrails:
+    sla_breach_dispute_threshold_pct: 5
+    dlq_growth_limit_per_day: 50
+    agent_disagreement_threshold_pct: 10
+  compliance_guardrails:
+    kyc_verification_required: true
+    dpdp_data_handling_compliant: true
+    audit_hash_chain_enabled: true
+  automated_alerts:
+    - name: "financial_exposure_breach"
+      metric: "unsettled_amount_inr"
+      threshold: 500000
+      action: "freeze_payouts + notify_supervisor"
+    - name: "sla_breach_spike"
+      metric: "sla_breach_rate_7d"
+      threshold: 0.08
+      action: "pause_new_assignments + request_root_cause"
+    - name: "dlq_overflow"
+      metric: "dlq_size_24h"
+      threshold: 200
+      action: "suspend_workflow_execution + alert_engineering"
+
+governance:
+  health_score_weights:
+    operational: 0.35
+    financial: 0.30
+    compliance: 0.20
+    relationship: 0.15
+  health_thresholds:
+    expand_trigger: 75
+    maintain_range:
+      - 40
+      - 75
+    reduce_exposure: 40
+    exit_trigger: 20
+  review_cadence:
+    daily_metrics: true
+    weekly_ops_sync: true
+    monthly_business_review: true
+    quarterly_contract_renegotiation: true
+  escalation_matrix:
+    l1_ops: "partner_dispatcher + zippy_ops_lead"
+    l2_finance: "partner_finance_mgr + zippy_finance_controller"
+    l3_supervisor: "zippy_supervisor_agent"
+
+rollout_phases:
+  phase_0_shadow:
+    duration_days: 7
+    traffic_pct: 0
+    write_authority: false
+    success_criteria: ">=95% decision alignment, 0 critical violations"
+    hard_stop_conditions:
+      - "any_state_machine_bypass"
+      - "suggested_refund_exceeds_policy_cap"
+  phase_1_canary:
+    duration_days: 14
+    traffic_pct: 5
+    write_authority: "limited"
+    success_criteria: "measurable ops improvement, 0 financial incidents"
+    hard_stop_conditions:
+      - "duplicate_execution_detected"
+      - "unexpected_refund_created"
+  phase_2_expanded:
+    duration_days: 21
+    traffic_pct: 25
+    write_authority: "extended"
+    success_criteria: "finance sign-off, audit checks pass"
+    hard_stop_conditions:
+      - "ledger_imbalance"
+      - "gst_mismatch"
+  phase_3_full:
+    duration_days: 30
+    traffic_pct: 100
+    write_authority: "full_guarded"
+    success_criteria: "stable SLOs, cost/order down, human ops load down"
+
+exit_clauses:
+  voluntary_exit:
+    notice_period_days: 60
+    data_portability_required: true
+    final_settlement_window_days: 15
+  breach_exit:
+    triggers:
+      - "health_score < 20 for 14 consecutive days"
+      - "repeated_supervisor_overrides > 3/month"
+      - "material_compliance_violation"
+    notice_period_days: 14
+    immediate_access_revocation: true
+  force_majeure:
+    covered_events:
+      - "regulatory_ban"
+      - "natural_disaster"
+      - "api_provider_outage_72h"
+    suspension_period_days: 30
+    termination_notice_days: 7
+  wind_down_workflow:
+    step_1: "freeze_new_assignments + pause_settlements"
+    step_2: "drain_existing_orders_to_completion"
+    step_3: "final_financial_reconciliation + invoice_generation"
+    step_4: "data_archival_to_encrypted_storage + pii_deletion_request"
+    step_5: "revoke_api_keys + remove_rbac_permissions"
+    step_6: "final_audit_report + sign_off"
+  post_exit_retention:
+    audit_logs_days: 365
+    dispute_records_days: 365
+    anonymized_analytics: true
+
+dispute_resolution:
+  tier_1_mediation: "internal_ops + partner_dispatcher"
+  tier_2_arbitration: "neutral_third_party"
+  tier_3_legal: "applicable_indian_law"
+  sla_for_resolution_days: 7
+  evidence_requirements:
+    - "gps_trace"
+    - "pod_hash"
+    - "audit_log"
+    - "agent_score"
+
+compliance:
+  regulatory_frameworks:
+    - "Indian_GST"
+    - "DPDP_Act_2023"
+    - "Motor_Vehicles_Act"
+  audit_frequency: "quarterly"
+  data_residency: "India"
+  encryption_at_rest: true
+  encryption_in_transit: "tls_1.3"
+
+sign_off:
+  zippy_authorized_signatory:
+    name: "[ ]"
+    title: "[ ]"
+    timestamp: "[ ]"
+  partner_authorized_signatory:
+    name: "[ ]"
+    title: "[ ]"
+    timestamp: "[ ]"
+  immutable: true
+  hash_chain_id: "[SHA256_AGREEMENT_PAYLOAD]"
+  audit_log_reference: "agent_decisions_audit / partnership_lifecycle"

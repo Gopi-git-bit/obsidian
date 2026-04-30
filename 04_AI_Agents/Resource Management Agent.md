@@ -31,6 +31,7 @@ The Resource Management Agent handles all aspects of fleet allocation, driver as
 - Balance capacity utilization across regions
 - Manage vehicle types (open, closed, refrigerated, hazardous)
 - Reserve candidate vehicles safely without directly committing order state
+- Suggest hub-aware return trips where hub/spoke topology can reduce empty running
 
 ### Driver Assignment
 - Match drivers to vehicles based on availability and skills
@@ -51,6 +52,7 @@ The Resource Management Agent handles all aspects of fleet allocation, driver as
 | Partner failure | Trigger [[SOP - Handle Partner Transporter]] workflow |
 | Excess capacity | Offer to partner network to optimize utilization |
 | Reservation conflict | Move to next ranked candidate or fallback cascade |
+| Completed delivery inside hub corridor | Run [[Hub-Aware Return Trip Matching]] and return advisory loop metadata to OMS |
 
 ## Integration Points
 
@@ -77,6 +79,8 @@ The Resource Management Agent handles all aspects of fleet allocation, driver as
 - [[Carrier Selection Algorithm]]
 - [[Carrier Scoring Algorithm]]
 - [[IMS Matching Engine]]
+- [[Hub-Aware Return Trip Matching]]
+- [[Return Load Optimization]]
 
 ## Related SOPs
 

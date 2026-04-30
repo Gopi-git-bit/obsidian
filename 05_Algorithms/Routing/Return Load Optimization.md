@@ -31,6 +31,8 @@ tags:
 
 Reduce empty return miles by pairing completed outbound trips with feasible backhaul demand, reposition opportunities, or open-route continuations.
 
+For hub-and-spoke networks, use [[Hub-Aware Return Trip Matching]] to add hub corridor, spoke adjacency, hub capacity, and empty-leg savings metadata to the return-load decision.
+
 ## Strategic Relevance
 
 India-scale freight efficiency depends heavily on reducing empty running. Return-trip probability should feed allocation, pricing, corridor planning, and the 2050 roadmap goal of lowering unnecessary vehicular freight activity.
@@ -76,6 +78,20 @@ Only promote return-trip options when PCR clears the configured threshold.
 | Compatibility | 0.15 | Ensure vehicle-body and cargo fit |
 | Partner reliability | 0.10 | Reduce return-leg execution risk |
 
+## Hub-Aware Extension
+
+When a completed delivery is inside an active hub/spoke service radius, return-load scoring should add:
+
+| Factor | Purpose |
+|--------|---------|
+| same hub | prefer returns that keep vehicle flow inside the same hub network |
+| adjacent spoke | support hub-to-spoke-to-hub cycles without excessive deadhead |
+| corridor alignment | favor known profitable corridors and vehicle-type patterns |
+| hub capacity | avoid overloading hubs with too many pending returns |
+| empty-leg saved km | quantify operational savings for OMS/FIN and network analytics |
+
+If hub context is unavailable, matching should fall back to the original radius-based search.
+
 ## Decision Rules
 
 - Prefer loaded returns on long-haul lanes where empty running is materially expensive.
@@ -97,6 +113,8 @@ Only promote return-trip options when PCR clears the configured threshold.
 
 - [[Return Load Economics]]
 - [[Route Optimization Logic]]
+- [[Hub-Aware Return Trip Matching]]
+- [[Hub-and-Spoke Network Design Algorithm]]
 - [[Unified Routing & Optimization Algorithm]]
 - [[Load Matching Algorithm]]
 - [[Fleet Utilization]]

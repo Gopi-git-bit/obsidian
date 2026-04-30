@@ -1,0 +1,6 @@
+﻿timestamp,lane_id,shipment_id,route_optimization_applied,original_eta_min,optimized_eta_min,time_saved_min,cost_saved_inr,congestion_avoided,alternative_route_used,optimization_reason
+2026-04-01 10:30,chennai:coimbatore:textiles,SHP-001,true,135,105,30,450,true,NH716_via_Vellore,traffic_congestion
+2026-04-01 14:15,tiruppur:chennai:garments,SHP-003,true,150,120,30,520,false,,weather_reroute
+2026-04-02 08:45,vizag:vijayawada:port,SHP-004,false,90,90,0,0,false,,
+2026-04-02 11:20,bengaluru:hosur:auto,SHP-005,true,45,35,10,180,true,NH44_express,accident_avoidance
+2026-04-03 09:00,coimbatore:tiruppur:textiles,SHP-006,true,75,60,15,225,false,,carrier_optimization

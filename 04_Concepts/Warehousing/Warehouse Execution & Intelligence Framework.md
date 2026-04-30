@@ -72,6 +72,8 @@ For each facility, capture:
 - unloading or staging controlled
 - received goods inspected, documented, and routed to putaway, quarantine, cross-dock, or return flow
 
+Use [[Inbound Logistics Operating Framework]] for supplier pickup, hybrid fleet sourcing, pickup proof, receiving discrepancy, and inbound KPI controls before goods enter inventory.
+
 ### Outbound
 
 - order staged
@@ -218,6 +220,7 @@ Warehouse intelligence should improve:
 - [[Transport Cost Breakdown Model]]
 - [[Transport Control Tower KPI Framework]]
 - [[Inventory-Driven Resource Allocation Framework]]
+- [[Inbound Logistics Operating Framework]]
 - [[Transport Logistics and Warehousing Knowledge Map]]
 
 ## Related Hubs

@@ -1,0 +1,308 @@
+﻿{
+  "nodes": [
+    {
+      "id": "n_problem",
+      "type": "text",
+      "text": "# Return Trip / Triangle Engine Canvas\n\nGoal: convert weak direct returns into profitable earning loops.\n\nCore question: after A -> B delivery, should the truck return directly, wait, move to C, or enter a triangle/quad loop?",
+      "x": -1700,
+      "y": -700,
+      "width": 520,
+      "height": 260
+    },
+    {
+      "id": "n_trading_pairs",
+      "type": "file",
+      "file": "09_Market_Intelligence/South India Trading Pair City Research System.md",
+      "x": -1700,
+      "y": -320,
+      "width": 420,
+      "height": 260
+    },
+    {
+      "id": "n_city_pair_master",
+      "type": "file",
+      "file": "12_Dashboards/South India City Pair Master.md",
+      "x": -1700,
+      "y": 20,
+      "width": 420,
+      "height": 220
+    },
+    {
+      "id": "n_directed_lane_master",
+      "type": "file",
+      "file": "12_Dashboards/Directed Lane Master.md",
+      "x": -1700,
+      "y": 320,
+      "width": 420,
+      "height": 220
+    },
+    {
+      "id": "n_lane_examples",
+      "type": "text",
+      "text": "## Directional Lane Truth\n\nDo not store only A <-> B.\n\nStore:\n- A -> B\n- B -> A\n\nBecause volume, rate, delay and return probability are asymmetric.",
+      "x": -1700,
+      "y": 620,
+      "width": 420,
+      "height": 220
+    },
+    {
+      "id": "n_return_analogy",
+      "type": "file",
+      "file": "04_Concepts/Return Trip Analogy - From Empty Return to Earning Loop.md",
+      "x": -1040,
+      "y": -700,
+      "width": 440,
+      "height": 250
+    },
+    {
+      "id": "n_deadhead",
+      "type": "file",
+      "file": "05_Algorithms/Backhaul/Deadhead Reduction Intelligence Layer for Tier 2-3 Freight.md",
+      "x": -1040,
+      "y": -360,
+      "width": 440,
+      "height": 250
+    },
+    {
+      "id": "n_triangle_engine",
+      "type": "file",
+      "file": "05_Algorithms/Backhaul/Triangle Route Engine for Return Trip Optimization.md",
+      "x": -1040,
+      "y": 0,
+      "width": 440,
+      "height": 260
+    },
+    {
+      "id": "n_triangle_technical",
+      "type": "file",
+      "file": "05_Algorithms/Backhaul/Triangle Backhaul Technical Implementation Addendum.md",
+      "x": -1040,
+      "y": 360,
+      "width": 440,
+      "height": 240
+    },
+    {
+      "id": "n_triangle_master",
+      "type": "file",
+      "file": "12_Dashboards/Triangle Route Master.md",
+      "x": -1040,
+      "y": 700,
+      "width": 440,
+      "height": 220
+    },
+    {
+      "id": "n_transport_network",
+      "type": "file",
+      "file": "09_Market_Intelligence/South India Logistics Hub Intelligence Framework.md",
+      "x": -380,
+      "y": -700,
+      "width": 460,
+      "height": 250
+    },
+    {
+      "id": "n_multimodal",
+      "type": "file",
+      "file": "09_Market_Intelligence/South India Multimodal Freight Strategy.md",
+      "x": -380,
+      "y": -360,
+      "width": 460,
+      "height": 250
+    },
+    {
+      "id": "n_warehouse_clusters",
+      "type": "file",
+      "file": "09_Market_Intelligence/South India Warehouse and Industrial Cluster Intelligence Framework.md",
+      "x": -380,
+      "y": 0,
+      "width": 460,
+      "height": 250
+    },
+    {
+      "id": "n_hub_master",
+      "type": "file",
+      "file": "12_Dashboards/Logistics Hub Master.md",
+      "x": -380,
+      "y": 340,
+      "width": 460,
+      "height": 220
+    },
+    {
+      "id": "n_industry_matrix",
+      "type": "file",
+      "file": "09_Market_Intelligence/Industry Hub Cargo Matrix for Triangle Backhaul Optimization.md",
+      "x": -380,
+      "y": 640,
+      "width": 460,
+      "height": 250
+    },
+    {
+      "id": "n_delay_metrics",
+      "type": "file",
+      "file": "05_Algorithms/Backhaul/Common Delay Metrics for South India Transportation Planning.md",
+      "x": 320,
+      "y": -700,
+      "width": 470,
+      "height": 240
+    },
+    {
+      "id": "n_delay_action",
+      "type": "file",
+      "file": "05_Algorithms/Backhaul/Delay-to-Action Optimization Framework for Logistics Agents.md",
+      "x": 320,
+      "y": -380,
+      "width": 470,
+      "height": 240
+    },
+    {
+      "id": "n_lane_scorecard",
+      "type": "file",
+      "file": "05_Algorithms/Backhaul/Lane Reliability Scorecard for Return Trip Promise Engine.md",
+      "x": 320,
+      "y": -60,
+      "width": 470,
+      "height": 240
+    },
+    {
+      "id": "n_route_timing",
+      "type": "file",
+      "file": "00_System/Templates/Route Chain Timing Evaluation Template.md",
+      "x": 320,
+      "y": 260,
+      "width": 470,
+      "height": 220
+    },
+    {
+      "id": "n_dashboard_metrics",
+      "type": "file",
+      "file": "12_Dashboards/Corridor Delay Trends Essential Metrics Framework.md",
+      "x": 320,
+      "y": 560,
+      "width": 470,
+      "height": 240
+    },
+    {
+      "id": "n_decision",
+      "type": "text",
+      "text": "# Decision Layer\n\nFor every completed A -> B trip, choose one:\n\n1. Direct B -> A return\n2. B -> C -> A triangle\n3. B -> C -> D -> A quad\n4. Wait for better load\n5. Reposition empty only if strategic\n6. Escalate to dispatcher/control tower\n\nPrimary optimization target:\nRevenue per vehicle day, not just shortest distance.",
+      "x": 1040,
+      "y": -700,
+      "width": 520,
+      "height": 310
+    },
+    {
+      "id": "n_scoring_formula",
+      "type": "text",
+      "text": "## Triangle Approval Formula\n\nApprove if:\n\ntriangle_score >= 70\nAND route_chain_reliability passes\nAND payment reliability passes\nAND vehicle/cargo/hub compatibility passes\nAND expected wait time is acceptable\nAND revenue per vehicle day improves.\n\nReject if any compliance or safety gate fails.",
+      "x": 1040,
+      "y": -280,
+      "width": 520,
+      "height": 260
+    },
+    {
+      "id": "n_agent_rules",
+      "type": "text",
+      "text": "## Agent Decisions\n\nMatching Agent:\n- finds B -> C and C -> A candidates\n\nPricing Agent:\n- applies return-leg incentive or risk premium\n\nRisk Agent:\n- blocks low-confidence, low-reliability, unsafe cargo combinations\n\nControl Tower:\n- handles exception, premium cargo, or low-confidence route chains",
+      "x": 1040,
+      "y": 100,
+      "width": 520,
+      "height": 260
+    },
+    {
+      "id": "n_data_model",
+      "type": "file",
+      "file": "10_Data_Model/Docs/Zippy Logistics Analytics Star Schema.md",
+      "x": 1040,
+      "y": 470,
+      "width": 520,
+      "height": 240
+    },
+    {
+      "id": "n_calendar",
+      "type": "file",
+      "file": "10_Data_Model/Docs/dim_time India Logistics Calendar.md",
+      "x": 1040,
+      "y": 800,
+      "width": 520,
+      "height": 220
+    },
+    {
+      "id": "n_mvp",
+      "type": "text",
+      "text": "# MVP Validation Routes\n\n1. Tiruppur -> Chennai -> Coimbatore -> Tiruppur\n2. Erode -> Chennai -> Coimbatore -> Erode\n3. Bengaluru -> Sri City -> Chennai -> Bengaluru\n\nMeasure for 14 days:\n- direct return load availability\n- B -> C load availability\n- C -> A load availability\n- wait time\n- empty km\n- revenue per vehicle day\n- driver acceptance\n- payment reliability\n- delay/reliability score",
+      "x": 1720,
+      "y": -700,
+      "width": 520,
+      "height": 350
+    },
+    {
+      "id": "n_dashboard",
+      "type": "file",
+      "file": "12_Dashboards/Corridor Delay Trends and Performance Dashboard Template.md",
+      "x": 1720,
+      "y": -240,
+      "width": 520,
+      "height": 240
+    },
+    {
+      "id": "n_tableau",
+      "type": "file",
+      "file": "12_Dashboards/Tableau/ZippyLogitech_Corridor_Delay_Analytics_Workbook_Spec.md",
+      "x": 1720,
+      "y": 100,
+      "width": 520,
+      "height": 240
+    },
+    {
+      "id": "n_linear_index",
+      "type": "file",
+      "file": "00_System/Logistics Brain - Linear Execution Index.md",
+      "x": 1720,
+      "y": 450,
+      "width": 520,
+      "height": 240
+    },
+    {
+      "id": "n_build_sequence",
+      "type": "text",
+      "text": "# Build Sequence\n\n1. Directed lanes\n2. Cluster/hub metadata\n3. Triangle candidate scoring\n4. Delay event capture\n5. Lane reliability scorecards\n6. Return-trip recommendation workflow\n7. Pricing/risk guardrails\n8. Tableau/Power BI cockpit\n9. Field validation feedback loop\n\nRule: never automate what has not been manually validated for at least one route cycle.",
+      "x": 1720,
+      "y": 780,
+      "width": 520,
+      "height": 300
+    }
+  ],
+  "edges": [
+    { "id": "e1", "fromNode": "n_problem", "fromSide": "right", "toNode": "n_return_analogy", "toSide": "left" },
+    { "id": "e2", "fromNode": "n_trading_pairs", "fromSide": "right", "toNode": "n_return_analogy", "toSide": "left" },
+    { "id": "e3", "fromNode": "n_city_pair_master", "fromSide": "right", "toNode": "n_directed_lane_master", "toSide": "left" },
+    { "id": "e4", "fromNode": "n_directed_lane_master", "fromSide": "right", "toNode": "n_triangle_engine", "toSide": "left" },
+    { "id": "e5", "fromNode": "n_lane_examples", "fromSide": "right", "toNode": "n_triangle_engine", "toSide": "left" },
+    { "id": "e6", "fromNode": "n_return_analogy", "fromSide": "bottom", "toNode": "n_deadhead", "toSide": "top" },
+    { "id": "e7", "fromNode": "n_deadhead", "fromSide": "bottom", "toNode": "n_triangle_engine", "toSide": "top" },
+    { "id": "e8", "fromNode": "n_triangle_engine", "fromSide": "bottom", "toNode": "n_triangle_technical", "toSide": "top" },
+    { "id": "e9", "fromNode": "n_triangle_technical", "fromSide": "bottom", "toNode": "n_triangle_master", "toSide": "top" },
+    { "id": "e10", "fromNode": "n_transport_network", "fromSide": "bottom", "toNode": "n_multimodal", "toSide": "top" },
+    { "id": "e11", "fromNode": "n_multimodal", "fromSide": "bottom", "toNode": "n_warehouse_clusters", "toSide": "top" },
+    { "id": "e12", "fromNode": "n_warehouse_clusters", "fromSide": "bottom", "toNode": "n_hub_master", "toSide": "top" },
+    { "id": "e13", "fromNode": "n_hub_master", "fromSide": "bottom", "toNode": "n_industry_matrix", "toSide": "top" },
+    { "id": "e14", "fromNode": "n_warehouse_clusters", "fromSide": "right", "toNode": "n_triangle_engine", "toSide": "right" },
+    { "id": "e15", "fromNode": "n_industry_matrix", "fromSide": "right", "toNode": "n_scoring_formula", "toSide": "left" },
+    { "id": "e16", "fromNode": "n_delay_metrics", "fromSide": "bottom", "toNode": "n_delay_action", "toSide": "top" },
+    { "id": "e17", "fromNode": "n_delay_action", "fromSide": "bottom", "toNode": "n_lane_scorecard", "toSide": "top" },
+    { "id": "e18", "fromNode": "n_lane_scorecard", "fromSide": "bottom", "toNode": "n_route_timing", "toSide": "top" },
+    { "id": "e19", "fromNode": "n_route_timing", "fromSide": "bottom", "toNode": "n_dashboard_metrics", "toSide": "top" },
+    { "id": "e20", "fromNode": "n_triangle_engine", "fromSide": "right", "toNode": "n_decision", "toSide": "left" },
+    { "id": "e21", "fromNode": "n_lane_scorecard", "fromSide": "right", "toNode": "n_scoring_formula", "toSide": "left" },
+    { "id": "e22", "fromNode": "n_decision", "fromSide": "bottom", "toNode": "n_scoring_formula", "toSide": "top" },
+    { "id": "e23", "fromNode": "n_scoring_formula", "fromSide": "bottom", "toNode": "n_agent_rules", "toSide": "top" },
+    { "id": "e24", "fromNode": "n_agent_rules", "fromSide": "bottom", "toNode": "n_data_model", "toSide": "top" },
+    { "id": "e25", "fromNode": "n_data_model", "fromSide": "bottom", "toNode": "n_calendar", "toSide": "top" },
+    { "id": "e26", "fromNode": "n_agent_rules", "fromSide": "right", "toNode": "n_mvp", "toSide": "left" },
+    { "id": "e27", "fromNode": "n_mvp", "fromSide": "bottom", "toNode": "n_dashboard", "toSide": "top" },
+    { "id": "e28", "fromNode": "n_dashboard", "fromSide": "bottom", "toNode": "n_tableau", "toSide": "top" },
+    { "id": "e29", "fromNode": "n_tableau", "fromSide": "bottom", "toNode": "n_linear_index", "toSide": "top" },
+    { "id": "e30", "fromNode": "n_linear_index", "fromSide": "bottom", "toNode": "n_build_sequence", "toSide": "top" },
+    { "id": "e31", "fromNode": "n_dashboard_metrics", "fromSide": "right", "toNode": "n_dashboard", "toSide": "left" },
+    { "id": "e32", "fromNode": "n_calendar", "fromSide": "right", "toNode": "n_dashboard", "toSide": "left" }
+  ]
+}

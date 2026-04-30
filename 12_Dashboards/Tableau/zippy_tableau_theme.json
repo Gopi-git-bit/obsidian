@@ -1,0 +1,21 @@
+﻿{
+  "name": "ZippyLogitech_Tableau_Theme",
+  "palette": {
+    "categorical": [
+      { "name": "Grade A", "color": "#2ECC71" },
+      { "name": "Grade B", "color": "#F1C40F" },
+      { "name": "Grade C", "color": "#E67E22" },
+      { "name": "Grade D/F", "color": "#E74C3C" },
+      { "name": "ASCT Primary", "color": "#3498DB" },
+      { "name": "ASCT Secondary", "color": "#34495E" }
+    ]
+  },
+  "font": {
+    "default": "Aptos, sans-serif",
+    "size": 11
+  },
+  "dashboard": {
+    "background": "#F7F8F4",
+    "border": "#ECF0F1"
+  }
+}
