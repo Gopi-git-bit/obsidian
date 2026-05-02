@@ -136,15 +136,9 @@ If you are implementing, follow this order:
 
 ## Current Structural Note
 
-There are two AI agent folders:
-
-```text
-04_AI_Agents = active architecture and event-layer agents
-10_AI_Agents = older concept-level agent notes
-```
-
-Do not add new agent architecture notes to `10_AI_Agents` unless intentionally preserving legacy material.
+Legacy `10_AI_Agents` notes have been moved out of the active numbered vault and archived under `99_Archive/Legacy_AI_Agents_2026-04-30`. New agent architecture notes should go in `04_AI_Agents`.
 
 ## Canvas Companion
 
 Use [[Return Trip Triangle Engine Operating Canvas]] as the visual companion to this linear index. The canvas is organized left-to-right as demand data -> route engine -> network constraints -> reliability gates -> decision -> dashboard.
+

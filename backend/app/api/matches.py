@@ -15,6 +15,7 @@ from app.models.order_model import Order, OrderStatus, Match, MatchStatus
 from app.models.vehicle_model import VehicleModel
 from app.models.order_model import Bid
 from app.schemas.order import MatchResponse, MatchListResponse, MatchAction
+from app.services.order_service import transition_order
 
 router = APIRouter()
 
@@ -114,8 +115,18 @@ async def find_matches(
     matches.sort(key=lambda x: x[2]["match_score"], reverse=True)
     matches = matches[:limit]
 
-    order.status = OrderStatus.PENDING_MATCH
-    db.commit()
+    if order.status == OrderStatus.CREATED:
+        transition_order(
+            db,
+            order_id=order.id,
+            new_status=OrderStatus.PENDING_MATCH.value,
+            event="match_candidates_generated",
+            actor_role="OMS",
+            idempotency_key=f"match-candidates-generated:{order.id}",
+            reason="Matching engine generated vehicle candidates",
+        )
+    else:
+        db.commit()
 
     return {
         "order_id": str(order_id),
@@ -157,9 +168,6 @@ async def accept_match(
     match.accepted_at = datetime.utcnow()
 
     order = db.query(Order).filter(Order.id == match.order_id).first()
-    if order:
-        order.status = OrderStatus.MATCHED
-
     vehicle = db.query(VehicleModel).filter(VehicleModel.id == match.vehicle_id).first()
 
     if order and vehicle:
@@ -191,6 +199,17 @@ async def accept_match(
         match.platform_fee = round(platform_fee, 2)
         match.gst_amount = round(gst, 2)
         match.total_amount = round(base_cost + surcharge_amount + platform_fee + gst, 2)
+
+    if order:
+        transition_order(
+            db,
+            order_id=order.id,
+            new_status=OrderStatus.MATCHED.value,
+            event="match_accepted",
+            actor_role="IMS",
+            idempotency_key=f"match-accepted:{match.id}",
+            reason=action.notes,
+        )
 
     db.commit()
     db.refresh(match)

@@ -59,7 +59,7 @@ This pass updated the master index and added a dedicated linear execution index.
 | `09_Market_Intelligence` | Good | Corridors, hubs, lanes, warehouses and industry maps are here |
 | `10_Data_Model` | Good | SQL and schema documentation are here |
 | `12_Dashboards` | Good | Dashboard specs, Tableau package, Power BI theme and samples are here |
-| `10_AI_Agents` | Legacy/reference | Contains older concept-level agent notes; avoid adding new architecture here |
+| `99_Archive/Legacy_AI_Agents_2026-04-30` | Archived/reference | Old `10_AI_Agents` notes moved out of active numbered vault |
 
 ---
 
@@ -108,7 +108,7 @@ Market lanes
 ## Known Issues
 
 1. Some older notes may still contain unresolved wikilinks to planned notes.
-2. `10_AI_Agents` is a legacy/reference folder while `04_AI_Agents` is active.
+2. Old `10_AI_Agents` notes were archived under `99_Archive/Legacy_AI_Agents_2026-04-30`; `04_AI_Agents` remains active.
 3. This workspace contains caches and app/project files outside the Obsidian-style vault, so broad recursive scans are noisy.
 4. Some old notes have encoding artifacts from prior generations, for example arrow symbols rendered incorrectly. Newly created docs use ASCII arrows to avoid this.
 5. SQL files have not been executed against a live database in this audit pass.
@@ -119,7 +119,7 @@ Market lanes
 
 1. Use [[Logistics Brain - Linear Execution Index]] as the main onboarding/read path.
 2. Add future return-trip, delay, scorecard and dashboard docs to the linear index immediately.
-3. Keep new architecture agent notes in `04_AI_Agents`, not `10_AI_Agents`.
+3. Keep new architecture agent notes in `04_AI_Agents`; archived agent notes are reference-only.
 4. Later, run a wikilink resolution audit and decide whether to create or prune missing notes.
 5. Later, execute SQL scripts in Supabase/PostgreSQL and mark data-model docs as tested.
 
@@ -138,3 +138,34 @@ Corridor intelligence -> Route intelligence -> Reliability intelligence -> Finan
 ---
 
 *This audit confirms the new documents are broadly in the right place. The major improvement made in this pass was linear navigation.*
+
+
+## Cleanup Pass - 2026-04-30
+
+Actions taken after reviewing unwanted/irrelevant Markdown files:
+
+1. Archived legacy `10_AI_Agents` notes out of the active numbered vault:
+   - `Customer Service Agent.md`
+   - `Order Management Agent.md`
+
+   Archive location:
+
+   ```text
+   99_Archive/Legacy_AI_Agents_2026-04-30
+   ```
+
+2. Removed the empty `10_AI_Agents` folder from active navigation.
+
+3. Fixed duplicate Obsidian basename ambiguity:
+   - Renamed `09_Market_Intelligence/Warehouse_Clusters/Madhavaram Logistics Hub.md`
+   - New name: `09_Market_Intelligence/Warehouse_Clusters/Madhavaram Warehouse Cluster.md`
+
+4. Re-ran duplicate basename scan:
+
+   ```text
+   DUPLICATE_BASENAMES = 0
+   ```
+
+Decision note:
+
+Most remaining Markdown files are relevant as source notes, concept notes, algorithms, SOPs, dashboards, data-model docs or market intelligence. No broad deletion was performed because the rest of the files still support the logistics knowledge graph.

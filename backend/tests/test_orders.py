@@ -73,14 +73,116 @@ def test_get_order_not_found():
     assert response.status_code == 404
 
 
-def test_update_order_status():
+def test_update_order_status_rejected():
     order_id = create_order()
     response = client.patch(
         f"/api/v1/orders/{order_id}", json={"status": "pending_match"}
     )
+    assert response.status_code == 422
+
+
+def test_transition_order_status():
+    order_id = create_order()
+    response = client.post(
+        f"/api/v1/orders/{order_id}/transition",
+        json={
+            "new_status": "pending_match",
+            "event": "payment_gate_ready",
+            "actor_role": "OMS",
+            "idempotency_key": f"test-transition-{order_id}",
+        },
+    )
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "pending_match"
+
+
+def test_illegal_transition_blocked():
+    order_id = create_order()
+    response = client.post(
+        f"/api/v1/orders/{order_id}/transition",
+        json={
+            "new_status": "matched",
+            "event": "skip_matching",
+            "actor_role": "IMS",
+            "idempotency_key": f"test-illegal-{order_id}",
+        },
+    )
+    assert response.status_code == 400
+
+
+def test_role_transition_blocked():
+    order_id = create_order()
+    response = client.post(
+        f"/api/v1/orders/{order_id}/transition",
+        json={
+            "new_status": "pending_match",
+            "event": "wrong_actor",
+            "actor_role": "IMS",
+            "idempotency_key": f"test-role-{order_id}",
+        },
+    )
+    assert response.status_code == 403
+
+
+def test_transition_idempotency_replay():
+    order_id = create_order()
+    payload = {
+        "new_status": "pending_match",
+        "event": "payment_gate_ready",
+        "actor_role": "OMS",
+        "idempotency_key": f"test-idempotency-{order_id}",
+    }
+    first = client.post(f"/api/v1/orders/{order_id}/transition", json=payload)
+    second = client.post(f"/api/v1/orders/{order_id}/transition", json=payload)
+    assert first.status_code == 200
+    assert second.status_code == 200
+    assert second.json()["status"] == "pending_match"
+
+
+def test_transition_idempotency_mismatch_blocked():
+    order_id = create_order()
+    idempotency_key = f"test-idempotency-mismatch-{order_id}"
+    first = client.post(
+        f"/api/v1/orders/{order_id}/transition",
+        json={
+            "new_status": "pending_match",
+            "event": "payment_gate_ready",
+            "actor_role": "OMS",
+            "idempotency_key": idempotency_key,
+        },
+    )
+    second = client.post(
+        f"/api/v1/orders/{order_id}/transition",
+        json={
+            "new_status": "bidding",
+            "event": "changed_event",
+            "actor_role": "OMS",
+            "idempotency_key": idempotency_key,
+        },
+    )
+    assert first.status_code == 200
+    assert second.status_code == 409
+
+
+def test_transition_event_written():
+    order_id = create_order()
+    response = client.post(
+        f"/api/v1/orders/{order_id}/transition",
+        json={
+            "new_status": "pending_match",
+            "event": "payment_gate_ready",
+            "actor_role": "OMS",
+            "idempotency_key": f"test-events-{order_id}",
+        },
+    )
+    assert response.status_code == 200
+
+    events = client.get(f"/api/v1/orders/{order_id}/events")
+    assert events.status_code == 200
+    data = events.json()
+    assert data["total"] >= 1
+    assert data["events"][-1]["to_status"] == "pending_match"
 
 
 def test_cancel_order():

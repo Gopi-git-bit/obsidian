@@ -16,7 +16,11 @@ from app.schemas.order import (
     OrderUpdate,
     OrderResponse,
     OrderListResponse,
+    OrderTransitionRequest,
+    OrderStateEventResponse,
+    OrderStateEventListResponse,
 )
+from app.services.order_service import get_order_or_404, transition_order
 
 router = APIRouter()
 
@@ -90,70 +94,6 @@ async def list_orders(
     )
 
 
-@router.get("/orders/{order_id}", response_model=OrderResponse)
-async def get_order(order_id: UUID, db: Session = Depends(get_db)):
-    """Get a specific order by ID"""
-    order = db.query(Order).filter(Order.id == order_id).first()
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    return order
-
-
-@router.patch("/orders/{order_id}", response_model=OrderResponse)
-async def update_order(
-    order_id: UUID,
-    order_data: OrderUpdate,
-    db: Session = Depends(get_db),
-):
-    """Update an order's status or price"""
-    order = db.query(Order).filter(Order.id == order_id).first()
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-
-    update_data = order_data.model_dump(exclude_unset=True)
-
-    if "status" in update_data:
-        new_status = update_data["status"]
-        if new_status not in VALID_STATUSES:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Invalid status. Must be one of: {VALID_STATUSES}",
-            )
-        order.status = OrderStatus(new_status)
-
-    if "offered_price" in update_data and update_data["offered_price"] is not None:
-        order.offered_price = update_data["offered_price"]
-    if (
-        "negotiated_price" in update_data
-        and update_data["negotiated_price"] is not None
-    ):
-        order.negotiated_price = update_data["negotiated_price"]
-    if "notes" in update_data and update_data["notes"] is not None:
-        order.notes = update_data["notes"]
-
-    db.commit()
-    db.refresh(order)
-    return order
-
-
-@router.post("/orders/{order_id}/cancel", response_model=OrderResponse)
-async def cancel_order(order_id: UUID, db: Session = Depends(get_db)):
-    """Cancel an order"""
-    order = db.query(Order).filter(Order.id == order_id).first()
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    if order.status in (OrderStatus.DELIVERED, OrderStatus.CANCELLED):
-        raise HTTPException(
-            status_code=400,
-            detail=f"Cannot cancel order in {order.status.value} status",
-        )
-
-    order.status = OrderStatus.CANCELLED
-    db.commit()
-    db.refresh(order)
-    return order
-
-
 @router.get("/orders/stats/summary")
 async def get_order_stats(db: Session = Depends(get_db)):
     """Get order summary statistics"""
@@ -190,3 +130,92 @@ async def get_order_stats(db: Session = Depends(get_db)):
             {"origin": r[0], "destination": r[1], "count": r[2]} for r in top_routes
         ],
     }
+
+
+@router.get("/orders/{order_id}", response_model=OrderResponse)
+async def get_order(order_id: UUID, db: Session = Depends(get_db)):
+    """Get a specific order by ID"""
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return order
+
+
+@router.patch("/orders/{order_id}", response_model=OrderResponse)
+async def update_order(
+    order_id: UUID,
+    order_data: OrderUpdate,
+    db: Session = Depends(get_db),
+):
+    """Update editable order commercial fields.
+
+    Lifecycle status changes must go through /orders/{order_id}/transition.
+    """
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    update_data = order_data.model_dump(exclude_unset=True)
+
+    if "offered_price" in update_data and update_data["offered_price"] is not None:
+        order.offered_price = update_data["offered_price"]
+    if (
+        "negotiated_price" in update_data
+        and update_data["negotiated_price"] is not None
+    ):
+        order.negotiated_price = update_data["negotiated_price"]
+    if "notes" in update_data and update_data["notes"] is not None:
+        order.notes = update_data["notes"]
+
+    db.commit()
+    db.refresh(order)
+    return order
+
+
+@router.post("/orders/{order_id}/transition", response_model=OrderResponse)
+async def transition_order_status(
+    order_id: UUID,
+    transition_data: OrderTransitionRequest,
+    db: Session = Depends(get_db),
+):
+    """Request an order lifecycle transition through the policy gateway."""
+    return transition_order(
+        db,
+        order_id=order_id,
+        new_status=transition_data.new_status,
+        event=transition_data.event,
+        actor_role=transition_data.actor_role,
+        actor_id=transition_data.actor_id,
+        idempotency_key=transition_data.idempotency_key,
+        reason=transition_data.reason,
+        evidence_ref=transition_data.evidence_ref,
+    )
+
+
+@router.get("/orders/{order_id}/events", response_model=OrderStateEventListResponse)
+async def list_order_state_events(order_id: UUID, db: Session = Depends(get_db)):
+    """List lifecycle state events for an order."""
+    order = get_order_or_404(db, order_id)
+    events = order.state_events
+    return OrderStateEventListResponse(
+        total=len(events),
+        events=[OrderStateEventResponse.model_validate(event) for event in events],
+    )
+
+
+@router.post("/orders/{order_id}/cancel", response_model=OrderResponse)
+async def cancel_order(order_id: UUID, db: Session = Depends(get_db)):
+    """Cancel an order"""
+    order = db.query(Order).filter(Order.id == order_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return transition_order(
+        db,
+        order_id=order_id,
+        new_status=OrderStatus.CANCELLED.value,
+        event="order_cancelled",
+        actor_role="OMS",
+        actor_id=None,
+        idempotency_key=f"cancel:{order_id}",
+        reason="Cancel endpoint requested",
+    )

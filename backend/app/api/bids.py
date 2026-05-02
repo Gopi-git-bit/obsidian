@@ -19,6 +19,7 @@ from app.schemas.order import (
     BidResponse,
     BidListResponse,
 )
+from app.services.order_service import transition_order
 
 router = APIRouter()
 
@@ -64,7 +65,16 @@ async def create_bid(
     )
     db.add(bid)
 
-    order.status = OrderStatus.BIDDING
+    if order.status != OrderStatus.BIDDING:
+        transition_order(
+            db,
+            order_id=order.id,
+            new_status=OrderStatus.BIDDING.value,
+            event="bid_window_opened",
+            actor_role="OMS",
+            idempotency_key=f"bid-window-opened:{order.id}",
+            reason="First eligible bid received",
+        )
 
     db.commit()
     db.refresh(bid)
@@ -115,9 +125,17 @@ async def accept_bid(bid_id: UUID, db: Session = Depends(get_db)):
 
     order = db.query(Order).filter(Order.id == bid.order_id).first()
     if order:
-        order.status = OrderStatus.BID_ACCEPTED
         if bid.bid_amount:
             order.negotiated_price = bid.bid_amount
+        transition_order(
+            db,
+            order_id=order.id,
+            new_status=OrderStatus.BID_ACCEPTED.value,
+            event="bid_accepted",
+            actor_role="OMS",
+            idempotency_key=f"bid-accepted:{bid.id}",
+            reason="Customer accepted provider bid",
+        )
 
     competing = (
         db.query(Bid)

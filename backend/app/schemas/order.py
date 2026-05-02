@@ -51,10 +51,21 @@ class OrderCreate(BaseModel):
 
 
 class OrderUpdate(BaseModel):
-    status: Optional[str] = None
+    model_config = ConfigDict(extra="forbid")
+
     offered_price: Optional[float] = Field(None, gt=0)
     negotiated_price: Optional[float] = Field(None, gt=0)
     notes: Optional[str] = None
+
+
+class OrderTransitionRequest(BaseModel):
+    new_status: str
+    event: str = Field(..., min_length=1, max_length=80)
+    actor_role: str = Field(..., min_length=1, max_length=40)
+    actor_id: Optional[str] = Field(None, max_length=80)
+    idempotency_key: str = Field(..., min_length=1, max_length=120)
+    reason: Optional[str] = None
+    evidence_ref: Optional[str] = Field(None, max_length=255)
 
 
 class OrderResponse(BaseModel):
@@ -103,6 +114,27 @@ class OrderResponse(BaseModel):
 
     created_at: datetime
     updated_at: datetime
+
+
+class OrderStateEventResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    order_id: UUID
+    from_status: str
+    to_status: str
+    event: str
+    actor_role: str
+    actor_id: Optional[str]
+    idempotency_key: str
+    reason: Optional[str]
+    evidence_ref: Optional[str]
+    created_at: datetime
+
+
+class OrderStateEventListResponse(BaseModel):
+    total: int
+    events: list[OrderStateEventResponse]
 
 class OrderListResponse(BaseModel):
     total: int

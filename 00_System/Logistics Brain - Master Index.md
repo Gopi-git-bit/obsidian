@@ -22,7 +22,7 @@ This vault serves as:
 
 ## Current Vault Snapshot
 
-- **Vault markdown note count:** 282 notes across `00_` to `12_` folders
+- **Vault markdown note count:** 296 notes across `00_` to `12_` folders
 - **SQL/data-model files:** 5 SQL files in `10_Data_Model/SQL`
 - **Dashboard asset files:** 9 Tableau/Power BI sample/theme/README assets
 - **Primary focus:** Indian logistics operations, platform design, route intelligence, finance lifecycle, data model and execution playbooks
@@ -46,21 +46,22 @@ Use this order when onboarding yourself, an agent, or a teammate.
 | Order | Layer | Start Here |
 |---:|---|---|
 | 1 | System orientation | [[Logistics Brain - Linear Execution Index]] |
-| 2 | Market thesis | [[South India Tier 2-3 City Pair Freight Atlas Framework]] |
-| 3 | Directed demand | [[South India Trading Pair City Research System]] |
-| 4 | Return-trip logic | [[Return Trip Analogy - From Empty Return to Earning Loop]] |
-| 5 | Triangle engine | [[Triangle Route Engine for Return Trip Optimization]] |
-| 6 | Deadhead intelligence | [[Deadhead Reduction Intelligence Layer for Tier 2-3 Freight]] |
-| 7 | Hub/warehouse intelligence | [[South India Logistics Hub Intelligence Framework]] |
-| 8 | Industry/cargo compatibility | [[Industry Hub Cargo Matrix for Triangle Backhaul Optimization]] |
-| 9 | Delay and promise logic | [[Common Delay Metrics for South India Transportation Planning]] |
-| 10 | Delay-to-action rules | [[Delay-to-Action Optimization Framework for Logistics Agents]] |
-| 11 | Lane scorecards | [[Lane Reliability Scorecard for Return Trip Promise Engine]] |
-| 12 | Finance/invoice lifecycle | [[Finance and Invoice Event Layer for Logistics Platform]] |
-| 13 | Analytics schema | [[Zippy Logistics Analytics Star Schema]] |
-| 14 | Calendar/seasonality | [[dim_time India Logistics Calendar]] |
-| 15 | Control dashboard | [[Corridor Delay Trends and Performance Dashboard Template]] |
-| 16 | Tableau implementation | [[Tableau Workbook Spec: ZippyLogitech Corridor Delay Analytics]] |
+| 2 | AI operating roadmap | [[AI Logistics Operating System Roadmap]] |
+| 3 | Market thesis | [[South India Tier 2-3 City Pair Freight Atlas Framework]] |
+| 4 | Directed demand | [[South India Trading Pair City Research System]] |
+| 5 | Return-trip logic | [[Return Trip Analogy - From Empty Return to Earning Loop]] |
+| 6 | Triangle engine | [[Triangle Route Engine for Return Trip Optimization]] |
+| 7 | Deadhead intelligence | [[Deadhead Reduction Intelligence Layer for Tier 2-3 Freight]] |
+| 8 | Hub/warehouse intelligence | [[South India Logistics Hub Intelligence Framework]] |
+| 9 | Industry/cargo compatibility | [[Industry Hub Cargo Matrix for Triangle Backhaul Optimization]] |
+| 10 | Delay and promise logic | [[Common Delay Metrics for South India Transportation Planning]] |
+| 11 | Delay-to-action rules | [[Delay-to-Action Optimization Framework for Logistics Agents]] |
+| 12 | Lane scorecards | [[Lane Reliability Scorecard for Return Trip Promise Engine]] |
+| 13 | Finance/invoice lifecycle | [[Finance and Invoice Event Layer for Logistics Platform]] |
+| 14 | Analytics schema | [[Zippy Logistics Analytics Star Schema]] |
+| 15 | Calendar/seasonality | [[dim_time India Logistics Calendar]] |
+| 16 | Control dashboard | [[Corridor Delay Trends and Performance Dashboard Template]] |
+| 17 | Tableau implementation | [[Tableau Workbook Spec: ZippyLogitech Corridor Delay Analytics]] |
 
 ## Hub Navigation
 
@@ -85,11 +86,18 @@ Use this order when onboarding yourself, an agent, or a teammate.
 | Area | Folder | Status |
 |---|---|---|
 | Return-trip intelligence | `05_Algorithms/Backhaul`, `09_Market_Intelligence` | active |
+| Return-trip streamlined operations | `05_Algorithms/Backhaul` | active |
+| AI logistics operating system roadmap | `00_System` | active |
+| AI logistics value chain implementation | `08_Business_Models` | active |
 | Corridor intelligence | `09_Market_Intelligence`, `12_Dashboards` | active |
 | Finance + invoice event layer | `04_AI_Agents` | active |
+| CRM and customer retention playbook | `07_SOPs/Customer Support` | active |
+| Safe algorithm rollout SOP | `07_SOPs` | active |
+| Current frontend surface specs | `00_System` | active |
+| Frontend state-driven UI blueprint | `00_System` | active |
 | Analytics/data model | `10_Data_Model` | active |
 | Tableau/Power BI dashboards | `12_Dashboards` | active |
-| Legacy concept agents | `10_AI_Agents` | legacy/reference |
+| Archived legacy concept agents | `99_Archive/Legacy_AI_Agents_2026-04-30` | archived/reference |
 
 ## System Notes
 
@@ -122,3 +130,4 @@ Use this order when onboarding yourself, an agent, or a teammate.
 ## Active Canvas Maps
 
 - [[Return Trip Triangle Engine Operating Canvas]] - visual operating map for trading pairs, triangle engine, hub/warehouse data, delay data, decision rules and dashboards.
+

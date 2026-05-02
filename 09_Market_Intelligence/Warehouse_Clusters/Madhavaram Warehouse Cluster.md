@@ -49,7 +49,7 @@ tags:
   - validate
 ---
 
-# Madhavaram Logistics Hub - Chennai
+# Madhavaram Warehouse Cluster - Chennai
 
 ## Industrial Context
 
@@ -86,3 +86,4 @@ Tiruppur Export ICD -> Madhavaram Logistics Hub -> SIPCOT Irugur -> Tiruppur Exp
 - [[Tiruppur to Chennai]]
 - [[Chennai to Tiruppur]]
 - [[Tiruppur Chennai Coimbatore Triangle Route]]
+

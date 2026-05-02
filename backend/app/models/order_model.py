@@ -35,6 +35,12 @@ class OrderStatus(str, enum.Enum):
     CANCELLED = "cancelled"
 
 
+TERMINAL_ORDER_STATUSES = {
+    OrderStatus.DELIVERED,
+    OrderStatus.CANCELLED,
+}
+
+
 class CargoType(str, enum.Enum):
     GENERAL = "general"
     FRAGILE = "fragile"
@@ -106,6 +112,12 @@ class Order(Base):
     matches = relationship(
         "Match", back_populates="order", cascade="all, delete-orphan"
     )
+    state_events = relationship(
+        "OrderStateEvent",
+        back_populates="order",
+        cascade="all, delete-orphan",
+        order_by="OrderStateEvent.created_at",
+    )
 
     __table_args__ = (
         Index("idx_order_status", "status"),
@@ -116,6 +128,41 @@ class Order(Base):
 
     def __repr__(self):
         return f"<Order {self.id} {self.origin_city}->{self.destination_city} [{self.status}]>"
+
+
+class OrderStateEvent(Base):
+    """Audit event for order lifecycle transitions."""
+
+    __tablename__ = "order_state_events"
+
+    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    order_id = Column(
+        Uuid(as_uuid=True),
+        ForeignKey("orders.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+
+    from_status = Column(Enum(OrderStatus), nullable=False)
+    to_status = Column(Enum(OrderStatus), nullable=False)
+    event = Column(String(80), nullable=False)
+    actor_role = Column(String(40), nullable=False)
+    actor_id = Column(String(80))
+    idempotency_key = Column(String(120), nullable=False, unique=True, index=True)
+    reason = Column(Text)
+    evidence_ref = Column(String(255))
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    order = relationship("Order", back_populates="state_events")
+
+    __table_args__ = (
+        Index("idx_order_state_event_order_created", "order_id", "created_at"),
+        Index("idx_order_state_event_to_status", "to_status"),
+    )
+
+    def __repr__(self):
+        return f"<OrderStateEvent {self.order_id} {self.from_status}->{self.to_status}>"
 
 
 class BidStatus(str, enum.Enum):
