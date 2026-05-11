@@ -1,0 +1,11 @@
+lane_id,total_score_v1,total_score_v2,score_delta,demand_score,supply_score,backhaul_score,pricing_score,payment_score,complexity_score,proof_score,competition_score,confidence_level,hard_gate_flag,recommendation_v2,validation_state,why_it_moved
+tiruppur:chennai:garments,74,76,2,18,10,12,7,6,6,9,8,medium,false,validate_manually,proxy_operational_plus_lane_logic,Strong outbound lane plus triangle support but reverse-rate validation still missing
+chennai:tiruppur:textiles,60,56,-4,10,11,4,6,6,7,6,6,low,false,build_later,weak_return_evidence,Weak-return evidence is clearer and lane is better treated as triangle support
+coimbatore:chennai:engineering,73,75,2,17,11,10,7,7,7,8,8,medium,false,validate_manually,proxy_operational_plus_corridor_support,Industrial lane thesis strengthened by corridor and warehouse notes
+chennai:coimbatore:mixed,69,74,5,15,11,10,7,7,7,7,10,medium,false,validate_manually,reliability_proxy_plus_lane_strength,Strong directed-lane evidence plus sample reliability support
+erode:chennai:textiles,70,73,3,16,9,11,7,6,6,8,10,medium,false,validate_manually,triangle_support_plus_lane_strength,Triangle support and medium-strong lane logic improve confidence
+karur:chennai:home_textiles,67,68,1,14,8,10,7,6,6,8,9,medium,false,validate_manually,export_supporting_signal,Export relevance is real but density evidence still partial
+namakkal:chennai:poultry_industrial,64,61,-3,13,13,6,6,6,4,5,8,medium,false,build_later,compatibility_risk_adjustment,Supply is strong but hygiene and return-fit complexity reduce attractiveness
+hosur:chennai:auto_components,77,80,3,17,11,10,8,7,8,8,11,medium,false,launch_now,policy_priority_plus_industrial_fit,High-priority industrial corridor with strong premium-service logic
+hosur:coimbatore:industrial,72,75,3,15,10,11,7,7,7,7,11,medium,false,validate_manually,western_corridor_support,Western industrial corridor logic is stronger than first-pass estimate
+coimbatore:tuticorin_via_madurai:export,66,68,2,15,8,9,7,6,5,8,10,low,true,validate_manually,policy_plus_export_logic,Export and policy logic are stronger but port workflow remains a hard gate

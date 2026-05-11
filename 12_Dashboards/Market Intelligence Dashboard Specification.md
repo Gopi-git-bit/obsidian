@@ -343,6 +343,14 @@ Use the first-pass corridor seed file for dashboard prototyping:
 
 - `12_Dashboards/Tableau/sample_data/sample_corridor_opportunity_scores.csv`
 
+Use the re-scored seed file when v2 strategic comparisons are needed:
+
+- `12_Dashboards/Tableau/sample_data/sample_corridor_opportunity_scores_v2.csv`
+
+Use this proxy backtest file to compare score recommendations versus available operational hints:
+
+- `12_Dashboards/Tableau/sample_data/sample_corridor_backtest_results.csv`
+
 ## Refresh Cadence
 
 | Layer | Refresh |
