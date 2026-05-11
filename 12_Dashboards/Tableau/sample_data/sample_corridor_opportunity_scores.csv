@@ -1,0 +1,11 @@
+lane_id,origin_city,destination_city,route_shape,primary_cargo,demand_score,supply_score,backhaul_score,pricing_score,payment_score,complexity_score,proof_score,competition_score,total_score,confidence_level,hard_gate_flag,recommendation,next_action
+tiruppur:chennai:garments,Tiruppur,Chennai,direct,Garments and export cargo,18,10,11,7,6,6,9,7,74,medium,false,validate_manually,Collect reverse-lane rates and transporter interviews
+chennai:tiruppur:textiles,Chennai,Tiruppur,direct,Textile inputs and dry goods,11,11,6,6,6,7,7,6,60,medium,false,build_later,Verify reverse-demand depth and backhaul fit
+coimbatore:chennai:engineering,Coimbatore,Chennai,direct,Engineering and warehouse freight,17,11,10,7,7,7,8,6,73,medium,false,validate_manually,Capture live rate bands and shipper proof angle
+chennai:coimbatore:mixed,Chennai,Coimbatore,direct,Industrial inputs and mixed B2B cargo,14,11,9,7,7,7,7,7,69,medium,false,validate_manually,Confirm repeat-lane mix and contractability
+erode:chennai:textiles,Erode,Chennai,direct,Processed fabric and textile cargo,16,9,10,7,6,6,8,8,70,medium,false,validate_manually,Validate shipper frequency and rate benchmarks
+karur:chennai:home_textiles,Karur,Chennai,direct,Home textiles and furnishing export cargo,14,8,9,7,6,6,8,9,67,medium,false,validate_manually,Confirm export-linked repeat demand and supply depth
+namakkal:chennai:poultry_industrial,Namakkal,Chennai,direct,Poultry inputs and industrial freight,13,13,8,6,6,5,6,7,64,medium,false,build_later,Separate poultry and non-poultry vehicle patterns
+hosur:chennai:auto_components,Hosur,Chennai,direct,Auto EV and industrial parts,17,11,10,8,7,8,8,8,77,medium,false,validate_manually,Prioritize industrial shipper interviews and lane pilots
+hosur:coimbatore:industrial,Hosur,Coimbatore,direct,Industrial parts and western TN supply,15,10,11,7,7,7,7,8,72,medium,false,validate_manually,Confirm return-load logic through Salem and Erode
+coimbatore:tuticorin_via_madurai:export,Coimbatore,Tuticorin via Madurai,port_linked,Textile and engineering export cargo,15,8,9,7,6,5,8,8,66,low,true,validate_manually,Validate port workflow CFS dependency and document burden

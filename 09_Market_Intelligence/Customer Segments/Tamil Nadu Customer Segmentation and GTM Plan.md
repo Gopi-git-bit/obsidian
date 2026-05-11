@@ -26,6 +26,8 @@ This plan is based on the Tamil Nadu logistics market database and Tavily/AutoCl
 
 Personal phone numbers and direct contacts are intentionally not repeated in this note. Keep outreach contact details in a controlled CRM or database layer.
 
+For the execution-layer rollout tied to MSME shipper acquisition, see [[Zippy Logistics 12-Month Marketing Execution Plan]].
+
 ## Segmentation Model
 
 | Axis | Values | Weight |

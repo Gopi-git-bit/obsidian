@@ -45,9 +45,15 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 - [[Partnership-Led Market Entry Framework]]
 - [[Collaboration Risk Opportunity Balance Framework]]
 - [[Tamil Nadu Customer Segmentation and GTM Plan]]
+- [[Zippy Logistics 12-Month Marketing Execution Plan]]
 - [[Customer Needs Analysis]]
 - [[Price Sensitivity Data]]
 - [[Indian Road Logistics Pain Point Map]]
+- [[Zippy Logistics Intelligence Maturity Model v1]]
+- [[Zippy Competitor Battlefield Map]]
+- [[Corridor Opportunity Scoring Model]]
+- [[Pricing and Service Benchmark Framework]]
+- [[Market Intelligence Dashboard Specification]]
 
 ## Regional Intelligence
 
