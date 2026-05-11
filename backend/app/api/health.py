@@ -3,6 +3,7 @@ Health check endpoints
 """
 
 from fastapi import APIRouter, Depends
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
@@ -23,7 +24,7 @@ async def health_check(db: Session = Depends(get_db)):
     # Check database connection
     db_status = "connected"
     try:
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
     except Exception:
         db_status = "disconnected"
 
@@ -40,7 +41,7 @@ async def liveness():
 async def readiness(db: Session = Depends(get_db)):
     """Readiness probe - checks database connectivity"""
     try:
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {"status": "ready", "database": "connected"}
     except Exception as e:
         return {"status": "not ready", "database": "disconnected", "error": str(e)}

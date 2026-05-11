@@ -15,6 +15,7 @@ def test_health_check():
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "healthy"
+    assert data["database"] == "connected"
     assert "version" in data
 
 
@@ -23,6 +24,15 @@ def test_liveness_probe():
     response = client.get("/api/v1/health/live")
     assert response.status_code == 200
     assert response.json()["status"] == "alive"
+
+
+def test_readiness_probe():
+    """Test readiness endpoint checks database connectivity"""
+    response = client.get("/api/v1/health/ready")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "ready"
+    assert data["database"] == "connected"
 
 
 def test_root_endpoint():

@@ -16,7 +16,7 @@ from app.models import vehicle_model, order_model
 
 config = context.config
 
-if config.cmd_opts and config.cmd_opts.config_file_name:
+if config.cmd_opts and getattr(config.cmd_opts, "config_file_name", None):
     fileConfig(config.config_file_name)
 
 DATABASE_URL = os.getenv("DATABASE_URL")

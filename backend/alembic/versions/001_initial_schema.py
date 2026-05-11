@@ -17,15 +17,29 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
+def uuid_type():
+    if op.get_bind().dialect.name == "postgresql":
+        return postgresql.UUID(as_uuid=True)
+    return sa.Uuid(as_uuid=True)
+
+
+def uuid_pk_column(name: str = "id"):
+    kwargs = {"nullable": False}
+    if op.get_bind().dialect.name == "postgresql":
+        kwargs["server_default"] = sa.text("gen_random_uuid()")
+    return sa.Column(name, uuid_type(), **kwargs)
+
+
+def current_timestamp_default():
+    if op.get_bind().dialect.name == "postgresql":
+        return sa.text("now()")
+    return sa.text("CURRENT_TIMESTAMP")
+
+
 def upgrade() -> None:
     op.create_table(
         "vehicle_models",
-        sa.Column(
-            "id",
-            postgresql.UUID(as_uuid=True),
-            server_default=sa.text("gen_random_uuid()"),
-            nullable=False,
-        ),
+        uuid_pk_column(),
         sa.Column("manufacturer", sa.String(50), nullable=False),
         sa.Column("model_name", sa.String(100), nullable=False),
         sa.Column("variant", sa.String(50)),
@@ -53,7 +67,9 @@ def upgrade() -> None:
         sa.Column("price_ex_showroom", sa.Numeric(15, 2)),
         sa.Column("is_active", sa.Boolean(), server_default="true"),
         sa.Column(
-            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=current_timestamp_default(),
         ),
         sa.CheckConstraint(
             "category IN ('LCV', 'ICV', 'HCV', 'Tipper', 'Tractor')",
@@ -68,12 +84,7 @@ def upgrade() -> None:
 
     op.create_table(
         "orders",
-        sa.Column(
-            "id",
-            postgresql.UUID(as_uuid=True),
-            server_default=sa.text("gen_random_uuid()"),
-            nullable=False,
-        ),
+        uuid_pk_column(),
         sa.Column("shipper_name", sa.String(150), nullable=False),
         sa.Column("shipper_phone", sa.String(15), nullable=False),
         sa.Column("shipper_email", sa.String(255)),
@@ -106,10 +117,14 @@ def upgrade() -> None:
         sa.Column("status", sa.String(20), nullable=False),
         sa.Column("notes", sa.Text()),
         sa.Column(
-            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=current_timestamp_default(),
         ),
         sa.Column(
-            "updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=current_timestamp_default(),
         ),
         sa.CheckConstraint("weight_kg > 0", name="positive_weight"),
         sa.PrimaryKeyConstraint("id"),
@@ -122,14 +137,9 @@ def upgrade() -> None:
 
     op.create_table(
         "bids",
-        sa.Column(
-            "id",
-            postgresql.UUID(as_uuid=True),
-            server_default=sa.text("gen_random_uuid()"),
-            nullable=False,
-        ),
-        sa.Column("order_id", postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column("vehicle_id", postgresql.UUID(as_uuid=True), nullable=False),
+        uuid_pk_column(),
+        sa.Column("order_id", uuid_type(), nullable=False),
+        sa.Column("vehicle_id", uuid_type(), nullable=False),
         sa.Column("driver_name", sa.String(150), nullable=False),
         sa.Column("driver_phone", sa.String(15), nullable=False),
         sa.Column("bid_amount", sa.Numeric(12, 2), nullable=False),
@@ -140,10 +150,14 @@ def upgrade() -> None:
         sa.Column("notes", sa.Text()),
         sa.Column("status", sa.String(20), nullable=False),
         sa.Column(
-            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=current_timestamp_default(),
         ),
         sa.Column(
-            "updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=current_timestamp_default(),
         ),
         sa.CheckConstraint("bid_amount > 0", name="positive_bid"),
         sa.PrimaryKeyConstraint("id"),
@@ -154,15 +168,10 @@ def upgrade() -> None:
 
     op.create_table(
         "matches",
-        sa.Column(
-            "id",
-            postgresql.UUID(as_uuid=True),
-            server_default=sa.text("gen_random_uuid()"),
-            nullable=False,
-        ),
-        sa.Column("order_id", postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column("vehicle_id", postgresql.UUID(as_uuid=True), nullable=False),
-        sa.Column("bid_id", postgresql.UUID(as_uuid=True)),
+        uuid_pk_column(),
+        sa.Column("order_id", uuid_type(), nullable=False),
+        sa.Column("vehicle_id", uuid_type(), nullable=False),
+        sa.Column("bid_id", uuid_type()),
         sa.Column("match_score", sa.Numeric(5, 2)),
         sa.Column("utilization_percent", sa.Numeric(5, 2)),
         sa.Column("efficiency_score", sa.Numeric(5, 2)),
@@ -172,12 +181,16 @@ def upgrade() -> None:
         sa.Column("total_amount", sa.Numeric(12, 2)),
         sa.Column("status", sa.String(20), nullable=False),
         sa.Column(
-            "matched_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+            "matched_at",
+            sa.DateTime(timezone=True),
+            server_default=current_timestamp_default(),
         ),
         sa.Column("accepted_at", sa.DateTime(timezone=True)),
         sa.Column("completed_at", sa.DateTime(timezone=True)),
         sa.Column(
-            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=current_timestamp_default(),
         ),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(["order_id"], ["orders.id"], ondelete="CASCADE"),
