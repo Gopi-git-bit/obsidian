@@ -60,8 +60,12 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 ## Marketing Systems
 
 - [[Zippy Logistics 12-Month Marketing Execution Plan]] - annual GTM operating plan for corridor validation, proof capture, acquisition, and expansion
+- [[Modern Marketing Channel Strategy for Zippy Logistics]] - operating-model view of acquisition, engagement, automation, and ROI tracking across channels
+- [[Emotional and Psychological Marketing Methodology for Zippy Logistics]] - trust, fear-reduction, assurance, and sentiment framework for channel messaging and conversion
 - [[WhatsApp Growth and Dispatch-Led Marketing Strategy for Zippy Logistics]] - channel strategy for chat-led conversion, dispatch trust, and retention loops
 - [[SEO Mastery Framework for Zippy Logistics]] - search-acquisition framework for intent capture, content clustering, and PPC alignment
+- [[Blog Marketing and Editorial Guidelines for Logistics and Supply Chain]] - editorial rules for authority-building blog content, internal linking, and domain vocabulary
+- [[AI Prompting Framework for Marketing Strategy]] - reusable prompt architecture for generating marketing plans from uploaded business context
 
 ## Regional Intelligence
 
