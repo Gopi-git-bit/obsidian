@@ -28,6 +28,10 @@ Use this note when you want the shortest path between product direction, archite
 - [[Master PRD Distillation for Current Project]]
 - [[Backend Structure for Current Project]]
 - [[Frontend Architecture for Current Project]]
+- [[MVP Build Contract for Current Project]]
+- [[API and Event Contract for Current Project]]
+- [[Role and Permission Matrix for Current Project]]
+- [[Frontend-to-Backend Flow Map for Current Project]]
 - [[Codex Context Bundle for Current Project]]
 
 ## Product Surfaces
@@ -43,6 +47,10 @@ Use this note when you want the shortest path between product direction, archite
 - [[Current Architecture Source of Truth]]
 - [[Backend Structure for Current Project]]
 - [[Frontend Architecture for Current Project]]
+- [[MVP Build Contract for Current Project]]
+- [[API and Event Contract for Current Project]]
+- [[Role and Permission Matrix for Current Project]]
+- [[Frontend-to-Backend Flow Map for Current Project]]
 - [[Current Project Navigation Hub]]
 - [[AI Logistics Operating System Roadmap]]
 
@@ -85,11 +93,15 @@ Use this note when you want the shortest path between product direction, archite
 
 1. [[Current Architecture Source of Truth]]
 2. [[Master PRD Distillation for Current Project]]
-3. [[Backend Structure for Current Project]]
-4. [[Frontend Architecture for Current Project]]
-5. [[Operational Compliance Framework for Indian Logistics Startup 2025-2026]]
-6. [[Zippy Logistics Operational Core Schema]]
-7. [[On-Time Delivery Control Tower Strategy for Multimodal Freight]]
+3. [[MVP Build Contract for Current Project]]
+4. [[API and Event Contract for Current Project]]
+5. [[Role and Permission Matrix for Current Project]]
+6. [[Frontend-to-Backend Flow Map for Current Project]]
+7. [[Backend Structure for Current Project]]
+8. [[Frontend Architecture for Current Project]]
+9. [[Operational Compliance Framework for Indian Logistics Startup 2025-2026]]
+10. [[Zippy Logistics Operational Core Schema]]
+11. [[On-Time Delivery Control Tower Strategy for Multimodal Freight]]
 
 ## Navigation Rule
 
