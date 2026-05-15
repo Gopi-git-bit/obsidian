@@ -46,6 +46,8 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 - [[Collaboration Risk Opportunity Balance Framework]]
 - [[Tamil Nadu Customer Segmentation and GTM Plan]]
 - [[Zippy Logistics 12-Month Marketing Execution Plan]]
+- [[WhatsApp Growth and Dispatch-Led Marketing Strategy for Zippy Logistics]]
+- [[SEO Mastery Framework for Zippy Logistics]]
 - [[Customer Needs Analysis]]
 - [[Price Sensitivity Data]]
 - [[Indian Road Logistics Pain Point Map]]
@@ -55,10 +57,17 @@ Central hub for competitive analysis, market sizing, and strategic market insigh
 - [[Pricing and Service Benchmark Framework]]
 - [[Market Intelligence Dashboard Specification]]
 
+## Marketing Systems
+
+- [[Zippy Logistics 12-Month Marketing Execution Plan]] - annual GTM operating plan for corridor validation, proof capture, acquisition, and expansion
+- [[WhatsApp Growth and Dispatch-Led Marketing Strategy for Zippy Logistics]] - channel strategy for chat-led conversion, dispatch trust, and retention loops
+- [[SEO Mastery Framework for Zippy Logistics]] - search-acquisition framework for intent capture, content clustering, and PPC alignment
+
 ## Regional Intelligence
 
 ### South India
 - [[South India Logistics and Transportation Market Research]] - Completed GLM/Z.ai market research with city-pair priorities, state opportunity matrix, sector flows, ports, air cargo, and Zippy GTM sequencing
+- [[Pan-India Logistics Expansion Gaps for Current Project]] - Extracts the missing national-layer insights beyond the current South India research, especially DFC logic, national hub tiering, NE gateway strategy, and state-fragmentation implications
 - [[Tier 2-3 Delivery Reliability Playbook]] - Location, last-mile, reverse logistics, partner-quality, and exception-management playbook for non-metro delivery reliability
 - [[South India Tier 2-3 Logistics Opportunity]]
 - [[South India Local Truck Rate Bands]]

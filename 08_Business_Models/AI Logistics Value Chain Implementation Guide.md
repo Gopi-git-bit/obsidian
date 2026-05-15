@@ -28,6 +28,8 @@ source_files:
 
 This note recreates the value-chain implementation guidance from the source document in the current Zippy Logistics context.
 
+Use [[Zippy Enterprise Value Chain Architecture]] as the enterprise-layer companion to this note. This guide is the operating implementation view; the enterprise architecture note adds Porter-style activity structure, cross-activity linkages, SCaaS framing, and margin-driver logic.
+
 The source material teaches one important truth:
 
 ```text
@@ -949,3 +951,9 @@ feed the learning back into the next shipment
 ```
 
 That is how the company moves from transport arrangement to AI-enabled logistics operating system.
+
+## Related Enterprise Notes
+
+- [[Zippy Enterprise Value Chain Architecture]]
+- [[Current Project Navigation Hub]]
+- [[Current Architecture Source of Truth]]

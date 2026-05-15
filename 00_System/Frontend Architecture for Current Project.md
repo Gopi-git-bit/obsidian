@@ -366,6 +366,7 @@ Those can evolve.
 
 Use this note with:
 
+- [[Current Project Navigation Hub]]
 - [[Current Architecture Source of Truth]]
 - [[Backend Structure for Current Project]]
 - [[Zippy Logistics Operational Core Schema]]

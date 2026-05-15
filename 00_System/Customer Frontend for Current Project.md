@@ -358,3 +358,10 @@ a shipment booking, tracking, payment, and relationship surface
 that turns Zippy's operational truth into customer confidence
 ```
 
+## Related Project Notes
+
+- [[Current Project Navigation Hub]]
+- [[Frontend Architecture for Current Project]]
+- [[Current Architecture Source of Truth]]
+- [[Backend Structure for Current Project]]
+- [[Operational Compliance Framework for Indian Logistics Startup 2025-2026]]

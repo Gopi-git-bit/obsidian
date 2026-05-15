@@ -53,6 +53,8 @@ Central hub for revenue models, pricing strategies, and financial frameworks.
 
 ## Strategic Decision Layer
 
+- [[Zippy Enterprise Value Chain Architecture]] - Porter-style enterprise business architecture connecting route intelligence, execution, compliance, finance, customer value, and SCaaS expansion
+- [[AI Logistics Value Chain Implementation Guide]] - operating-model translation of value-chain logic into Zippy's route, finance, partner, and customer systems
 - [[3PL vs 4PL]] - Outsourcing lens for physical execution versus logistics orchestration
 - [[Revenue Model Decision Framework]] - How to choose monetization structure under uncertainty
 - [[Order Processing and Transportation Management Knowledge Map]] - Logistics taxonomy connecting order strategy, TMS, smart tech, India market factors, and monetization

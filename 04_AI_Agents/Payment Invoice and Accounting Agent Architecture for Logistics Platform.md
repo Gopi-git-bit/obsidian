@@ -30,6 +30,13 @@ related:
 
 The Payment, Invoice, and Accounting Agent should connect OMS, TMS, IMS/WMS, driver settlement, GST invoicing, Tally accounting, Excel payroll, and chatbot query retrieval into one financial control layer.
 
+It must also keep four things separate:
+
+- payment status
+- fund custody
+- payout authorization
+- accounting recognition
+
 The goal is:
 
 > Every shipment event should create the correct payment, invoice, settlement, ledger, and reconciliation record automatically.
@@ -69,6 +76,13 @@ Invoice Agent creates compliant documents.
 Accounting Agent records the truth.
 ```
 
+## GST Classification Rule
+
+```text
+Do not reduce GST to a yes/no field.
+Classify tax from business model, freight supplier type, customer tax profile, freight payer, goods category, and the effective-dated rule version.
+```
+
 ---
 
 # 2. Agent Roles
@@ -82,7 +96,7 @@ The OMS is the commercial starting point.
 | Function | Description |
 | --- | --- |
 | Create shipment order | customer, origin, destination, cargo |
-| Generate quote | freight + service fee + GST + risk buffer |
+| Generate quote | freight value, platform/service fee, tax treatment, and risk buffer |
 | Define payment terms | prepaid, partial, COD, credit, escrow |
 | Define SLA | economy, standard, guaranteed |
 | Reserve route/mode option | road, rail, port, air |
@@ -101,8 +115,39 @@ The OMS is the commercial starting point.
   "payment_terms": "partial_advance",
   "advance_required": 10000,
   "shipment_type": "domestic_road",
-  "gst_applicable": true
+  "business_model": "hybrid",
+  "freight_supplier_type": "partner_gta",
+  "tax_mode": "rcm",
+  "invoice_split_required": true,
+  "rcm_flag": true,
+  "exemption_reason": null,
+  "review_required": false,
+  "customer_tax_profile": {
+    "legal_type": "private_limited_company",
+    "gst_status": "registered",
+    "gstin": "captured",
+    "freight_payer": "consignor"
+  },
+  "goods_category": "normal_goods",
+  "partner_tax_profile": {
+    "partner_id": "PARTNER-001",
+    "is_gta": true,
+    "issues_consignment_note": true,
+    "tax_mode": "rcm"
+  },
+  "gst_rule_version": "GST_RATE_MASTER_2026_V1"
 }
+```
+
+### Quote Ownership Rule
+
+```text
+If Zippy is marketplace/intermediary:
+- freight invoice belongs to the partner supplier
+- Zippy invoice covers only platform/service fee unless Zippy separately supplies a taxable service
+
+If Zippy is principal/GTA:
+- Zippy owns the freight invoice and freight-side GST treatment
 ```
 
 ---
@@ -192,6 +237,10 @@ The Payment Agent/OMS layer should handle real-time payment processing, fraud/ri
 
 Razorpay Route is relevant because it supports splitting incoming funds between linked accounts, managing transfers, reversals, refunds, settlements, and API-driven reconciliation. It is designed for one-to-many disbursement flows like marketplaces and platforms.
 
+Compliance correction:
+
+Do not treat partner capability as regulatory clearance. Use [[Operational Compliance Framework for Indian Logistics Startup 2025-2026]] as the governing rule for whether the platform may actually collect, hold, or settle third-party funds in a given operating model.
+
 ## Payment Agent Responsibilities
 
 | Function | Description |
@@ -204,6 +253,8 @@ Razorpay Route is relevant because it supports splitting incoming funds between 
 | Execute refund | cancellation or failed shipment |
 | Track partial payments | installment-wise |
 | Trigger accounting entry | send event to Accounting Agent |
+| Record custody mode | who collected and who currently holds the funds |
+| Preserve tax decision context | business model, supplier role, invoice split, and rule version |
 
 ## Payment Statuses
 
@@ -238,10 +289,10 @@ It should create documents based on shipment and payment stage.
 | --- | --- |
 | Quote accepted | Proforma invoice |
 | Advance received | Payment receipt |
-| Shipment delivered | Final tax invoice |
+| Shipment delivered | Final tax invoice, freight invoice, or platform invoice depending on supplier role |
 | Cancellation before final invoice | Refund receipt |
 | Cancellation after tax invoice | Credit note |
-| Unregistered/B2C case | Bill of supply / invoice without GST if applicable |
+| Exempt or eligible nil-tax case | Bill of supply / invoice without GST if applicable |
 | Demurrage added | Debit note or invoice line item |
 | Carrier payment | Settlement statement |
 
@@ -252,13 +303,28 @@ For GST e-invoicing, the official IRP process registers B2B and applicable docum
 | Function | Description |
 | --- | --- |
 | Generate proforma invoice | before payment |
-| Generate final tax invoice | after delivery/POD |
+| Generate final tax invoice | after delivery/POD and only after supplier role is clear |
 | Generate receipt | against payment transaction |
 | Link partial payments | many payments to one invoice |
 | Generate credit note | refund/adjustment |
 | Generate GST split | CGST/SGST/IGST |
 | Generate IRN/e-invoice if applicable | B2B/export GST compliance |
+| Generate invoice split | freight invoice plus Zippy platform invoice when marketplace logic applies |
+| Persist order tax decision | store rule version, mode, exemption, and review flags |
 | Push invoice to Accounting Agent | ledger creation |
+
+## Invoice Classification Rule
+
+```text
+Do not assume one invoice per order.
+
+Marketplace mode may require:
+- freight invoice from partner GTA / transporter
+- separate Zippy platform/service invoice
+
+Principal/GTA mode may require:
+- Zippy-issued freight invoice
+```
 
 ---
 
@@ -309,9 +375,11 @@ The platform should maintain these ledgers.
 | --- | --- | --- |
 | Customer Receivable | Asset | amount customer owes |
 | Customer Advance / Deposit | Liability | amount received before final invoice |
-| Freight Revenue / Commission Income | Revenue | platform earning |
+| Freight Revenue | Revenue | freight earning only when Zippy is principal supplier |
+| Platform Commission / Service Income | Revenue | Zippy earning in marketplace/intermediary mode |
 | Carrier Settlement Liability | Liability | amount payable to carrier/driver |
-| Output GST | Liability | GST collected on platform service |
+| Output GST - Freight | Liability | GST collected on freight only when Zippy is the freight supplier |
+| Output GST - Platform Fee | Liability | GST collected on Zippy platform/service fee |
 | Input GST / ITC | Asset | GST paid on expenses |
 | Demurrage Income / Recovery | Revenue or pass-through | waiting-time charge |
 | Refund Payable | Liability | refund due to customer |
@@ -322,11 +390,14 @@ The platform should maintain these ledgers.
 
 ```text
 Net GST Payable =
-Output GST on Platform Commission
+Output GST on Freight where Zippy is principal supplier
++ Output GST on Platform/Service Fee
 - Input Tax Credit on Eligible Expenses
 ```
 
 Operating expenses are not deducted from customer payment or commission income. Only GST paid on eligible expenses is used as ITC to reduce GST payable.
+
+Do not post freight-side output GST to Zippy by default in marketplace mode.
 
 ---
 
@@ -452,6 +523,33 @@ This is best for the logistics platform because it:
 - reduces manual settlement disputes
 
 Razorpay Route supports linked accounts, transfer splitting, reversals, settlement management, and settlement holds/delays through APIs, matching this marketplace-style logistics settlement need.
+
+Important compliance qualifier:
+
+- this flow is operationally attractive
+- it is not a default assumption the startup may use without checking regulatory applicability and partner structure
+
+Safer interpretation:
+
+- use regulated-partner collection and approved payout instructions by default
+- use platform-held custody only after legal and compliance approval
+
+## 8.5 Custody Modes
+
+The finance layer should explicitly classify each transaction:
+
+| Custody Mode | Meaning |
+| --- | --- |
+| `partner_collected_partner_settled` | regulated partner collects and settles |
+| `partner_collected_platform_instructed` | regulated partner holds funds, platform sends approved payout instructions |
+| `platform_collected_platform_held` | platform directly holds third-party funds |
+| `credit_no_custody` | receivable only, no immediate fund custody |
+
+Core rule:
+
+```text
+The agent must know who holds the money before it decides who may release the money.
+```
 
 ---
 
@@ -594,6 +692,10 @@ Split demurrage share to carrier if applicable.
 | amount |
 | payment_status |
 | payment_type |
+| custody_mode |
+| funds_holder |
+| tax_mode |
+| rcm_flag |
 | created_at |
 
 ## invoices
@@ -608,6 +710,11 @@ Split demurrage share to carrier if applicable.
 | taxable_value |
 | gst_amount |
 | total_amount |
+| business_model |
+| freight_supplier_type |
+| invoice_split_required |
+| exemption_reason |
+| rule_id |
 | irn |
 | qr_code |
 | invoice_status |
@@ -624,7 +731,77 @@ Split demurrage share to carrier if applicable.
 | platform_commission |
 | demurrage_share |
 | settlement_status |
+| payout_approval_mode |
+| custody_compliance_status |
 | released_at |
+
+## customer_tax_profile
+
+| Field |
+| --- |
+| customer_id |
+| legal_type |
+| gst_status |
+| gstin |
+| freight_payer_type |
+| rcm_eligible |
+| exemption_eligible |
+
+## partner_tax_profile
+
+| Field |
+| --- |
+| partner_id |
+| gstin |
+| is_gta |
+| issues_consignment_note |
+| tax_mode |
+| fcm_rate |
+| itc_enabled |
+| e_invoice_applicable |
+
+## gst_rate_master
+
+| Field |
+| --- |
+| rule_id |
+| service_code |
+| service_name |
+| rate |
+| mechanism |
+| itc_allowed |
+| effective_from |
+| effective_to |
+| notification_reference |
+
+## order_tax_decision
+
+| Field |
+| --- |
+| order_id |
+| business_model |
+| freight_supplier_id |
+| freight_supplier_type |
+| customer_id |
+| tax_mode_selected |
+| gst_rate |
+| rcm_flag |
+| exemption_reason |
+| review_required |
+| rule_id |
+
+## invoice_split
+
+| Field |
+| --- |
+| order_id |
+| freight_invoice_id |
+| zippy_platform_invoice_id |
+| invoice_split_required |
+| partner_payout |
+| zippy_fee |
+| gst_on_zippy_fee |
+| tcs_amount |
 
 ## accounting_entries
 
@@ -666,6 +843,8 @@ Split demurrage share to carrier if applicable.
   "payment_id": "PAY-001",
   "amount": 10000,
   "mode": "UPI",
+  "custody_mode": "partner_collected_partner_settled",
+  "funds_holder": "regulated_partner",
   "gateway_reference": "razorpay_pay_xxx",
   "timestamp": "2026-04-30T10:00:00"
 }
@@ -679,9 +858,16 @@ Split demurrage share to carrier if applicable.
   "invoice_id": "INV-001",
   "order_id": "ORD-001",
   "shipment_id": "SHP-001",
+  "business_model": "marketplace",
+  "freight_supplier_type": "partner_gta",
+  "tax_mode": "rcm",
+  "invoice_split_required": true,
+  "rcm_flag": true,
+  "exemption_reason": null,
+  "rule_id": "GST_RATE_MASTER_2026_V1",
   "taxable_value": 25000,
-  "gst_amount": 4500,
-  "total_amount": 29500,
+  "gst_amount": 0,
+  "total_amount": 25000,
   "irn": "optional_if_applicable"
 }
 ```
@@ -695,7 +881,9 @@ Split demurrage share to carrier if applicable.
   "carrier_id": "CARR-001",
   "carrier_amount": 22500,
   "platform_commission": 2500,
-  "release_condition": "POD_APPROVED"
+  "release_condition": "POD_APPROVED",
+  "custody_compliance_status": "approved",
+  "payout_approval_mode": "partner_instructed"
 }
 ```
 
@@ -724,13 +912,20 @@ At delivery/POD stage.
 
 | Debit | Credit |
 | --- | --- |
-| Customer Receivable / Advance Adjusted | Freight Revenue / Commission Income |
-|  | Output GST |
+| Customer Receivable / Advance Adjusted | Freight Revenue or Platform Commission Income depending on invoice owner |
+|  | Output GST on the relevant invoice owner/service |
 
 ```text
 Dr Customer Receivable / Customer Advance
-    Cr Platform Commission Income
-    Cr Output GST
+    Cr Freight Revenue or Platform Commission Income
+    Cr Output GST - Freight or Output GST - Platform Fee
+```
+
+Marketplace rule:
+
+```text
+Do not recognize partner freight as Zippy freight revenue.
+Recognize only Zippy's own platform/service revenue and its related output GST.
 ```
 
 ---
@@ -865,6 +1060,7 @@ Add:
 | document OCR | invoice/bill extraction |
 | GST reports | compliance |
 | chatbot financial search | user retrieval |
+| GST review queue | block ambiguous or incomplete tax cases |
 
 ## Phase 4: Advanced FinOps
 
@@ -904,7 +1100,9 @@ Add:
 | One accounting AI | Make it supervisor + sub-agents |
 | Payment only after invoice | Support proforma, advance, partial, final invoice |
 | Settlement simple payout | Add POD-based settlement release |
+| Escrow as default | Model custody explicitly and use regulated-partner flow by default |
 | GST calculator only | Add GST event mapping and ledger posting |
+| GST as boolean | Replace with structured tax classification and effective-dated rule version |
 | Files only local | Add source ID, hash, duplicate check |
 
 ## Avoid Initially
@@ -914,7 +1112,9 @@ Add:
 - auto-posting to Tally without approval
 - giving customer credit from own working capital
 - releasing carrier payout without POD
+- assuming escrow is automatically legal because the product wants it
 - mixing customer freight amount and platform commission in one revenue ledger
+- finalizing dispatch or invoice when supplier role and tax mode are unresolved
 
 ---
 

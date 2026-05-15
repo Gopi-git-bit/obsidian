@@ -3,7 +3,7 @@ type: hub
 domain: master
 scope: strategic
 status: active
-last_updated: 2026-04-30
+last_updated: 2026-05-13
 ---
 
 # Logistics Brain - Master Index
@@ -22,11 +22,22 @@ This vault serves as:
 
 ## Current Vault Snapshot
 
-- **Vault markdown note count:** 296 notes across `00_` to `12_` folders
-- **SQL/data-model files:** 5 SQL files in `10_Data_Model/SQL`
-- **Dashboard asset files:** 9 Tableau/Power BI sample/theme/README assets
+- **Vault markdown note count:** 255 notes across the active numbered knowledge folders audited in this pass
+- **SQL/data-model files:** 7 SQL files in `10_Data_Model/SQL`
+- **Dashboard files:** 33 files under `12_Dashboards`
 - **Primary focus:** Indian logistics operations, platform design, route intelligence, finance lifecycle, data model and execution playbooks
 - **Known issue:** some older/deeper notes still reference planned notes that do not yet exist
+
+## Current Project Front Door
+
+Use these notes first when you are working on the active Zippy build rather than the wider research vault:
+
+- [[Current Project Navigation Hub]]
+- [[Current Architecture Source of Truth]]
+- [[Master PRD Distillation for Current Project]]
+- [[Backend Structure for Current Project]]
+- [[Frontend Architecture for Current Project]]
+- [[Operational Compliance Framework for Indian Logistics Startup 2025-2026]]
 
 ## Vault Architecture
 
@@ -104,6 +115,7 @@ Use this order when onboarding yourself, an agent, or a teammate.
 - [[Tag Dictionary]] - tagging standards
 - [[Linking Rules]] - internal linking conventions
 - [[Note Templates]] - note creation patterns
+- [[Current Project Navigation Hub]] - active Zippy project deep-link hub
 - [[VAULT_AUDIT_REPORT]] - current audit and alignment status
 - [[Logistics Brain - Linear Execution Index]] - clean linear product reading path
 

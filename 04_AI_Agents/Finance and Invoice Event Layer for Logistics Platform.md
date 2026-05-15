@@ -59,12 +59,23 @@ Admin Agent governs risk, override, audit, and retention.
 Communication Agent sends invoices, receipts, alerts, and payment messages.
 ```
 
+Use [[Operational Compliance Framework for Indian Logistics Startup 2025-2026]] as the governing constraint for payment custody, payout authorization, and settlement holds.
+
 Core rule:
 
 ```text
 Every operational event should produce the right financial event.
 Every financial event should produce a controlled accounting record.
 No financial agent should casually change OMS state.
+```
+
+## Hybrid GST Alignment Rule
+
+```text
+Treat hybrid as the canonical Zippy tax architecture.
+Marketplace/intermediary is the common default.
+Principal/GTA is a supported selective mode.
+GST must be classified from supplier role and rule version, not from a generic assumption.
 ```
 
 ---
@@ -285,6 +296,8 @@ Invoice Agent creates and manages:
 - proforma invoice
 - payment receipt
 - final tax invoice
+- freight invoice
+- platform/service invoice
 - debit note
 - credit note
 - settlement slip
@@ -297,6 +310,7 @@ Important:
 ```text
 Proforma invoice can happen before payment.
 Final tax invoice should happen after delivery/POD or taxable supply confirmation.
+Do not generate or post the final tax invoice until the system knows whether Zippy or the partner owns the freight invoice.
 ```
 
 ---
@@ -393,6 +407,26 @@ order_created
 -> logs_purged_after_retention
 ```
 
+## GST Decision Gate
+
+Before `final_tax_invoice_generated`, the finance layer should require:
+
+- business model confirmed
+- freight supplier type confirmed
+- freight payer confirmed
+- customer tax profile captured
+- partner tax profile captured if partner-led
+- invoice ownership determined
+- rule version selected from the tax rule registry
+- review queue cleared if the case was flagged
+
+Core rule:
+
+```text
+No tax basis, no final invoice.
+No final invoice, no settlement release.
+```
+
 ## Critical Correction
 
 ```text
@@ -414,7 +448,7 @@ This avoids a bad payout before ToPay collection, damage claims, or demurrage di
 | Part Payment | Customer pays minimum 50 percent | Balance remains receivable; settlement can be held until final payment rule clears |
 | ToPay | Consignee pays at delivery | Invoice/payment collection must be tied to consignee; provider payout waits unless admin-approved |
 | Credit | Approved customer pays later | Must require credit policy, exposure limit, due date, and admin/fintech approval |
-| Escrow/Hold | Customer pays platform, provider paid after POD | Best trust model for early startup |
+| Escrow/Hold | Funds are held or routed until payout conditions clear | Use only through approved custody model and compliant payout path |
 
 ## Important PRD Rule
 
@@ -455,6 +489,32 @@ Before settlement: confirm invoice/payment obligation is resolved.
 
 This keeps operations flexible without letting fake bookings consume vehicles.
 
+## Custody And Compliance Layer
+
+The event spine must distinguish:
+
+- payment obligation satisfied
+- funds collected
+- funds holder identified
+- payout authorized
+- payout executed
+
+Recommended custody fields on payment and settlement events:
+
+```json
+{
+  "custody_mode": "partner_collected_partner_settled | partner_collected_platform_instructed | platform_collected_platform_held | credit_no_custody",
+  "funds_holder": "regulated_partner | platform | customer | consignee",
+  "custody_compliance_status": "pending | approved | blocked"
+}
+```
+
+Core rule:
+
+```text
+No settlement event should imply legal right to move money unless custody_compliance_status is approved.
+```
+
 ---
 
 # 5. Event Groups
@@ -485,7 +545,7 @@ Razorpay Payment Links support partial payment behavior where multiple payments 
 | --- | --- |
 | proforma_invoice_generated | quote-stage invoice, not final tax record |
 | payment_receipt_generated | receipt for advance/partial/full payment |
-| final_tax_invoice_generated | final GST invoice after POD/taxable supply confirmation |
+| final_tax_invoice_generated | final GST invoice after POD/taxable supply confirmation and supplier-role validation |
 | invoice_sent | invoice delivered through app/email/approved channels |
 | invoice_paid | invoice payment obligation cleared |
 | debit_note_generated | demurrage/extra charge adjustment |
@@ -498,9 +558,21 @@ Razorpay Payment Links support partial payment behavior where multiple payments 
 Do not create final tax invoice too early.
 Use proforma before execution.
 Use final invoice after POD or taxable supply confirmation.
+Use review queue when supplier ownership, exemption path, or tax mode is unclear.
 ```
 
 For GST e-invoicing, applicable B2B/export invoices must be authenticated through the IRP to get IRN and QR code.
+
+### Invoice Ownership Rule
+
+```text
+Marketplace mode:
+- freight invoice belongs to the partner supplier
+- Zippy platform/service invoice is separate
+
+Principal/GTA mode:
+- Zippy owns the freight invoice
+```
 
 ---
 
@@ -703,6 +775,7 @@ Supporting agents: Invoice Agent, Accounting Agent, Admin Agent
     "verification_status": "auto",
     "amount_match_status": "matched",
     "gst_compliance_check": true,
+    "rule_id": "GST_RATE_MASTER_2026_V1",
     "idempotency_key": "invoice_paid:INV-000123:TXN-001"
   },
   "timestamp": "iso_timestamp"
@@ -719,6 +792,7 @@ POD verified
 + no demurrage dispute
 + no claim hold
 + no admin hold
++ custody path approved
 ```
 
 ---
@@ -752,6 +826,9 @@ Supporting agents: OMS, TMS, DWIS, Accounting Agent
   "payload": {
     "settlement_stage": "preprocessing",
     "payment_type": "full | part | to_pay | credit",
+    "business_model": "marketplace | principal_gta",
+    "freight_supplier_type": "partner_gta | non_gta_transporter | zippy_principal",
+    "tax_mode": "rcm | fcm_5 | fcm_standard | exempt | review_required",
     "is_to_pay_pending": false,
     "delivery_status_confirmed": true,
     "pod_status": "verified",
@@ -760,6 +837,8 @@ Supporting agents: OMS, TMS, DWIS, Accounting Agent
   "metadata": {
     "payout_model": "provider_type_based",
     "commission_policy_version": "2026_v1",
+    "review_required": false,
+    "rule_id": "GST_RATE_MASTER_2026_V1",
     "settlement_risk_check": "pending",
     "refund_required": false,
     "idempotency_key": "settlement_preprocess:ORDER-001"
@@ -846,6 +925,15 @@ Settlement should close only after reconciliation and audit checks.
 | sgst |
 | igst |
 | total_amount |
+| business_model |
+| freight_supplier_type |
+| invoice_owner |
+| tax_mode |
+| invoice_split_required |
+| rcm_flag |
+| exemption_reason |
+| review_required |
+| rule_id |
 | amount_paid |
 | amount_due |
 | irn |
@@ -873,8 +961,82 @@ Settlement should close only after reconciliation and audit checks.
 | payment_method |
 | payment_status |
 | payment_type |
+| custody_mode |
+| funds_holder |
+| business_model |
+| tax_mode |
+| rcm_flag |
 | received_at |
 | reconciled_at |
+
+## customer_tax_profile
+
+| Field |
+| --- |
+| customer_id |
+| legal_type |
+| gst_status |
+| gstin |
+| freight_payer_type |
+| rcm_eligible |
+| exemption_eligible |
+
+## partner_tax_profile
+
+| Field |
+| --- |
+| partner_id |
+| gstin |
+| is_gta |
+| issues_consignment_note |
+| tax_mode |
+| fcm_rate |
+| itc_enabled |
+| e_invoice_applicable |
+
+## gst_rate_master
+
+| Field |
+| --- |
+| rule_id |
+| service_code |
+| service_name |
+| rate |
+| mechanism |
+| itc_allowed |
+| effective_from |
+| effective_to |
+| source_reference |
+| notification_reference |
+
+## order_tax_decision
+
+| Field |
+| --- |
+| order_id |
+| business_model |
+| freight_supplier_id |
+| freight_supplier_type |
+| customer_id |
+| tax_mode_selected |
+| gst_rate |
+| rcm_flag |
+| exemption_reason |
+| review_required |
+| rule_id |
+
+## invoice_split
+
+| Field |
+| --- |
+| order_id |
+| freight_invoice_id |
+| zippy_platform_invoice_id |
+| invoice_split_required |
+| partner_payout |
+| zippy_fee |
+| gst_on_zippy_fee |
+| tcs_amount |
 
 ## settlements
 
@@ -896,6 +1058,8 @@ Settlement should close only after reconciliation and audit checks.
 | payout_reference |
 | settlement_status |
 | risk_status |
+| payout_approval_mode |
+| custody_compliance_status |
 | approved_at |
 | payout_started_at |
 | payout_completed_at |
@@ -963,6 +1127,14 @@ Dr Bank / Payment Gateway Receivable
 Dr Customer Receivable / Customer Advance
     Cr Platform Commission Income / Freight Revenue
     Cr Output GST
+```
+
+Interpretation rule:
+
+```text
+If Zippy is principal/GTA, freight revenue and related output GST may belong to Zippy.
+If Zippy is marketplace/intermediary, partner freight should not be recognized as Zippy freight revenue by default.
+In marketplace mode, Zippy should recognize only its own platform/service revenue and its related output GST.
 ```
 
 ## Provider Settlement Liability Created
@@ -1059,6 +1231,11 @@ provider name/bank mismatch
 large payout threshold crossed
 admin compliance hold active
 customer outstanding policy violated
+custody or payout path not approved
+business model unresolved
+freight supplier role unresolved
+tax mode unresolved
+review queue not cleared
 ```
 
 ## Hold Ownership
@@ -1150,6 +1327,7 @@ Show:
 - ToPay status if consignee is payer
 - outstanding payment block if policy applies
 - POD and invoice after delivery
+- billing explanation when freight invoice and Zippy platform invoice are separate
 
 Do not show:
 
@@ -1205,6 +1383,8 @@ Show:
 - Tally sync failures
 - archived records
 - retention status
+- GST review queue
+- invoice ownership mismatch queue
 
 ---
 
@@ -1250,6 +1430,11 @@ Add:
 - receipt
 - GST split
 - invoice status
+- customer_tax_profile
+- partner_tax_profile
+- order_tax_decision
+- gst_rate_master
+- invoice_split
 
 ---
 
@@ -1345,6 +1530,18 @@ Tally Agent = local accounting sync
 Admin Agent = governance and retention
 Communication Agent = message delivery
 ```
+
+## Compliance-Specific Design Verdict
+
+The finance event layer should default to:
+
+- regulated-partner collection where possible
+- explicit custody-state recording
+- evidence-first payout release
+- settlement holds on unresolved compliance, dispute, or mismatch conditions
+- invoice ownership separation between freight and platform charges where marketplace logic applies
+
+It should not assume that operational ability to split funds automatically means the startup may legally hold and release those funds itself.
 
 ## Final Takeaway
 

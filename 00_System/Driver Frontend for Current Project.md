@@ -407,6 +407,7 @@ not generic app dashboard
 
 Use this note with:
 
+- [[Current Project Navigation Hub]]
 - [[Frontend Architecture for Current Project]]
 - [[Current Architecture Source of Truth]]
 - [[Backend Structure for Current Project]]

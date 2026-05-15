@@ -71,6 +71,8 @@ The backend should support a vehicle-owner to consignor logistics platform focus
 - operational alerts and control-tower workflows
 - downstream analytics for lane reliability and return-trip intelligence
 
+Use [[Current Project Navigation Hub]] as the top-level navigation note that connects this backend note to frontend, compliance, and source-of-truth notes.
+
 ## Recommended Backend Layers
 
 ## 1. API Layer

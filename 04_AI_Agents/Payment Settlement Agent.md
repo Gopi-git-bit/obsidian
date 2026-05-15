@@ -17,6 +17,7 @@ region:
   - India
 created: 2025-01-15
 updated: 2025-01-15
+updated: 2026-05-13
 ---
 
 # Payment Settlement Agent
@@ -38,6 +39,7 @@ The Payment Settlement Agent manages all financial transactions including invoic
 - Process partial payments and payment plans
 - Release driver-side advances only after required field evidence clears validation gates
 - Support partner-led pay-later and finance-linked settlement flows without taking underwriting responsibility
+- Treat customer fund custody as a regulated design decision, not a default implementation shortcut
 
 ### Reconciliation
 - Match payments received to outstanding invoices
@@ -64,6 +66,7 @@ The Payment Settlement Agent manages all financial transactions including invoic
 | Collaboration financial risk rising | Use [[Collaboration Risk Opportunity Balance Framework]] to trigger exposure caps, escrow, or settlement review |
 | Partnership agreement active | Read payment cycle, escrow, exposure cap, payout hold, and reconciliation cadence from [[PartnershipAgreement.yaml]] |
 | Profit-sharing partnership | Apply active rule from [[Strategic Profit Sharing Framework]], enforce margin protection, and emit audit hash |
+| Platform may hold customer funds | Require approved regulated flow or explicit legal sign-off per [[Operational Compliance Framework for Indian Logistics Startup 2025-2026]] |
 
 ## GST & Compliance
 
@@ -84,6 +87,53 @@ The Payment Settlement Agent manages all financial transactions including invoic
 - **Output**: Invoices, payment records, settlement batches, collaboration settlement reports
 - **Dependencies**: [[Payment Risk Logic]], [[Business Models Hub]]
 - **Future Extension**: [[Embedded Finance Enablement Framework]] for lender-linked pay-later workflows
+
+## Escrow And Custody Rule
+
+The agent must separate:
+
+```text
+payment obligation state
+from
+actual fund custody state
+```
+
+Safe operating modes:
+
+- regulated payment-partner collection and settlement flow
+- partner-routed escrow or linked-account flow
+- platform-held or net-settlement flow only after legal and compliance approval
+
+Unsafe assumption to avoid:
+
+```text
+customer paid us
+therefore we may freely hold, split, and release funds
+```
+
+The settlement agent should always record:
+
+- who collected the funds
+- where the funds are held
+- whether payout is partner-executed or platform-executed
+- whether the payout path is legally approved for the operating model
+
+## Required Settlement Gates
+
+Provider payout must remain blocked unless all of the following are true:
+
+- required customer payment condition is satisfied
+- POD or delivery evidence is verified
+- no active dispute, damage flag, or mismatch hold exists
+- beneficiary bank details are verified
+- compliance hold is clear
+- custody and payout path are approved for the transaction type
+
+## Recommended Related Notes
+
+- [[Operational Compliance Framework for Indian Logistics Startup 2025-2026]]
+- [[Finance and Invoice Event Layer for Logistics Platform]]
+- [[Payment Invoice and Accounting Agent Architecture for Logistics Platform]]
 
 ## Settlement Cycles
 

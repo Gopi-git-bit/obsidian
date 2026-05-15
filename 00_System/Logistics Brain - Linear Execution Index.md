@@ -12,6 +12,8 @@ This note is the straight-line path through the Zippy logistics knowledge base.
 
 Use it when the vault feels too wide and you need to understand the system in the order it should be built.
 
+If you want the active build notes instead of the full research spine, start with [[Current Project Navigation Hub]].
+
 ## Product Logic in One Line
 
 ```text

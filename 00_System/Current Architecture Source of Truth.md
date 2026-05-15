@@ -28,6 +28,7 @@ It ties together:
 - current backend structure
 - current database structure
 - current operational logic
+- current-project navigation
 
 It should be used instead of older PRD, backend, and database drafts when those conflict with present project direction.
 
@@ -289,6 +290,7 @@ These should not be treated as current architecture commitments:
 
 Use these as the linked source set:
 
+- [[Current Project Navigation Hub]]
 - [[Master PRD Distillation for Current Project]]
 - [[Backend Structure for Current Project]]
 - [[Zippy Logistics Operational Core Schema]]

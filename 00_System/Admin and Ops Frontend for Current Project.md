@@ -399,3 +399,10 @@ an operations and finance control tower
 that makes stuck workflows visible, owned, auditable, and recoverable
 ```
 
+## Related Project Notes
+
+- [[Current Project Navigation Hub]]
+- [[Frontend Architecture for Current Project]]
+- [[Current Architecture Source of Truth]]
+- [[Backend Structure for Current Project]]
+- [[Operational Compliance Framework for Indian Logistics Startup 2025-2026]]

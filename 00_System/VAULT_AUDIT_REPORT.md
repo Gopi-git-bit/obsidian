@@ -7,12 +7,12 @@ tags:
   - report
   - logistics-brain
 created: 2025-01-15
-updated: 2026-04-30
+updated: 2026-05-13
 ---
 
 # Logistics Brain Vault - Alignment Audit Report
 
-**Audit Date:** April 30, 2026  
+**Audit Date:** May 13, 2026  
 **Vault Location:** `MiniMax Agent_ Minimize Effort, Maximize Intelligence_files`  
 **Audit Goal:** check whether recently added Obsidian-style docs are positioned correctly and indexed linearly
 
@@ -24,7 +24,7 @@ The vault has grown from a general logistics knowledge base into a multi-layer o
 
 The newly added return-trip, lane reliability, dashboard and data-model documents are mostly positioned in the correct folders. The main gap was navigation: the master index was outdated and there was no single linear reading path through the new material.
 
-This pass updated the master index and added a dedicated linear execution index.
+This pass updates the master index, reinforces the current-project navigation layer, and adds deeper cross-links between the active architecture, frontend, backend, and compliance notes.
 
 ---
 
@@ -32,17 +32,10 @@ This pass updated the master index and added a dedicated linear execution index.
 
 | Metric | Count |
 |---|---:|
-| Vault markdown notes across `00_` to `12_` folders | 282 |
-| SQL files in `10_Data_Model/SQL` | 5 |
-| Dashboard asset files in `12_Dashboards` | 9 |
-| System notes/templates | 17 |
-| AI agent architecture notes | 7 |
-| Concept notes | 61 |
-| Algorithm notes | 33 |
-| SOP notes | 15 |
-| Business model notes | 11 |
-| Market intelligence notes | 31 |
-| Dashboard notes | 14 |
+| Vault markdown notes across the active numbered knowledge folders audited in this pass | 255 |
+| SQL files in `10_Data_Model/SQL` | 7 |
+| Files in `12_Dashboards` | 33 |
+| System notes in `00_System` | 33 |
 
 ---
 
@@ -117,10 +110,10 @@ Market lanes
 
 ## Recommended Next Actions
 
-1. Use [[Logistics Brain - Linear Execution Index]] as the main onboarding/read path.
-2. Add future return-trip, delay, scorecard and dashboard docs to the linear index immediately.
-3. Keep new architecture agent notes in `04_AI_Agents`; archived agent notes are reference-only.
-4. Later, run a wikilink resolution audit and decide whether to create or prune missing notes.
+1. Use [[Current Project Navigation Hub]] as the first stop for active project work.
+2. Use [[Logistics Brain - Linear Execution Index]] for deep domain onboarding across the wider vault.
+3. Add future "current project" notes to the project navigation hub immediately.
+4. Later, run a dedicated wikilink resolution audit and decide whether to create or prune missing notes.
 5. Later, execute SQL scripts in Supabase/PostgreSQL and mark data-model docs as tested.
 
 ---
@@ -138,6 +131,15 @@ Corridor intelligence -> Route intelligence -> Reliability intelligence -> Finan
 ---
 
 *This audit confirms the new documents are broadly in the right place. The major improvement made in this pass was linear navigation.*
+
+## Cleanup Pass - 2026-05-13
+
+Actions taken in this pass:
+
+1. Added [[Current Project Navigation Hub]] as a dedicated front door for active build notes.
+2. Updated [[Logistics Brain - Master Index]] with a current-project front-door section and refreshed high-level counts.
+3. Linked the active architecture, backend, frontend, and compliance notes together more directly.
+4. Kept Obsidian config minimal because the vault structure itself was the larger issue, not plugin availability.
 
 
 ## Cleanup Pass - 2026-04-30
