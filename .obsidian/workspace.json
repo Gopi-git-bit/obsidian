@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "5f5cf8fb98aebf44",
+        "id": "586b9129d8ed5fff",
         "type": "tabs",
         "children": [
           {
-            "id": "8c531dead128325c",
+            "id": "83010577b59a13da",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -157,13 +157,23 @@
               "icon": "lucide-list",
               "title": "Outline"
             }
+          },
+          {
+            "id": "451ae1d674a4f35d",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -178,7 +188,7 @@
       "github-sync:Sync with Remote": false
     }
   },
-  "active": "8c531dead128325c",
+  "active": "82081b46337fc88b",
   "lastOpenFiles": [
     "MiniMax Agent_ Minimize Effort, Maximize Intelligence_files-",
     "claude.md",
