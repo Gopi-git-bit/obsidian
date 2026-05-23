@@ -15,7 +15,8 @@ tags:
   - web
   - source-of-truth
 source_files:
-  - "C:\\Users\\user\\Downloads\\frontend ui.txt"
+  - "C:\Users\user\Downloads\frontend ui.txt"
+  - "C:\Users\user\Downloads\new -chatgpt  (1).txt"
 ---
 
 # Frontend UI Blueprint for Current Project
@@ -34,6 +35,13 @@ This means the UI does not decide business truth.
 
 It displays the current state and sends allowed action requests to the backend.
 
+## Authority Status
+
+This note is the canonical frontend contract for state-driven UI behavior in the current project.
+
+Role-specific frontend notes are supporting notes.
+
+Raw screen PRDs and chat extracts remain reference inputs unless their rules are restated here or in another canonical current-project note.
 ## Non-Negotiable UI Rules
 
 1. Frontend never changes order, trip, payment, settlement, or audit state locally.
@@ -74,6 +82,7 @@ Recommended operational state families:
 ```text
 DRAFT
 PAYMENT_PENDING
+PAYMENT_GATE_SATISFIED
 CONFIRMED
 VEHICLE_SEARCH
 DRIVER_ASSIGNED
@@ -83,7 +92,14 @@ ENROUTE
 ARRIVED_DELIVERY
 POD_UPLOADED
 DELIVERY_COMPLETED
+INVOICE_PENDING
+INVOICE_SENT
+SETTLEMENT_PREPROCESSING
+SETTLEMENT_ON_HOLD
 SETTLEMENT_READY
+PAYOUT_INITIATED
+PAYOUT_SUCCESSFUL
+SETTLEMENT_RECONCILED
 CLOSED
 FAILED
 CANCELLED
@@ -107,13 +123,16 @@ Customer goals:
 | State / Condition | Screen | UI Shows | Allowed Customer Actions |
 |---|---|---|---|
 | always | Customer Home | active orders, past orders, create order CTA, blockers | create order, open order |
-| `DRAFT` | Create Order | pickup/drop, cargo, vehicle, schedule, missing fields | submit order request |
-| `PAYMENT_PENDING` | Payment | amount, payment mode, retry info | pay now, cancel if policy allows |
+| `DRAFT` | Create Order | pickup/drop, cargo, vehicle, schedule, payer, GST/billing inputs, missing fields | submit order request |
+| quote ready | Quote / Proforma | quote, payment mode, payer, proforma status, GST classification, invoice ownership | accept quote, edit, cancel |
+| `PAYMENT_PENDING` | Payment | amount, payment mode, payer responsibility, retry info, ToPay consent or credit gate | pay now, request ToPay consent, cancel if policy allows |
+| `PAYMENT_GATE_SATISFIED` | Confirmation Pending | payment/authorization/ToPay/credit gate satisfied, backend confirmation pending | wait, refresh, contact support |
 | `CONFIRMED` | Order Confirmed | summary, searching/processing status | cancel if policy allows |
 | `VEHICLE_SEARCH` | Searching / Matching | vehicle search status, next update time | view status, contact support if delayed |
 | `DRIVER_ASSIGNED` to `ENROUTE` | Live Tracking | map/status, timeline, ETA, driver/provider info if authorized | view only, report issue |
-| `ARRIVED_DELIVERY` to `DELIVERY_COMPLETED` | Delivery / POD | delivery status, POD preview, rating/feedback | rate, report issue |
-| `SETTLEMENT_READY` / `CLOSED` | Invoice / Receipt | invoice PDF, receipt, POD, download/email | download, email, reorder |
+| `ARRIVED_DELIVERY` to `DELIVERY_COMPLETED` | Delivery / POD | delivery status, POD preview, final invoice pending state, rating/feedback | rate, report issue |
+| `INVOICE_PENDING` / `INVOICE_SENT` | Invoice / Payment Closure | final invoice status, GST review, invoice sent, payment obligation, receipt | pay balance, download, email |
+| `SETTLEMENT_READY` / `CLOSED` | Invoice / Receipt | invoice PDF, receipt, POD, payment closed, download/email | download, email, reorder |
 | `FAILED` / `CANCELLED` | Failed / Cancelled | reason, refund/payment status, support CTA | reorder, contact support |
 
 Important:
@@ -169,15 +188,45 @@ Transport-company goals:
 | Context | Screen | UI Shows | Allowed Actions |
 |---|---|---|---|
 | always | Dashboard | role context, active work, available fleet, blockers | switch context, open queues |
-| provider opportunity | Received Work | lane, cargo, SLA, earning/service fee, requirements | accept/reject, assign vehicle |
-| placed order | Placed Order Tracking | customer-side order status, invoice/payment | track, report issue |
+| provider opportunity | Received Work | lane, cargo, SLA, earning, service fee, payout blockers, requirements | accept/reject, assign vehicle |
+| placed order | Placed Order Tracking | customer-side order status, payer, invoice/payment, ToPay or credit state | track, pay/follow up, report issue |
 | fleet | Fleet | vehicles, drivers, verification, availability | mark availability, upload documents |
-| finance | Finance | provider earnings, customer payments, service fees, settlements | view, download, follow up |
+| finance | Finance | provider earnings, customer payments, service fees, invoices, holds, settlements | view, download, follow up |
 
 Important:
 
 ```text
 provider-side earnings and customer-side payments must stay visually and financially separate
+```
+
+Transport-company finance states:
+
+```text
+Placed Order:
+proforma_generated
+payment_link_created
+advance_paid
+partially_paid
+fully_paid
+topay_consent_pending
+topay_collection_pending
+topay_collection_received
+credit_due
+final_tax_invoice_generated
+invoice_paid
+```
+
+```text
+Received Work:
+pod_under_review
+settlement_preprocessing
+settlement_on_hold
+settlement_ready_for_disbursement
+payout_initiated
+payout_successful
+payout_failed
+settlement_reconciled
+settlement_closed
 ```
 
 ## Ops UI Blueprint
@@ -322,6 +371,44 @@ Preferred API shape:
 ```text
 GET order detail -> includes current state and allowed_actions
 POST action request -> backend validates and emits event
+```
+
+## Finance State Rendering Contract
+
+Payment, invoice, settlement, and payout states must render from finance events, not inferred lifecycle shortcuts.
+
+Required frontend distinctions:
+
+- `payment_gate_satisfied` is not the same as `fully_paid`.
+- `proforma_generated` is not the same as `final_tax_invoice_generated`.
+- `invoice_sent` is not the same as `invoice_paid`.
+- `pod_verified` is not the same as `settlement_ready_for_disbursement`.
+- `settlement_ready_for_disbursement` is not the same as `payout_successful`.
+- `payout_successful` is not the same as `settlement_reconciled` or `settlement_closed`.
+
+Common payment-mode state text:
+
+```text
+Full Payment:
+pay full required amount -> payment gate satisfied -> order confirmed
+
+Part Payment:
+pay required advance/authorization -> balance remains due by policy -> final payment clears before release point
+
+ToPay:
+consignee consent pending -> collection pending -> collection received or obligation resolved
+
+Credit:
+credit approved -> due later -> overdue or paid
+```
+
+GST and invoice UI rules:
+
+```text
+Do not ask users to choose GST rate.
+Show GST classification, review state, and invoice owner returned by backend.
+If marketplace mode applies, show partner freight invoice and Zippy service invoice separately.
+If principal/GTA mode applies, show Zippy freight invoice.
 ```
 
 ## Frontend API Contract

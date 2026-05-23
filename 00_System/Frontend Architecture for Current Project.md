@@ -272,11 +272,14 @@ login or signup
 -> create booking
 -> choose route and vehicle preference
 -> choose payment mode
+-> capture payer responsibility and GST/billing inputs
 -> upload optional documents
--> confirm booking
+-> review quote/proforma
+-> satisfy required payment, ToPay consent, or approved credit gate
+-> backend confirms booking
 -> receive quote and status updates
 -> track assigned shipment
--> receive delivery and payment closure updates
+-> receive POD, final invoice, payment, and closure updates
 ```
 
 ## Admin And Ops Flow
@@ -309,11 +312,50 @@ The older note mixes several payment cases.
 Current frontend truth should be:
 
 - show payment mode clearly
+- show payer responsibility clearly
 - show quote and invoice status clearly
-- show advance, pending, and settlement-related statuses clearly
+- show proforma, receipt, final invoice, and invoice-sent status as separate states
+- show advance, balance, ToPay, credit, and settlement-related statuses clearly
+- show freight invoice ownership and Zippy service/platform invoice separately when invoice split applies
+- show GST review state without asking users to pick GST slabs
 - do not let frontend infer payment completion from local assumptions
 
 All finance truth should come from backend state and finance events.
+
+Shared payment modes:
+
+```text
+Full Payment = required full amount captured before confirmation.
+Part Payment = required advance or authorization clears booking gate; balance remains receivable by policy.
+ToPay = consignee is payer; consent and collection are separate visible states.
+Credit = approved customer account pays later under exposure limit and due date.
+Escrow/Hold = shown only when custody and payout path are approved for that transaction.
+```
+
+Shared invoice timing:
+
+```text
+quote/proforma may exist before execution.
+payment receipt follows actual payment.
+final tax invoice waits for delivery/POD or taxable-supply confirmation plus GST ownership checks.
+invoice_sent means delivered to the user, not paid.
+invoice_paid means obligation cleared only after amount match and finance validation.
+```
+
+Shared settlement timing:
+
+```text
+POD verified can start settlement preprocessing.
+Payment obligation resolved plus no dispute, mismatch, GST review, bank, admin, or custody hold can unlock disbursement.
+Payout success and reconciliation are separate states.
+```
+
+Transport-company finance rule:
+
+```text
+The same transport company account may place orders and receive work.
+Placed-order payments and received-work settlements must stay separate in UI, API state, invoices, and ledgers.
+```
 
 ## SLA And Delivery UX
 

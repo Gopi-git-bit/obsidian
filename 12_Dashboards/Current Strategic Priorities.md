@@ -20,6 +20,7 @@ High-level snapshot of current strategic focus areas for the logistics platform.
 
 Related dashboard notes:
 
+- [[CEO Scenario Operating Playbook for Logistics Uncertainty]]
 - [[Transport Control Tower KPI Framework]]
 - [[Corridor Delay Trends and Performance Dashboard Template]]
 - [[Triangle Route Master]]
@@ -33,6 +34,13 @@ Related dashboard notes:
 - **Focus**: Convert weak direct returns into earning loops
 - **Target**: Tiruppur -> Chennai -> Coimbatore -> Tiruppur as first validated triangle
 - **Success Metric**: 15 percent+ revenue per vehicle day lift and 20 percent+ empty km reduction
+
+### CEO Scenario Overlay
+
+- **Default Posture**: Corridor-first execution before broad geographic expansion
+- **Bull Market Move**: Deepen anchor contracts and lock reliable SFO capacity inside the strongest corridor
+- **Bear Market Move**: Protect cash through anchor tenants, backhaul economics, and reduced empty km instead of rate-war discounting
+- **Policy Exception Rule**: Accept specialty MNC orders only through isolated SCaaS modules and approved asset-light partners
 
 ### 2. Corridor Reliability
 

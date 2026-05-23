@@ -24,6 +24,24 @@
 - **E-Way Bill:** Required for inter-state >₹50,000
 - **BS-VI Emission:** Mandatory for all vehicles
 
+### Partnership Business Practice
+- **Default Driver Commission:** 10% unless a signed corridor or partner-specific rule overrides it
+- **Default Transport Company Fee:** Rs 700/order flat service fee unless upgraded to a strategic collaboration model
+- **Partner Authority:** Partners must use documented APIs and cannot bypass OMS/TMS/FIN state transitions
+- **Payment Custody:** Use regulated payment-partner or escrow flows; platform-held funds require legal/compliance approval
+- **Insurance Distribution:** Treat insurance as partner-led or legally approved distribution; do not assume Zippy can sell/underwrite insurance directly
+- **Dispute Resolution:** AI may score SLA/dispute cases, but Ops/Finance/Supervisor must approve liability, refund, override, and closure decisions
+- **Reference File:** `08_Business_Models/Partnership Term Sheet Compatibility Framework.md`
+
+### CEO Scenario Strategy
+- **Default Strategy:** Corridor-first South India execution before nationwide expansion
+- **Demand Strategy:** Anchor tenant demand before broad SFO onboarding
+- **Supply Strategy:** Predictive backhaul and verified partner/SFO execution
+- **Trust Strategy:** Hard-block compliance plus proactive control tower visibility
+- **Downturn Strategy:** Cash preservation through anchor tenants, margin discipline, and empty-km reduction
+- **Policy Exception Rule:** Specialty MNC orders need 3x standard lane gross profit, asset-light partner execution, client liability coverage, and no core state-machine rewrite
+- **Reference File:** `04_Concepts/Operations/CEO Scenario Operating Playbook for Logistics Uncertainty.md`
+
 ## Technical Standards
 
 ### API Design

@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "949face1a61a5a01",
+        "id": "5f5cf8fb98aebf44",
         "type": "tabs",
         "children": [
           {
-            "id": "ec806444a883cb2b",
+            "id": "8c531dead128325c",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -173,9 +173,27 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "obsidian-git:Open Git source control": false,
+      "github-sync:Sync with Remote": false
     }
   },
-  "active": "ec806444a883cb2b",
-  "lastOpenFiles": []
+  "active": "8c531dead128325c",
+  "lastOpenFiles": [
+    "MiniMax Agent_ Minimize Effort, Maximize Intelligence_files-",
+    "claude.md",
+    "KNOWLEDGE.md",
+    "warehouse-distribution-advanced-architecture.md",
+    "runtime-verification-report.md",
+    "market-research-report.md",
+    "README.md",
+    "00_System/Phase 1 Build Sprint Plan.md",
+    "00_System/Top Launch Gaps Still Open.md",
+    "00_System/Async Event and Worker Orchestration for Current Project.md",
+    "00_System/Testing and Verification Strategy for Current Project.md",
+    "00_System/Archive Candidates - First Pass.md",
+    "00_System/Note Status Policy for Current Project.md",
+    "00_System/Source of Truth Coverage Matrix.md",
+    "00_System/Topic Collision Register for Current Project.md"
+  ]
 }

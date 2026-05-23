@@ -24,6 +24,7 @@ related:
   - Resource Management Agent
   - Platform Administration Agent
   - Communication Agent
+  - Accounting Policy Engine for Broker Model
   - Demurrage Solution Translated for Current Logistics Project
 source_files:
   - C:\Users\user\Downloads\chatgpt final verdict 1.txt
@@ -78,6 +79,25 @@ Principal/GTA is a supported selective mode.
 GST must be classified from supplier role and rule version, not from a generic assumption.
 ```
 
+## Broker Accounting Alignment Rule
+
+For standard marketplace transport transactions, Zippy should be treated as agent/broker by default.
+
+```text
+Zippy arranges transport.
+Independent drivers, vehicle owners, or transport vendors provide the physical carriage.
+Zippy revenue is net commission/platform fee.
+Gross freight collected from the customer is a pass-through collection liability, not Zippy gross revenue.
+```
+
+Accounting rule:
+
+```text
+No POD + OTP, no commission revenue.
+No principal/GTA approval, no freight revenue.
+No contract wording support, trigger principal-agent accounting review.
+```
+
 ---
 
 # 1. What ChatGPT Missed Without The Full PRD
@@ -96,6 +116,8 @@ That is risky.
 | Settlement completed is one event | Split into disbursement success, reconciliation, and settlement closed |
 | Customer and provider finance flows are similar | Customer payment and provider payout are separate financial lifecycles |
 | Transport company is only provider | Transport company can be customer-role or provider-role depending on active role |
+| Gross freight collected is Zippy revenue | Standard marketplace gross freight is customer advance / freight collection liability |
+| POD alone triggers revenue | Broker commission needs POD + OTP plus no unresolved hold |
 | Logs can be purged after closure | Logs purge only after archive and retention policy check |
 
 ## Better Mental Model
@@ -387,12 +409,16 @@ order_created
 -> proforma_invoice_generated
 -> payment_link_created
 -> payment_gate_satisfied
+-> customer_advance_or_collection_liability_recorded
 -> carrier_assigned
 -> shipment_picked_up
 -> shipment_in_transit
 -> delivery_completed
 -> pod_verified
+-> otp_verified
 -> demurrage_finalized_if_any
+-> commission_revenue_recognized_if_agent_model
+-> driver_or_vehicle_owner_payable_created
 -> final_tax_invoice_generated
 -> invoice_sent
 -> invoice_paid_or_payment_obligation_resolved
@@ -412,6 +438,7 @@ order_created
 Before `final_tax_invoice_generated`, the finance layer should require:
 
 - business model confirmed
+- principal-agent classification confirmed
 - freight supplier type confirmed
 - freight payer confirmed
 - customer tax profile captured
@@ -425,6 +452,7 @@ Core rule:
 ```text
 No tax basis, no final invoice.
 No final invoice, no settlement release.
+No agent/principal classification, no revenue posting.
 ```
 
 ## Critical Correction
@@ -526,6 +554,7 @@ No settlement event should imply legal right to move money unless custody_compli
 | payment_intent_created | payment process started |
 | payment_link_created | payment link generated |
 | advance_payment_received | customer paid required advance |
+| customer_collection_liability_recorded | gross customer collection posted to liability/clearing, not revenue |
 | partial_payment_received | installment received |
 | full_payment_received | full amount captured |
 | topay_collection_pending | consignee payment not yet received |
@@ -545,6 +574,7 @@ Razorpay Payment Links support partial payment behavior where multiple payments 
 | --- | --- |
 | proforma_invoice_generated | quote-stage invoice, not final tax record |
 | payment_receipt_generated | receipt for advance/partial/full payment |
+| commission_invoice_generated | Zippy commission/platform fee invoice under broker model |
 | final_tax_invoice_generated | final GST invoice after POD/taxable supply confirmation and supplier-role validation |
 | invoice_sent | invoice delivered through app/email/approved channels |
 | invoice_paid | invoice payment obligation cleared |
@@ -581,6 +611,7 @@ Principal/GTA mode:
 | Event | Meaning |
 | --- | --- |
 | settlement_preprocessing_started | payout calculation and validation begins |
+| driver_payable_created | verified driver/vehicle-owner payable created from collection liability |
 | settlement_on_hold | settlement blocked due to risk/dispute/payment issue |
 | settlement_ready_for_disbursement | payout approved but not yet transferred |
 | settlement_disbursement_started | payout transfer initiated |
@@ -634,6 +665,50 @@ Driver Commission
 + Demurrage Platform Share
 - Discounts
 - Refunds
+```
+
+## Broker Model Revenue Formula
+
+For standard marketplace transactions, use this formula instead of gross freight revenue:
+
+```text
+Zippy Revenue =
+Commission Amount
++ Platform / Service Fee
++ Zippy-owned add-on fee
+- Discounts or credits against Zippy fee
+```
+
+Do not use:
+
+```text
+Zippy Revenue = Gross Freight Collected
+```
+
+unless a transaction is explicitly classified and approved as principal/GTA.
+
+## Gross Freight Liability Rule
+
+When customer money is collected before POD + OTP:
+
+```text
+Dr Bank / Payment Gateway Control
+    Cr Customer Advance / Freight Collection Liability
+```
+
+After POD + OTP:
+
+```text
+Driver portion -> Driver / Vehicle Owner Payable
+Zippy portion -> Commission Revenue + Output GST on commission
+```
+
+Gross revenue blocker:
+
+```text
+IF principal_agent_status = AGENT
+AND credit_account = Freight Revenue
+THEN block_journal("Gross freight cannot be recognized as Zippy revenue under broker model")
 ```
 
 ## Customer Commission Rule
@@ -1118,10 +1193,25 @@ Settlement should close only after reconciliation and audit checks.
 
 ```text
 Dr Bank / Payment Gateway Receivable
-    Cr Customer Advance Liability
+    Cr Customer Advance / Freight Collection Liability
 ```
 
-## Final Tax Invoice Generated
+## Broker Commission Recognized After POD + OTP
+
+```text
+Dr Customer Advance / Freight Collection Liability
+    Cr Commission / Platform Service Income
+    Cr Output GST - Commission / Platform Fee
+```
+
+## Driver / Vehicle Owner Payable Created
+
+```text
+Dr Customer Advance / Freight Collection Liability
+    Cr Driver / Vehicle Owner Payable
+```
+
+## Principal/GTA Final Tax Invoice Generated
 
 ```text
 Dr Customer Receivable / Customer Advance
@@ -1137,10 +1227,17 @@ If Zippy is marketplace/intermediary, partner freight should not be recognized a
 In marketplace mode, Zippy should recognize only its own platform/service revenue and its related output GST.
 ```
 
+Standard broker rule:
+
+```text
+Do not post gross freight to Zippy freight revenue.
+Recognize net commission/platform fee only after verified POD + OTP and hold clearance.
+```
+
 ## Provider Settlement Liability Created
 
 ```text
-Dr Carrier Cost / Pass-through
+Dr Driver / Vehicle Owner Payable or Settlement Clearing
     Cr Provider Settlement Liability
 ```
 
@@ -1213,6 +1310,22 @@ Do not auto-post high-value, disputed, mismatched, or manually overridden entrie
 ---
 
 # 12. Risk And Hold Rules
+
+## Accounting Policy Holds
+
+The accounting engine must create or preserve a hold when:
+
+```text
+principal_agent_status unresolved
+contract wording does not support broker model
+customer contract makes Zippy primary delivery obligor
+pricing discretion exists without accounting memo
+POD verified but OTP missing
+commission amount and payout split do not reconcile
+gross freight is posted to revenue under agent model
+GST taxable value uses gross freight instead of commission under broker model
+customer advance / collection liability does not clear to driver payable + commission revenue
+```
 
 ## Settlement Must Pause If
 

@@ -115,6 +115,7 @@ This invoice belongs to Zippy when it charges:
 - booking fee
 - convenience fee
 - subscription or support fee
+- commission or brokerage fee
 
 This invoice must be modeled separately from the freight invoice unless Zippy is intentionally acting as principal/GTA.
 
@@ -123,6 +124,31 @@ Core rule:
 ```text
 Do not merge partner freight GST and Zippy platform GST into one assumed freight bill.
 ```
+
+## Broker Model GST Rule
+
+For standard Zippy marketplace transactions:
+
+```text
+Zippy acts as broker/arranger.
+Zippy's taxable supply is its commission/platform/brokerage service.
+Gross freight collected from the customer is not automatically Zippy's taxable freight value.
+```
+
+Accounting and GST validation:
+
+```text
+IF principal_agent_status = AGENT
+THEN zippy_taxable_value = commission_amount + platform_fee_amount
+AND gross_freight_amount = pass_through_collection_liability_to_extent_payable_to_driver_or_vendor
+```
+
+Do not calculate Zippy output GST on gross freight unless:
+
+- Zippy is explicitly classified as principal/GTA for that transaction
+- Zippy owns the freight invoice
+- the applicable GST rule version supports that treatment
+- accounting review is cleared
 
 ---
 

@@ -1,4 +1,4 @@
-﻿---
+---
 type: hub
 domain: master
 scope: strategic
@@ -111,6 +111,13 @@ Use this order when onboarding yourself, an agent, or a teammate.
 | Archived legacy concept agents | `99_Archive/Legacy_AI_Agents_2026-04-30` | archived/reference |
 
 ## System Notes
+- [[Note Status Policy for Current Project]] - authority classes for current-project cleanup
+- [[Source of Truth Coverage Matrix]] - uploaded file absorption map
+- [[Topic Collision Register for Current Project]] - current-project authority collisions
+- [[Async Event and Worker Orchestration for Current Project]] - canonical async worker and Celery discipline
+- [[Testing and Verification Strategy for Current Project]] - canonical workflow verification note
+- [[Top Launch Gaps Still Open]] - ranked build and pilot blockers for launch readiness
+- [[Phase 1 Build Sprint Plan]] - first execution sprint based on launch-gap order
 
 - [[Tag Dictionary]] - tagging standards
 - [[Linking Rules]] - internal linking conventions

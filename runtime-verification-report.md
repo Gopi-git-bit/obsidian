@@ -81,20 +81,20 @@ Fixes:
 
 ## Verification Results
 
-| Check | Result |
-|---|---|
-| Dependency install | Passed |
-| Test suite | Passed: `27 passed in 2.32s` |
-| Compile check | Passed |
-| Local server startup | Passed |
-| Root endpoint | Passed |
-| Health endpoint | Passed: `healthy`, database `connected` |
-| Readiness endpoint | Passed: `ready`, database `connected` |
-| Vehicles endpoint | Passed, returned `0` local records |
-| Order creation endpoint | Passed |
-| Order transition endpoint | Passed |
-| Order event endpoint | Passed |
-| Alembic upgrade against fresh SQLite DB | Passed |
+| Check                                   | Result                                  |
+| --------------------------------------- | --------------------------------------- |
+| Dependency install                      | Passed                                  |
+| Test suite                              | Passed: `27 passed in 2.32s`            |
+| Compile check                           | Passed                                  |
+| Local server startup                    | Passed                                  |
+| Root endpoint                           | Passed                                  |
+| Health endpoint                         | Passed: `healthy`, database `connected` |
+| Readiness endpoint                      | Passed: `ready`, database `connected`   |
+| Vehicles endpoint                       | Passed, returned `0` local records      |
+| Order creation endpoint                 | Passed                                  |
+| Order transition endpoint               | Passed                                  |
+| Order event endpoint                    | Passed                                  |
+| Alembic upgrade against fresh SQLite DB | Passed                                  |
 
 ## Live Smoke Test Result
 

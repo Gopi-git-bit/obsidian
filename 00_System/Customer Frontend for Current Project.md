@@ -160,8 +160,31 @@ Required fields:
 - delivery address and deadline
 - consignee name and contact
 - document requirements
-- payment mode
+- payment mode and payer responsibility
+- GST/PAN profile, freight payer, and billing contact where required
 - special handling
+
+Payment-mode section:
+
+- Full Payment: customer pays the full required amount before OMS confirms the order.
+- Part Payment: customer pays the required advance or authorization before confirmation; balance remains visible as receivable until cleared by policy.
+- ToPay: consignor selects consignee as payer; the app must collect consignee name, phone, address, consent status, and payment reminder channel before confirmation.
+- Credit: visible only for approved customers with a credit limit, due date, and backend policy approval.
+- Escrow/Hold: visible only when the approved custody model supports it; do not describe it as Zippy freely holding funds unless compliance approval exists.
+
+Payment-gate copy:
+
+```text
+Your shipment is confirmed only after the required payment condition is satisfied.
+For ToPay or Credit orders, confirmation depends on approved payer consent, credit policy, and backend finance checks.
+```
+
+GST and billing inputs:
+
+- The app should ask for company GST/PAN, billing address, freight payer, and consignee payer details where applicable.
+- The app should not ask the customer to choose a GST slab.
+- GST handling is auto-classified from supplier type, customer profile, freight payer, goods category, document basis, and effective rule version.
+- If supplier ownership, freight payer, or tax mode is unclear, show `GST review pending` and block final invoice readiness.
 
 Important refinement:
 
@@ -190,8 +213,15 @@ Show:
 
 - base freight
 - service-level option
+- proforma invoice amount
+- GST classification status
+- billing model: partner freight invoice, Zippy platform/service invoice, or Zippy freight invoice
 - estimated pickup and delivery window
 - payment mode
+- payer: consignor, consignee, approved credit account, or regulated payment partner
+- required booking payment or authorization
+- remaining balance rule
+- ToPay consent state if applicable
 - detention/waiting policy
 - document requirements
 - cancellation window
@@ -208,6 +238,25 @@ Rule:
 
 ```text
 quote truth comes from backend pricing and policy services
+```
+
+Invoice rule:
+
+```text
+Quote review may show a proforma invoice or payment link.
+It must not describe the proforma as the final GST invoice.
+Final tax invoice appears only after delivery/POD or other taxable-supply confirmation and GST ownership checks.
+```
+
+Confirmation flow:
+
+```text
+quote accepted
+-> proforma invoice generated
+-> payment intent or approved ToPay/Credit obligation created
+-> required payment gate satisfied
+-> OMS confirms order
+-> assignment and dispatch workflow starts
 ```
 
 ## 4. Tracking Screen
@@ -243,19 +292,105 @@ Purpose:
 Show:
 
 - payment mode
+- payer responsibility
+- required booking payment status
 - advance paid / pending
-- ToPay responsibility if applicable
-- invoice status
+- balance due and due trigger
+- ToPay consent and collection status if applicable
+- credit due date and exposure status if applicable
+- proforma invoice status
+- final tax invoice status
+- freight invoice owner
+- Zippy platform/service invoice if invoice split applies
 - receipts
 - POD-linked invoice
 - outstanding payment blocker
 - transaction history
+- debit notes, credit notes, demurrage charges, or refund status where applicable
 
 Rules:
 
 - customers do not see provider settlement internals
 - customers should see only their payment obligation and invoice status
 - payment completion must come from backend finance events
+- `invoice_sent` means the document was delivered; it does not mean payment is complete.
+- `invoice_paid` means the payment obligation is cleared only when amount matching and backend finance checks pass.
+- ToPay orders remain `collection pending` until the consignee payment is received or admin-approved policy resolves the obligation.
+- POD can make final invoice generation eligible, but settlement and order closure still depend on payment, dispute, GST, and custody gates.
+
+Customer payment states:
+
+```text
+payment_not_started
+payment_link_created
+booking_payment_pending
+advance_paid
+partially_paid
+fully_paid
+topay_consent_pending
+topay_collection_pending
+topay_collection_received
+credit_approved_due_later
+payment_failed
+payment_mismatch_under_review
+refund_initiated
+refund_completed
+```
+
+Invoice states:
+
+```text
+proforma_generated
+receipt_generated
+final_invoice_pending_pod
+final_invoice_pending_gst_review
+final_tax_invoice_generated
+invoice_sent
+invoice_paid
+debit_note_generated
+credit_note_generated
+```
+
+Payment-mode flows:
+
+```text
+Full Payment:
+quote accepted
+-> proforma generated
+-> full payment captured
+-> order confirmed
+-> shipment executed
+-> POD verified
+-> final tax invoice generated and sent
+```
+
+```text
+Part Payment:
+quote accepted
+-> proforma generated
+-> required advance captured or authorized
+-> order confirmed
+-> loading/payment policy checked
+-> balance collected before delivery, POD release, or due date as policy defines
+-> final tax invoice generated after POD/tax confirmation
+```
+
+```text
+ToPay:
+quote accepted
+-> consignee payer details captured
+-> ToPay consent requested
+-> order confirmed only after policy-approved consent/payment gate clears
+-> delivery/POD triggers final invoice and consignee payment request
+-> provider payout remains blocked until ToPay collection or admin-approved obligation resolution
+```
+
+GST display copy:
+
+```text
+GST is calculated by the finance system based on supplier role, freight payer, customer tax profile, goods category, and current rule version.
+If freight is supplied by a partner, the freight invoice and Zippy service invoice may be separate.
+```
 
 ## 6. Profile And CRM
 
@@ -288,6 +423,9 @@ Required notifications:
 - order created
 - quote ready
 - payment required
+- ToPay consent required
+- ToPay collection pending
+- payment mismatch under review
 - vehicle/provider assigned
 - truck reached pickup
 - loading completed
@@ -296,7 +434,9 @@ Required notifications:
 - delivery imminent
 - delivered
 - POD uploaded
+- final invoice pending GST review
 - invoice raised
+- debit note or credit note issued
 - payment reminder
 - issue resolved
 

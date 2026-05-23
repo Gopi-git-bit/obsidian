@@ -12,6 +12,8 @@ tags:
   - context
   - documentation
   - source-of-truth
+source_files:
+  - "C:\Users\user\Downloads\new -chatgpt  (1).txt"
 ---
 
 # Codex Context Bundle for Current Project
@@ -32,6 +34,15 @@ What is not carried forward:
 - old file names as mandatory truth
 - stack-locked coding instructions
 
+## Authority Status
+
+This note is a canonical current-project context note.
+
+It exists to prevent coding work from reading scattered drafts as if they were equally authoritative.
+
+Use it to route implementation work toward the current FastAPI-aligned notes.
+
+Do not treat raw external files or old framework-specific prompts as build law unless this note or another canonical current-project note explicitly carries them forward.
 ## Why This Matters
 
 The project now has multiple refined notes that replaced older drafts.
@@ -56,6 +67,8 @@ For future coding sessions, the minimum source-of-truth bundle should be:
 7. [[Frontend UI Blueprint for Current Project]]
 8. [[Return Trip Streamlined Operations v1]]
 9. [[Safe Algorithm Rollout and Experimentation SOP]]
+10. [[Async Event and Worker Orchestration for Current Project]]
+11. [[Testing and Verification Strategy for Current Project]]
 
 ## Optional Supporting Notes
 

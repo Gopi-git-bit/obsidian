@@ -22,6 +22,36 @@ Central deep-link hub for the active Zippy project notes.
 
 Use this note when you want the shortest path between product direction, architecture, frontend surfaces, backend shape, compliance, and execution notes.
 
+## Source-of-Truth Governance
+
+Use these notes to keep build authority small and explicit:
+
+- [[Note Status Policy for Current Project]]
+- [[Source of Truth Coverage Matrix]]
+- [[Topic Collision Register for Current Project]]
+- [[Archive Candidates - First Pass]]
+- [[Async Event and Worker Orchestration for Current Project]]
+- [[Testing and Verification Strategy for Current Project]]
+- [[Top Launch Gaps Still Open]]
+- [[Phase 1 Build Sprint Plan]]
+
+## Canonical Build Set
+
+Treat these as the top builder-facing canon for the current project:
+
+- [[Current Architecture Source of Truth]]
+- [[Master PRD Distillation for Current Project]]
+- [[Backend Structure for Current Project]]
+- [[Frontend Architecture for Current Project]]
+- [[Frontend UI Blueprint for Current Project]]
+- [[API and Event Contract for Current Project]]
+- [[Role and Permission Matrix for Current Project]]
+- [[Codex Context Bundle for Current Project]]
+- [[MVP Build Contract for Current Project]]
+- [[Async Event and Worker Orchestration for Current Project]]
+- [[Testing and Verification Strategy for Current Project]]
+- [[Top Launch Gaps Still Open]]
+- [[Phase 1 Build Sprint Plan]]
 ## Start Here
 
 - [[Current Architecture Source of Truth]]
@@ -51,6 +81,8 @@ Use this note when you want the shortest path between product direction, archite
 - [[API and Event Contract for Current Project]]
 - [[Role and Permission Matrix for Current Project]]
 - [[Frontend-to-Backend Flow Map for Current Project]]
+- [[Async Event and Worker Orchestration for Current Project]]
+- [[Testing and Verification Strategy for Current Project]]
 - [[Current Project Navigation Hub]]
 - [[AI Logistics Operating System Roadmap]]
 
@@ -102,6 +134,8 @@ Use this note when you want the shortest path between product direction, archite
 9. [[Operational Compliance Framework for Indian Logistics Startup 2025-2026]]
 10. [[Zippy Logistics Operational Core Schema]]
 11. [[On-Time Delivery Control Tower Strategy for Multimodal Freight]]
+12. [[Top Launch Gaps Still Open]]
+13. [[Phase 1 Build Sprint Plan]]
 
 ## Navigation Rule
 

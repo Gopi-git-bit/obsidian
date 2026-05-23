@@ -22,6 +22,7 @@ related:
   - Partnership and Contract Strategy for a Multimodal Logistics Startup
   - Demurrage Solution Translated for Current Logistics Project
   - Optimized Solution Framework for Current Logistics Project
+  - Accounting Policy Engine for Broker Model
 ---
 
 # Payment, Invoice, and Accounting Agent Architecture for Logistics Platform
@@ -36,6 +37,7 @@ It must also keep four things separate:
 - fund custody
 - payout authorization
 - accounting recognition
+- gross freight collection liability versus Zippy commission revenue
 
 The goal is:
 
@@ -83,6 +85,31 @@ Do not reduce GST to a yes/no field.
 Classify tax from business model, freight supplier type, customer tax profile, freight payer, goods category, and the effective-dated rule version.
 ```
 
+## Default Accounting Policy
+
+Zippy's standard marketplace transport transaction defaults to the agent/broker model.
+
+```text
+Zippy arranges transport services between customers and independent drivers, vehicle owners, or transport vendors.
+Zippy does not provide the physical transport service itself for standard marketplace transactions.
+Zippy revenue is limited to commission/platform fee.
+Gross freight collected from customers is a pass-through collection liability to the extent payable to drivers/vehicle owners.
+```
+
+Default accounting classification:
+
+```text
+principal_agent_status = AGENT
+revenue_presentation = NET_COMMISSION
+gross_freight_revenue_allowed = false
+```
+
+Risk warning:
+
+```text
+Because Zippy may contract with the customer and fix customer price, the customer contract must clearly state that Zippy acts as broker/arranger and that physical carriage responsibility remains with the driver, vehicle owner, or transport vendor.
+```
+
 ---
 
 # 2. Agent Roles
@@ -112,6 +139,9 @@ The OMS is the commercial starting point.
   "quote_amount": 25000,
   "platform_commission": 2500,
   "carrier_payable": 22500,
+  "principal_agent_status": "agent",
+  "revenue_presentation": "net_commission",
+  "gross_freight_collection_liability": 25000,
   "payment_terms": "partial_advance",
   "advance_required": 10000,
   "shipment_type": "domestic_road",
@@ -142,12 +172,22 @@ The OMS is the commercial starting point.
 ### Quote Ownership Rule
 
 ```text
-If Zippy is marketplace/intermediary:
+If Zippy is marketplace/intermediary/agent:
 - freight invoice belongs to the partner supplier
-- Zippy invoice covers only platform/service fee unless Zippy separately supplies a taxable service
+- Zippy invoice covers only commission/platform/service fee unless Zippy separately supplies a taxable service
+- customer gross freight collection is not Zippy freight revenue
 
 If Zippy is principal/GTA:
 - Zippy owns the freight invoice and freight-side GST treatment
+```
+
+## Broker Revenue Rule
+
+```text
+For standard marketplace transactions:
+Zippy performance obligation = arrange vehicle/driver and coordinate until verified POD + OTP.
+Revenue trigger = POD verified + OTP verified + no unresolved cancellation/fraud/dispute/claim hold.
+Revenue amount = commission/platform fee only.
 ```
 
 ---
@@ -374,12 +414,13 @@ The platform should maintain these ledgers.
 | Ledger | Type | Purpose |
 | --- | --- | --- |
 | Customer Receivable | Asset | amount customer owes |
-| Customer Advance / Deposit | Liability | amount received before final invoice |
+| Customer Advance / Freight Collection Liability | Liability | gross customer collection held before split into driver payable and earned commission |
 | Freight Revenue | Revenue | freight earning only when Zippy is principal supplier |
-| Platform Commission / Service Income | Revenue | Zippy earning in marketplace/intermediary mode |
-| Carrier Settlement Liability | Liability | amount payable to carrier/driver |
+| Commission / Platform Service Income | Revenue | Zippy earning in marketplace/intermediary/agent mode |
+| Driver / Vehicle Owner Payable | Liability | amount payable to carrier/driver/vehicle owner |
+| Vendor Payable Under Dispute | Liability | payable blocked due to claim, POD, OTP, damage, or settlement dispute |
 | Output GST - Freight | Liability | GST collected on freight only when Zippy is the freight supplier |
-| Output GST - Platform Fee | Liability | GST collected on Zippy platform/service fee |
+| Output GST - Commission / Platform Fee | Liability | GST collected on Zippy taxable commission/service fee |
 | Input GST / ITC | Asset | GST paid on expenses |
 | Demurrage Income / Recovery | Revenue or pass-through | waiting-time charge |
 | Refund Payable | Liability | refund due to customer |
@@ -399,6 +440,24 @@ Operating expenses are not deducted from customer payment or commission income. 
 
 Do not post freight-side output GST to Zippy by default in marketplace mode.
 
+## Broker Model Net Revenue Formula
+
+```text
+Zippy Revenue =
+Commission Amount
++ Platform / Service Fee
++ Zippy-owned add-on fee
+- Discounts / credits against Zippy fee
+```
+
+Do not use:
+
+```text
+Zippy Revenue = Gross Freight Collected
+```
+
+unless the transaction has an approved principal/GTA classification.
+
 ---
 
 # 7. Event-Based Architecture
@@ -412,11 +471,15 @@ OMS Order Created
 -> Quote Generated
 -> Payment Link Created
 -> Advance Received
+-> Customer Advance / Freight Collection Liability Created
 -> Carrier Assigned
 -> Shipment Picked Up
 -> Shipment Delivered
 -> POD Approved
--> Final Invoice Generated
+-> OTP Verified
+-> Commission Revenue Recognized
+-> Driver / Vehicle Owner Payable Created
+-> Final Commission / Platform Invoice Generated
 -> Carrier Settlement Released
 -> Accounting Reconciled
 ```
@@ -431,7 +494,7 @@ OMS Order Created
 | Shipment picked up | TMS | confirm execution started |
 | Waiting time recorded | TMS/DWIS | calculate demurrage |
 | Delivered/POD uploaded | TMS | final invoice eligibility |
-| POD approved | Accounting/TMS | carrier settlement release |
+| POD + OTP approved | Accounting/TMS | commission recognition and carrier payable eligibility |
 | Customer refund | Payment Agent | refund + credit note |
 | Invoice generated | Invoice Agent | ledger posting |
 | Bank settled | Accounting Agent | reconciliation |
@@ -897,62 +960,63 @@ Customer pays advance before final invoice.
 
 | Debit | Credit |
 | --- | --- |
-| Bank / Payment Gateway Receivable | Customer Advance Liability |
+| Bank / Payment Gateway Receivable | Customer Advance / Freight Collection Liability |
 
 ```text
 Dr Bank / Gateway Receivable
-    Cr Customer Advance Liability
+    Cr Customer Advance / Freight Collection Liability
 ```
 
 ---
 
-## 14.2 Final Tax Invoice Generated
+## 14.2 Broker Model Commission Recognition
 
-At delivery/POD stage.
-
-| Debit | Credit |
-| --- | --- |
-| Customer Receivable / Advance Adjusted | Freight Revenue or Platform Commission Income depending on invoice owner |
-|  | Output GST on the relevant invoice owner/service |
-
-```text
-Dr Customer Receivable / Customer Advance
-    Cr Freight Revenue or Platform Commission Income
-    Cr Output GST - Freight or Output GST - Platform Fee
-```
-
-Marketplace rule:
-
-```text
-Do not recognize partner freight as Zippy freight revenue.
-Recognize only Zippy's own platform/service revenue and its related output GST.
-```
-
----
-
-## 14.3 Carrier Settlement Liability
-
-When carrier payout becomes due.
+At verified POD + OTP stage, for standard marketplace transactions.
 
 | Debit | Credit |
 | --- | --- |
-| Freight Pass-through / Carrier Cost | Carrier Settlement Liability |
+| Customer Advance / Freight Collection Liability | Commission / Platform Service Income |
+|  | Output GST - Commission / Platform Fee |
 
 ```text
-Dr Carrier Cost / Pass-through
-    Cr Carrier Settlement Liability
+Dr Customer Advance / Freight Collection Liability
+    Cr Commission / Platform Service Income
+    Cr Output GST - Commission / Platform Fee
+```
+
+Broker model rule:
+
+```text
+Recognize only Zippy's commission/platform fee.
+Do not recognize gross freight as Zippy revenue.
+GST taxable value for Zippy is commission/platform fee unless CA-approved policy says otherwise.
 ```
 
 ---
 
-## 14.4 Carrier Paid
+## 14.3 Driver / Vehicle Owner Payable
+
+When the driver's/vehicle owner's service is completed and verified.
 
 | Debit | Credit |
 | --- | --- |
-| Carrier Settlement Liability | Bank |
+| Customer Advance / Freight Collection Liability | Driver / Vehicle Owner Payable |
 
 ```text
-Dr Carrier Settlement Liability
+Dr Customer Advance / Freight Collection Liability
+    Cr Driver / Vehicle Owner Payable
+```
+
+---
+
+## 14.4 Driver / Vehicle Owner Paid
+
+| Debit | Credit |
+| --- | --- |
+| Driver / Vehicle Owner Payable | Bank |
+
+```text
+Dr Driver / Vehicle Owner Payable
     Cr Bank
 ```
 
@@ -967,6 +1031,24 @@ Dr Carrier Settlement Liability
 ```text
 Dr Customer Advance Liability / Credit Note
     Cr Bank / Gateway
+```
+
+---
+
+## 14.6 Gross Revenue Error Blocker
+
+The accounting engine must block this journal for standard marketplace transactions:
+
+```text
+Dr Bank / Payment Gateway Control
+    Cr Freight Revenue
+```
+
+Block reason:
+
+```text
+Possible gross revenue error under agent/broker model.
+Use Customer Advance / Freight Collection Liability and recognize net commission only after POD + OTP.
 ```
 
 ---
@@ -1114,6 +1196,9 @@ Add:
 - releasing carrier payout without POD
 - assuming escrow is automatically legal because the product wants it
 - mixing customer freight amount and platform commission in one revenue ledger
+- treating gross freight collected from customers as Zippy revenue in standard broker transactions
+- calculating GST on gross freight as Zippy's taxable value when Zippy is only agent/broker
+- recognizing commission before POD + OTP verification
 - finalizing dispatch or invoice when supplier role and tax mode are unresolved
 
 ---

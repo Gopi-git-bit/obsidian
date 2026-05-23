@@ -240,6 +240,10 @@ Important operational events:
 
 The database should record these through state events, shipment events, finance events, and alert or incident records.
 
+Current event and worker note:
+
+- [[Async Event and Worker Orchestration for Current Project]]
+
 ## Analytics Source Of Truth
 
 Operational data should feed analytics, not replace it.
@@ -275,6 +279,10 @@ Current required test areas:
 - SLA promise vs outcome tests
 - finance event tests
 - idempotency and concurrency tests
+
+Current testing note:
+
+- [[Testing and Verification Strategy for Current Project]]
 
 ## What Is Explicitly Out Of Scope For Current Truth
 

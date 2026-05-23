@@ -13,6 +13,8 @@ tags:
   - operating-model
   - autonomy
   - policy
+source_files:
+  - "C:\Users\user\Downloads\AI agent roles.txt"
 created: 2026-05-01
 updated: 2026-05-01
 ---
@@ -36,6 +38,11 @@ It removes or updates what no longer fits:
 - stack-specific orchestration assumptions
 - old naming that does not match the current backend and database direction
 
+## Authority Status
+
+This note is the canonical agent-governance note for the active current project.
+
+Notes such as [[02_Agentic_AI_Application]] may summarize roles or implementation shape, but they should not redefine forbidden actions, escalation boundaries, or autonomy policy against this note.
 ## Core Principle
 
 Agents are not the source of truth.

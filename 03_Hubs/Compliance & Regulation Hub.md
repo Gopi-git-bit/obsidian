@@ -22,6 +22,7 @@ Central hub for Indian logistics compliance, legal requirements, and regulatory 
 - [[LR/GR Document Management]]
 - [[Legal Compliance Framework]]
 - [[Operational Compliance Framework for Indian Logistics Startup 2025-2026]]
+- [[Compliance Compatibility Plan for Current Logistics Environment]]
 - [[Government Warehousing Standards Compliance Layer]]
 - [[Logistics Network Implementation Roadmap]]
 - [[PartnershipAgreement.yaml]]
@@ -65,6 +66,7 @@ Central hub for Indian logistics compliance, legal requirements, and regulatory 
 ## Risk Management
 
 - [[Compliance Risk Scoring]]
+- [[Compliance Compatibility Plan for Current Logistics Environment]]
 - [[Penalty Avoidance Logic]]
 - [[Documentation Audit Trail]]
 - [[Legal Compliance Framework]]

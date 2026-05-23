@@ -16,6 +16,10 @@ updated: 2025-01-15
 
 Central hub for all operational scenarios and response playbooks for logistics exceptions and disruptions.
 
+## Executive Scenario Doctrine
+
+- [[CEO Scenario Operating Playbook for Logistics Uncertainty]]
+
 ## Scenario Child Notes (06_Scenarios/)
 
 ### Operational Disruptions

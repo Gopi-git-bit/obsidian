@@ -17,7 +17,8 @@ tags:
   - deterministic
   - zippy-logistics
 source_files:
-  - "C:\\Users\\user\\Downloads\\new -chatgpt .txt"
+  - "C:\Users\user\Downloads\new -chatgpt .txt"
+  - "C:\Users\user\Downloads\Aco-chat.txt"
 ---
 
 # Return Trip Streamlined Operations v1
@@ -34,6 +35,13 @@ return-trip matching should start as deterministic, metadata-only, auditable, an
 
 This note should guide the first production version of return-trip operations.
 
+## Authority Status
+
+This note is the canonical v1 operating-flow note for return-trip execution.
+
+Use [[03_ReturnTrip_Algorithm]] as the supporting algorithm note for scoring details.
+
+Use schema and API notes as supporting implementation references, not as competing owners of the end-to-end return-trip operating flow.
 ## Core Principle
 
 Return-trip logic must not violate the order state machine.

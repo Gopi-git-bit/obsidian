@@ -70,6 +70,7 @@ Central hub for revenue models, pricing strategies, and financial frameworks.
 - [[Logistics Network Implementation Roadmap]] - Startup roadmap from strategy and compliance to topology, tech stack, partners, and optimization
 - [[Collaborative Logistics Network Framework]] - Formal partner collaboration model for shared capacity, data, revenue, governance, and exit rules
 - [[Partnership-Led Market Entry Framework]] - Early-stage partnership playbook for capacity, demand, tech, compliance, and strategic alliances
+- [[Partnership Term Sheet Compatibility Framework]] - Contract-to-system compatibility guide for anchor tenants, SFOs, transport companies, EV fleets, payment partners, insurance partners, SLA disputes, and exit controls
 - [[Collaboration Risk Opportunity Balance Framework]] - Decide whether to expand, pilot, maintain, reduce, or exit collaborations
 - [[PartnershipAgreement.yaml]] - Machine-readable partner agreement template for economics, rollout gates, risk controls, and exit clauses
 - [[Strategic Profit Sharing Framework]] - Contribution-weighted, tiered-volume, and dynamic-margin rules for fair partner settlement
@@ -86,6 +87,11 @@ Central hub for revenue models, pricing strategies, and financial frameworks.
 - [[Payment Risk Logic]]
 - [[Dynamic Pricing Logic]]
 - [[Strategic Profit Sharing Framework]]
+
+## Related Backtests
+- [[Partnership Terms Backtest v1]]
+- [[Pricing Engine Backtest v1]]
+- [[Accounting Policy Backtest v1]]
 
 ## Related AI Agents
 - [[Payment Settlement Agent]] - Financial operations

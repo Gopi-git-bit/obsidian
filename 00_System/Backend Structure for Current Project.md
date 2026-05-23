@@ -277,6 +277,10 @@ Current-context guidance:
 - use database state and event logs as the core truth
 - treat background workers as helpers, not as the only source of business truth
 
+Current async orchestration note:
+
+- [[Async Event and Worker Orchestration for Current Project]]
+
 Important events:
 
 - order created
@@ -310,6 +314,10 @@ Minimum test set:
 - audit/event row is written for every accepted transition
 
 These tests matter more than happy-path endpoint tests.
+
+Current testing note:
+
+- [[Testing and Verification Strategy for Current Project]]
 
 ## 6. Analytics Feed Layer
 

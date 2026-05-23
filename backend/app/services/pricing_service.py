@@ -109,6 +109,43 @@ ROUTE_DIFFICULTY = {
     "mumbai-ahmedabad": 0.35,
 }
 
+CITY_DENSITY_MULTIPLIER = {
+    1: 1.08,  # metro: congestion, entry restrictions, last-mile friction
+    2: 1.00,  # tier-1 / tier-2: baseline regional operating cost
+    3: 1.07,  # smaller/remote cities: weaker roads and lower return-load certainty
+}
+
+RDS_SURCHARGE_TIERS = [
+    {"min": 0, "max": 20, "surcharge_pct": 0, "label": "easy"},
+    {"min": 20, "max": 40, "surcharge_pct": 5, "label": "normal_friction"},
+    {"min": 40, "max": 60, "surcharge_pct": 10, "label": "moderate"},
+    {"min": 60, "max": 80, "surcharge_pct": 15, "label": "hard"},
+    {"min": 80, "max": 101, "surcharge_pct": 25, "label": "extreme_review"},
+]
+
+LANE_VIABILITY = {
+    "highly_balanced": {
+        "return_load_probability": 0.85,
+        "deadhead_surcharge_pct": 0,
+    },
+    "moderately_balanced": {
+        "return_load_probability": 0.60,
+        "deadhead_surcharge_pct": 6,
+    },
+    "unbalanced_origin_heavy": {
+        "return_load_probability": 0.35,
+        "deadhead_surcharge_pct": 12,
+    },
+    "seasonal": {
+        "return_load_probability": 0.45,
+        "deadhead_surcharge_pct": 10,
+    },
+    "remote_low_demand": {
+        "return_load_probability": 0.20,
+        "deadhead_surcharge_pct": 18,
+    },
+}
+
 
 class FeatureEngineer:
     def __init__(self, config_path=None):
@@ -335,6 +372,61 @@ class DynamicPricingEngine:
         self.surge_predictor = SurgePredictor() if use_ml else None
         self.use_ml = use_ml
 
+    @staticmethod
+    def _normalize_rds_score(raw_score: float) -> float:
+        if raw_score <= 1:
+            return raw_score * 100
+        return max(0.0, min(raw_score, 100.0))
+
+    @staticmethod
+    def _resolve_rds_tier(score: float) -> dict:
+        for tier in RDS_SURCHARGE_TIERS:
+            if tier["min"] <= score < tier["max"]:
+                return tier
+        return RDS_SURCHARGE_TIERS[-1]
+
+    @staticmethod
+    def _resolve_density_factor(origin_city: str, destination_city: str) -> dict:
+        fe = FeatureEngineer()
+        origin_tier = fe.get_city_tier(origin_city)
+        destination_tier = fe.get_city_tier(destination_city)
+        origin_factor = CITY_DENSITY_MULTIPLIER.get(origin_tier, 1.07)
+        destination_factor = CITY_DENSITY_MULTIPLIER.get(destination_tier, 1.07)
+        multiplier = (origin_factor + destination_factor) / 2
+        return {
+            "origin_city_tier": origin_tier,
+            "destination_city_tier": destination_tier,
+            "origin_density_factor": round(origin_factor, 4),
+            "destination_density_factor": round(destination_factor, 4),
+            "density_multiplier": round(multiplier, 4),
+        }
+
+    @staticmethod
+    def _resolve_lane_viability(params: dict) -> dict:
+        viability = params.get("lane_viability")
+        if not viability:
+            return_probability = params.get("return_load_probability")
+            if return_probability is None:
+                viability = "moderately_balanced"
+            elif return_probability >= 0.75:
+                viability = "highly_balanced"
+            elif return_probability >= 0.50:
+                viability = "moderately_balanced"
+            elif return_probability >= 0.30:
+                viability = "unbalanced_origin_heavy"
+            else:
+                viability = "remote_low_demand"
+
+        config = LANE_VIABILITY.get(viability, LANE_VIABILITY["moderately_balanced"])
+        return {
+            "lane_viability": viability,
+            "return_load_probability": config["return_load_probability"],
+            "deadhead_surcharge_pct": config["deadhead_surcharge_pct"],
+            "deadhead_multiplier": round(
+                1 + (config["deadhead_surcharge_pct"] / 100), 4
+            ),
+        }
+
     def calculate_price(self, params: dict) -> dict:
         weight_kg = params["weight_kg"]
         distance_km = params["distance_km"]
@@ -367,6 +459,18 @@ class DynamicPricingEngine:
 
         tier_adjusted_cost = base_cost * tier_mult * fuel_index
 
+        raw_rds_score = params.get("route_difficulty_score")
+        if raw_rds_score is None:
+            raw_rds_score = fe.get_rds_score(origin_city, destination_city)
+        rds_score = self._normalize_rds_score(raw_rds_score)
+        rds_tier = self._resolve_rds_tier(rds_score)
+        route_difficulty_surcharge = tier_adjusted_cost * (
+            rds_tier["surcharge_pct"] / 100
+        )
+
+        density_factor = self._resolve_density_factor(origin_city, destination_city)
+        density_multiplier = density_factor["density_multiplier"]
+
         surcharges = {}
         total_surcharge_pct = 0
 
@@ -388,6 +492,10 @@ class DynamicPricingEngine:
             total_surcharge_pct += pct
 
         surcharge_amount = tier_adjusted_cost * (total_surcharge_pct / 100)
+        risk_adjusted_cost = (
+            tier_adjusted_cost + route_difficulty_surcharge + surcharge_amount
+        )
+        density_adjusted_cost = risk_adjusted_cost * density_multiplier
 
         surge_input = {
             "demand": demand,
@@ -402,6 +510,7 @@ class DynamicPricingEngine:
             "congestion_level": 0.5 if is_congested else 0.2,
             "vehicle_category": vehicle_category,
             "customer_type": customer_type,
+            "rds_score": rds_score / 100,
         }
 
         if self.use_ml and self.surge_predictor:
@@ -424,14 +533,20 @@ class DynamicPricingEngine:
             surge_model = "rule_based"
             surge_confidence = 0.9
 
-        surge_amount = (tier_adjusted_cost + surcharge_amount) * (surge_mult - 1.0)
+        surge_amount = density_adjusted_cost * (surge_mult - 1.0)
 
         service_mult = self.SERVICE_MULTIPLIERS.get(service_type, 1.0)
-        service_amount = (tier_adjusted_cost + surcharge_amount + surge_amount) * (
+        service_amount = (density_adjusted_cost + surge_amount) * (
             service_mult - 1.0
         )
 
-        subtotal = tier_adjusted_cost + surcharge_amount + surge_amount + service_amount
+        lane_viability = self._resolve_lane_viability(params)
+        after_service = density_adjusted_cost + surge_amount + service_amount
+        deadhead_amount = after_service * (
+            lane_viability["deadhead_surcharge_pct"] / 100
+        )
+
+        subtotal = after_service + deadhead_amount
 
         platform_fee_pct = 4.0 if distance_km > 200 else 5.0
         platform_fee = subtotal * (platform_fee_pct / 100)
@@ -455,9 +570,17 @@ class DynamicPricingEngine:
             "tier_multiplier": tier_mult,
             "fuel_index": round(fuel_index, 4),
             "tier_adjusted_cost": round(tier_adjusted_cost, 2),
+            "route_difficulty": {
+                "score": round(rds_score, 2),
+                "tier": rds_tier["label"],
+                "surcharge_pct": rds_tier["surcharge_pct"],
+                "surcharge_amount": round(route_difficulty_surcharge, 2),
+            },
+            "urbanization_density": density_factor,
             "surcharges": surcharges,
             "total_surcharge_pct": total_surcharge_pct,
             "surcharge_amount": round(surcharge_amount, 2),
+            "density_adjusted_cost": round(density_adjusted_cost, 2),
             "surge_multiplier": round(surge_mult, 3),
             "surge_model": surge_model,
             "surge_confidence": round(surge_confidence, 3),
@@ -465,6 +588,8 @@ class DynamicPricingEngine:
             "service_type": service_type,
             "service_multiplier": service_mult,
             "service_amount": round(service_amount, 2),
+            "deadhead_lane_viability": lane_viability,
+            "deadhead_amount": round(deadhead_amount, 2),
             "subtotal": round(subtotal, 2),
             "customer_type": customer_type,
             "customer_adjustment": round(customer_discount, 2),
@@ -491,10 +616,16 @@ class DynamicPricingEngine:
         return {
             "base_rates_per_km": self.RATE_PER_KM,
             "city_tier_multipliers": self.CITY_TIER_MULTIPLIER,
+            "city_density_multipliers": CITY_DENSITY_MULTIPLIER,
+            "route_difficulty_surcharge_tiers": RDS_SURCHARGE_TIERS,
+            "lane_viability_deadhead": LANE_VIABILITY,
             "surcharge_ranges": self.SURCHARGE_RANGES,
             "service_multipliers": self.SERVICE_MULTIPLIERS,
             "platform_fee_pct": {"short_haul_lt_200km": 5.0, "long_haul_gt_200km": 4.0},
-            "gst_rates": {"transport": 12, "services": 18},
+            "gst_rates": {
+                "transport": "classified_by_finance_tax_engine",
+                "services": 18,
+            },
             "demand_supply_surge": {
                 "1:1": "1.0x (normal)",
                 "2:1": "1.2x (+20%)",

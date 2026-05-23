@@ -1,4 +1,4 @@
-﻿---
+---
 type: audit_report
 domain: vault_management
 status: active
@@ -171,3 +171,22 @@ Actions taken after reviewing unwanted/irrelevant Markdown files:
 Decision note:
 
 Most remaining Markdown files are relevant as source notes, concept notes, algorithms, SOPs, dashboards, data-model docs or market intelligence. No broad deletion was performed because the rest of the files still support the logistics knowledge graph.
+
+## Cleanup Pass - 2026-05-17
+
+Actions taken in this pass:
+
+1. Created [[Note Status Policy for Current Project]] to classify canonical, supporting, reference, and archive-candidate notes.
+2. Created [[Source of Truth Coverage Matrix]] to map uploaded external files to current-project replacements.
+3. Created [[Topic Collision Register for Current Project]] to record builder-facing authority collisions.
+4. Created [[Archive Candidates - First Pass]] to hold later archive review decisions without moving or deleting notes now.
+5. Updated key current-project notes to make authority boundaries more explicit.
+
+## Cleanup Pass - 2026-05-17b
+
+Actions taken in this pass:
+
+1. Created [[Testing and Verification Strategy for Current Project]] from `Testing phase.txt` as the canonical verification note.
+2. Created [[Async Event and Worker Orchestration for Current Project]] from `CELERY -EVENT.txt` as the canonical async worker and Celery note.
+3. Extended the source coverage matrix and topic collision register to include testing and async orchestration authority.
+4. Linked testing and async orchestration into the current-project navigation and context bundle.

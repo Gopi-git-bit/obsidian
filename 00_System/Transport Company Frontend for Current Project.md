@@ -142,7 +142,11 @@ Show:
 - required vehicle type
 - pickup/delivery lane
 - cargo category
-- expected earning or service fee visibility
+- expected earning
+- INR 700 service fee deduction or current approved transport-company fee policy
+- payout readiness blockers
+- payment mode on the underlying order where it affects payout timing
+- ToPay collection status where applicable
 - SLA / promised window
 - required documents
 - accept/reject action
@@ -153,6 +157,9 @@ Rules:
 - acceptance is a provider signal, not final lifecycle truth
 - backend confirms assignment and trip creation
 - company can assign only verified vehicles/drivers
+- provider-side finance is a settlement payable to the company, not a customer receivable
+- POD verification can start settlement preprocessing but does not release payout by itself
+- payout waits for payment obligation, dispute, GST, custody, and bank-verification gates
 
 ## Customer Mode
 
@@ -163,6 +170,8 @@ Reuse customer-app logic where possible:
 - booking details
 - quote review
 - payment mode
+- payer responsibility
+- proforma and final invoice visibility
 - tracking
 - POD and invoice visibility
 
@@ -170,6 +179,35 @@ Important:
 
 - customer-mode payments and provider-mode earnings must remain separated
 - app copy should clearly show whether the company is paying or earning on that order
+- customer-mode ToPay means the company's consignee is responsible for delivery collection; it must not be shown as provider-side payout
+- credit terms are allowed only if the company has approved customer-role credit policy
+
+Customer-mode payment flow:
+
+```text
+company places order
+-> quote/proforma generated
+-> Full, Part, ToPay, or Credit payment mode selected
+-> required payment, ToPay consent, or credit gate clears
+-> OMS confirms order
+-> tracking and POD visibility follow customer-app rules
+-> final invoice generated after POD/tax confirmation
+```
+
+Provider-mode settlement flow:
+
+```text
+company accepts received work
+-> backend confirms assignment
+-> vehicle/driver executes trip
+-> POD verified
+-> settlement preprocessing starts
+-> INR 700 service fee, penalties, claims, demurrage share, and tax/withholding rules are applied
+-> settlement remains on hold until invoice/payment obligation, dispute, bank, GST, and custody gates clear
+-> payout initiated
+-> payout success
+-> settlement reconciled and closed
+```
 
 ## Fleet Screen
 
@@ -208,14 +246,83 @@ Sections:
 - Provider Earnings
 - Customer Payments
 - Zippy Service Fees
-- Invoices
+- Invoices Payable
+- Invoices Receivable / Freight Documents
 - Settlements
+- Holds And Exceptions
 
 Rules:
 
 - provider-side work may show INR 700 service fee or current approved policy
 - customer-side orders show payable invoices, not provider payout
 - final finance truth comes from backend finance events
+- the same company identity can have separate customer-role receivables/payables and provider-role settlement payables
+- finance cards must always show role context: `Placed Order` or `Received Work`
+- never net customer-mode dues against provider-mode payouts in the app UI unless a backend-approved adjustment document exists
+- marketplace mode may show partner freight invoice and separate Zippy platform/service invoice
+- principal/GTA mode may show Zippy freight invoice
+- GST handling is classified by supplier role, freight payer, company tax profile, goods category, and effective rule version
+- `invoice_sent` does not mean paid, and `settlement_ready_for_disbursement` does not mean payout succeeded
+
+Provider Earnings shows:
+
+- gross fare or approved earning
+- INR 700 service fee deduction or approved fee policy
+- demurrage/waiting share
+- penalties, claim adjustments, TDS, or other policy deductions
+- payout amount
+- settlement state
+- settlement slip
+
+Customer Payments shows:
+
+- quote/proforma amount
+- payment mode
+- payer responsibility
+- advance paid and balance due
+- ToPay consent and collection status
+- credit due date and overdue status
+- final invoice and receipt status
+
+Finance states:
+
+```text
+customer_role:
+proforma_generated
+payment_link_created
+advance_paid
+partially_paid
+fully_paid
+topay_consent_pending
+topay_collection_pending
+topay_collection_received
+credit_due
+payment_mismatch_under_review
+final_tax_invoice_generated
+invoice_paid
+```
+
+```text
+provider_role:
+earning_estimated
+pod_under_review
+settlement_preprocessing
+settlement_on_hold
+settlement_ready_for_disbursement
+payout_initiated
+payout_successful
+payout_failed
+settlement_reconciled
+settlement_closed
+```
+
+Dual-role finance copy:
+
+```text
+Placed orders are money the company owes or has paid.
+Received work is money the company may earn after settlement gates clear.
+These ledgers are separate even though the company account is the same.
+```
 
 ## Profile And Verification
 
@@ -274,4 +381,3 @@ a role-aware fleet, work, and finance surface
 that lets transport companies provide capacity or place orders
 without mixing operational or financial truth
 ```
-

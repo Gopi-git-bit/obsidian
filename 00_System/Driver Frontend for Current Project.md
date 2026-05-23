@@ -146,7 +146,10 @@ For each offer, show:
 - cargo summary
 - vehicle-fit relevance
 - service level
-- payment terms visibility
+- payment-mode visibility: Full Payment, Part Payment, ToPay, Credit, or approved custody/hold model
+- expected earning preview
+- deduction preview: driver commission, penalties, claims, or waiting-time share where applicable
+- payout readiness blockers, if already known
 - promised timeline
 
 Driver actions:
@@ -311,15 +314,67 @@ when operationally necessary and backend-authorized.
 
 The driver app should show:
 
-- advance payment status
-- pending payment status
-- settlement completion status
-- deductions or commission visibility where relevant
+- customer payment gate status only where it affects dispatch or payout readiness
+- expected earning
+- commission deducted from driver payout
+- demurrage or waiting compensation if collected and approved
+- payout readiness state
+- settlement hold reason when visible to the driver
+- payout initiated, payout successful, payout failed, and settlement slip states
+- ToPay collection pending when consignee payment blocks payout
+- dispute, claim, POD, GST, or bank-verification blocker summaries
 
 The driver app should not:
 
 - infer finance completion from local actions
 - allow manual override of payment state
+- describe POD upload as automatic payout release
+- expose customer invoice internals beyond what affects driver execution or payout
+
+Driver payout states:
+
+```text
+earning_estimated
+payment_gate_pending
+trip_in_progress
+pod_uploaded
+pod_under_review
+settlement_preprocessing
+settlement_on_hold
+settlement_ready_for_disbursement
+payout_initiated
+payout_successful
+payout_failed
+settlement_reconciled
+settlement_closed
+```
+
+Settlement hold copy:
+
+```text
+Payout is on hold until required payment, POD, dispute, bank, GST, or compliance checks are cleared.
+```
+
+Completion-to-payout flow:
+
+```text
+delivery completed
+-> POD uploaded
+-> POD verified by backend workflow
+-> final invoice and payment obligation checked
+-> settlement preprocessing starts
+-> commission, penalties, demurrage share, and claim adjustments calculated
+-> payout readiness computed
+-> disbursement starts only after payment, dispute, bank, custody, and compliance gates clear
+-> payout success and reconciliation update driver app
+```
+
+ToPay rule:
+
+```text
+For ToPay orders, driver completion and POD upload do not mean payout is ready.
+Payout remains blocked until consignee collection is received or an admin-approved finance policy resolves the obligation.
+```
 
 ## Document Handling
 

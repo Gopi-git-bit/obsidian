@@ -32,6 +32,7 @@ Central hub for core logistics operations: order management, dispatch, tracking,
 - [[Order Processing and Transportation Management Knowledge Map]]
 - [[Transport Logistics and Warehousing Knowledge Map]]
 - [[Transport Operations Implementation Framework]]
+- [[CEO Scenario Operating Playbook for Logistics Uncertainty]]
 - [[Logistics Network Implementation Roadmap]]
 - [[Collaborative Logistics Network Framework]]
 - [[Partnership-Led Market Entry Framework]]
@@ -67,6 +68,7 @@ Central hub for core logistics operations: order management, dispatch, tracking,
 - [[Reverse Logistics and Return Policy Framework]]
 - [[Fallback & Resilience Architecture]]
 - [[Scenario Management Framework]]
+- [[CEO Scenario Operating Playbook for Logistics Uncertainty]]
 - [[Transport Fraud & Cybersecurity Framework]]
 
 ## Algorithms

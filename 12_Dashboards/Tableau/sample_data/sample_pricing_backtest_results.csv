@@ -1,0 +1,11 @@
+lane_id,origin_city,destination_city,recommendation,hard_gate_flag,distance_km,vehicle_category,route_difficulty_score,route_difficulty_tier,route_difficulty_surcharge_pct,density_multiplier,lane_viability,deadhead_surcharge_pct,surge_multiplier,service_type,subtotal,platform_fee,gst_amount,final_price,rate_per_km,price_read
+tiruppur:chennai:garments,Tiruppur,Chennai,validate_manually,false,465,HCV,47,moderate,10,1.075,highly_balanced,0,1.1,standard,14227.69,569.11,1257.5,16054.3,34.53,commercially_testable
+chennai:tiruppur:textiles,Chennai,Tiruppur,build_later,false,465,HCV,44,moderate,10,1.075,remote_low_demand,18,1.0,standard,14625.39,585.02,1059.48,16269.89,34.99,review
+coimbatore:chennai:engineering,Coimbatore,Chennai,validate_manually,false,510,HCV,44,moderate,10,1.04,moderately_balanced,6,1.1,standard,12245.24,489.81,1189.77,13924.81,27.3,commercially_testable
+chennai:coimbatore:mixed,Chennai,Coimbatore,validate_manually,false,510,HCV,42,moderate,10,1.04,moderately_balanced,6,1.0,standard,10575.43,423.02,1122.66,12121.11,23.77,commercially_testable
+erode:chennai:textiles,Erode,Chennai,validate_manually,false,400,HCV,45,moderate,10,1.075,moderately_balanced,6,1.1,standard,12973.21,518.93,1087.01,14579.14,36.45,commercially_testable
+karur:chennai:home_textiles,Karur,Chennai,validate_manually,false,390,HCV,45,moderate,10,1.075,moderately_balanced,6,1.1,standard,12648.88,505.96,1059.83,14214.66,36.45,commercially_testable
+namakkal:chennai:poultry_industrial,Namakkal,Chennai,build_later,false,375,HCV,52,moderate,10,1.075,unbalanced_origin_heavy,12,1.0,standard,11682.56,467.3,1015.61,13165.48,35.11,review
+hosur:chennai:auto_components,Hosur,Chennai,validate_manually,false,310,HCV,35,normal_friction,5,1.075,moderately_balanced,6,1.1,express,12668.34,506.73,861.25,14036.32,45.28,commercially_testable
+hosur:coimbatore:industrial,Hosur,Coimbatore,validate_manually,false,330,HCV,40,moderate,10,1.035,highly_balanced,0,1.1,standard,8554.8,342.19,881.31,9778.31,29.63,commercially_testable
+coimbatore:tuticorin_via_madurai:export,Coimbatore,Tuticorin via Madurai,validate_manually,true,380,Trailer,75,hard,15,1.035,moderately_balanced,6,1.1,express,19673.42,786.94,1144.85,21605.2,56.86,correctly_gated

@@ -40,6 +40,22 @@ class MLPricingRequest(BaseModel):
     diesel_price: float = Field(
         default=89.62, description="Current diesel price INR/litre"
     )
+    route_difficulty_score: Optional[float] = Field(
+        default=None,
+        ge=0,
+        le=100,
+        description="Optional 0-100 route difficulty score override",
+    )
+    lane_viability: Optional[str] = Field(
+        default=None,
+        description="highly_balanced, moderately_balanced, unbalanced_origin_heavy, seasonal, remote_low_demand",
+    )
+    return_load_probability: Optional[float] = Field(
+        default=None,
+        ge=0,
+        le=1,
+        description="Optional probability of finding a return load on the lane",
+    )
 
 
 class MLPricingResponse(BaseModel):
@@ -49,9 +65,12 @@ class MLPricingResponse(BaseModel):
     tier_multiplier: float
     fuel_index: float
     tier_adjusted_cost: float
+    route_difficulty: dict
+    urbanization_density: dict
     surcharges: dict
     total_surcharge_pct: float
     surcharge_amount: float
+    density_adjusted_cost: float
     surge_multiplier: float
     surge_model: str
     surge_confidence: float
@@ -59,6 +78,8 @@ class MLPricingResponse(BaseModel):
     service_type: str
     service_multiplier: float
     service_amount: float
+    deadhead_lane_viability: dict
+    deadhead_amount: float
     subtotal: float
     customer_type: str
     customer_adjustment: float
@@ -102,7 +123,10 @@ async def ml_price_estimate(request: MLPricingRequest, db: Session = Depends(get
     - Service type multiplier (standard/express/priority)
     - Customer tier adjustments
     - Platform fee (3-5%) vs broker (8-12%)
-    - GST (12% transport + 18% services)
+    - Route Difficulty Score surcharge
+    - Urbanization density multiplier
+    - Deadhead / lane viability multiplier
+    - GST estimate, with final tax treatment owned by the finance/GST layer
     """
     params = request.model_dump()
     result = pricing_engine.calculate_price(params)
