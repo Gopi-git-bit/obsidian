@@ -20,6 +20,7 @@ from app.schemas.order import (
     OrderStateEventResponse,
     OrderStateEventListResponse,
 )
+from app.schemas.logistics import OrderIntakeRequest, OrderIntakeResponse
 from app.services.order_service import get_order_or_404, transition_order
 
 router = APIRouter()
@@ -46,6 +47,64 @@ async def create_order(order_data: OrderCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(order)
     return order
+
+
+@router.post("/orders/intake", response_model=OrderIntakeResponse, status_code=201)
+async def intake_order(order_data: OrderIntakeRequest, db: Session = Depends(get_db)):
+    """Create a DPDP-consented order from the Z.ai frontend intake flow."""
+    if order_data.cargo_type and order_data.cargo_type not in VALID_CARGO_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid cargo_type. Must be one of: {VALID_CARGO_TYPES}",
+        )
+
+    existing = (
+        db.query(Order)
+        .filter(Order.notes.ilike(f"%intake_idempotency_key={order_data.idempotency_key}%"))
+        .first()
+    )
+    if existing:
+        return OrderIntakeResponse(
+            order_id=existing.id,
+            status=existing.status.value,
+            shipper_name=existing.shipper_name,
+            shipper_phone=existing.shipper_phone,
+            origin_city=existing.origin_city,
+            destination_city=existing.destination_city,
+            consent_id=order_data.consent_id,
+            privacy_notice_version=order_data.privacy_notice_version,
+            idempotency_key=order_data.idempotency_key,
+            created_at=existing.created_at,
+        )
+
+    notes_parts = [
+        order_data.notes or "",
+        f"consent_id={order_data.consent_id}",
+        f"privacy_notice_version={order_data.privacy_notice_version}",
+        f"intake_idempotency_key={order_data.idempotency_key}",
+    ]
+    order_payload = order_data.model_dump(
+        exclude={"consent_id", "privacy_notice_version", "idempotency_key"}
+    )
+    order_payload["notes"] = " | ".join(part for part in notes_parts if part)
+
+    order = Order(status=OrderStatus.CREATED, **order_payload)
+    db.add(order)
+    db.commit()
+    db.refresh(order)
+
+    return OrderIntakeResponse(
+        order_id=order.id,
+        status=order.status.value,
+        shipper_name=order.shipper_name,
+        shipper_phone=order.shipper_phone,
+        origin_city=order.origin_city,
+        destination_city=order.destination_city,
+        consent_id=order_data.consent_id,
+        privacy_notice_version=order_data.privacy_notice_version,
+        idempotency_key=order_data.idempotency_key,
+        created_at=order.created_at,
+    )
 
 
 @router.get("/orders", response_model=OrderListResponse)

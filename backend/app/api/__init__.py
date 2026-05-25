@@ -11,6 +11,8 @@ from app.api import (
     bids,
     ml_pricing,
     routing,
+    shipments,
+    revenue,
 )
 
 __all__ = [
@@ -22,4 +24,6 @@ __all__ = [
     "bids",
     "ml_pricing",
     "routing",
+    "shipments",
+    "revenue",
 ]

@@ -16,8 +16,11 @@ from app.api import (
     bids,
     ml_pricing,
     routing,
+    shipments,
+    revenue,
 )
 from app.database import engine
+from app.middleware.privacy import DPDPPrivacyMaskingMiddleware
 from app.models import vehicle_model, order_model
 
 
@@ -49,6 +52,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(DPDPPrivacyMaskingMiddleware)
 
 # Include routers
 app.include_router(health.router, prefix="/api/v1", tags=["Health"])
@@ -59,6 +63,8 @@ app.include_router(matches.router, prefix="/api/v1", tags=["Matching"])
 app.include_router(bids.router, prefix="/api/v1", tags=["Bidding"])
 app.include_router(ml_pricing.router, prefix="/api/v1", tags=["ML Pricing"])
 app.include_router(routing.router, prefix="/api/v1", tags=["Route Optimization"])
+app.include_router(shipments.router, prefix="/api/v1", tags=["Shipments"])
+app.include_router(revenue.router, prefix="/api/v1", tags=["Revenue Controls"])
 
 # Ensure schema exists for local development and direct test imports.
 init_database()
