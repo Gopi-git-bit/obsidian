@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "AGENTS.md",
+                "file": "00_System/Admin and Ops Frontend for Current Project.md",
                 "mode": "source",
                 "source": false,
                 "backlinks": true,
@@ -28,7 +28,7 @@
                 }
               },
               "icon": "lucide-file",
-              "title": "AGENTS"
+              "title": "Admin and Ops Frontend for Current Project"
             }
           }
         ]
@@ -204,6 +204,7 @@
   },
   "active": "83010577b59a13da",
   "lastOpenFiles": [
+    "AGENTS.md",
     "MiniMax Agent_ Minimize Effort, Maximize Intelligence_files-",
     "claude.md",
     "KNOWLEDGE.md",
