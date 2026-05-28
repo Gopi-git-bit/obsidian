@@ -4,31 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "586b9129d8ed5fff",
+        "id": "09930bf86a8ae1e7",
         "type": "tabs",
         "children": [
           {
-            "id": "83010577b59a13da",
+            "id": "23c1cb07261af4c2",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "00_System/Admin and Ops Frontend for Current Project.md",
-                "mode": "source",
-                "source": false,
-                "backlinks": true,
-                "backlinkOpts": {
-                  "collapseAll": false,
-                  "extraContext": false,
-                  "sortOrder": "alphabetical",
-                  "showSearch": false,
-                  "searchQuery": "",
-                  "backlinkCollapsed": false,
-                  "unlinkedCollapsed": true
-                }
-              },
-              "icon": "lucide-file",
-              "title": "Admin and Ops Frontend for Current Project"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ]
@@ -202,8 +188,9 @@
       "github-sync:Sync with Remote": false
     }
   },
-  "active": "83010577b59a13da",
+  "active": "23c1cb07261af4c2",
   "lastOpenFiles": [
+    "00_System/Admin and Ops Frontend for Current Project.md",
     "AGENTS.md",
     "MiniMax Agent_ Minimize Effort, Maximize Intelligence_files-",
     "claude.md",
