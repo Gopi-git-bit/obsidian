@@ -17,11 +17,11 @@ router = APIRouter()
 
 
 def _delay_risk(order: Order) -> str:
-    if order.status.value in {"cancelled"}:
+    if order.status in {"CANCELLED"}:
         return "high"
     if (
         order.delivery_deadline
-        and order.status.value not in {"delivered", "cancelled"}
+        and order.status not in {"COMPLETED", "CANCELLED"}
         and order.delivery_deadline < datetime.now(timezone.utc)
     ):
         return "medium"
@@ -29,13 +29,13 @@ def _delay_risk(order: Order) -> str:
 
 
 def _shipment_projection(order: Order) -> ShipmentStatusResponse:
-    latest_milestone = order.status.value
+    latest_milestone = order.status
     if order.state_events:
-        latest_milestone = order.state_events[-1].event
+        latest_milestone = order.state_events[-1].event_name
 
     return ShipmentStatusResponse(
         order_id=order.id,
-        shipment_status=order.status.value,
+        shipment_status=order.status,
         origin_city=order.origin_city,
         destination_city=order.destination_city,
         latest_milestone=latest_milestone,

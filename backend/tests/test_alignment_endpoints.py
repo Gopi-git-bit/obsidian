@@ -37,7 +37,7 @@ def test_order_intake_masks_phone_by_default():
     assert response.status_code == 201
     data = response.json()
     assert data["shipper_phone"] == "******3210"
-    assert data["status"] == "created"
+    assert data["status"] == "CREATED"
 
 
 def test_shipment_status_masks_customer_phone():

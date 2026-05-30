@@ -3,11 +3,10 @@ Order API endpoints — freight transport order lifecycle management
 """
 
 from typing import Optional
-from uuid import UUID
+from uuid import NAMESPACE_URL, UUID, uuid5
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
 
 from app.database import get_db
 from app.models.order_model import Order, OrderStatus, CargoType
@@ -17,13 +16,14 @@ from app.schemas.order import (
     OrderResponse,
     OrderListResponse,
     OrderTransitionRequest,
-    OrderStateEventResponse,
     OrderStateEventListResponse,
+    StateAuditLogResponse,
 )
 from app.schemas.logistics import OrderIntakeRequest, OrderIntakeResponse
 from app.services.order_service import get_order_or_404, transition_order
 
 router = APIRouter()
+transition_alias_router = APIRouter()
 
 
 VALID_STATUSES = [s.value for s in OrderStatus]
@@ -40,7 +40,7 @@ async def create_order(order_data: OrderCreate, db: Session = Depends(get_db)):
         )
 
     order = Order(
-        status=OrderStatus.CREATED,
+        current_state=OrderStatus.CREATED,
         **order_data.model_dump(),
     )
     db.add(order)
@@ -66,7 +66,7 @@ async def intake_order(order_data: OrderIntakeRequest, db: Session = Depends(get
     if existing:
         return OrderIntakeResponse(
             order_id=existing.id,
-            status=existing.status.value,
+            status=existing.status,
             shipper_name=existing.shipper_name,
             shipper_phone=existing.shipper_phone,
             origin_city=existing.origin_city,
@@ -88,14 +88,14 @@ async def intake_order(order_data: OrderIntakeRequest, db: Session = Depends(get
     )
     order_payload["notes"] = " | ".join(part for part in notes_parts if part)
 
-    order = Order(status=OrderStatus.CREATED, **order_payload)
+    order = Order(current_state=OrderStatus.CREATED, **order_payload)
     db.add(order)
     db.commit()
     db.refresh(order)
 
     return OrderIntakeResponse(
         order_id=order.id,
-        status=order.status.value,
+        status=order.status,
         shipper_name=order.shipper_name,
         shipper_phone=order.shipper_phone,
         origin_city=order.origin_city,
@@ -125,12 +125,13 @@ async def list_orders(
     query = db.query(Order)
 
     if status:
-        if status not in VALID_STATUSES:
+        normalized_status = status.strip().upper()
+        if normalized_status not in VALID_STATUSES:
             raise HTTPException(
                 status_code=400,
                 detail=f"Invalid status. Must be one of: {VALID_STATUSES}",
             )
-        query = query.filter(Order.status == status)
+        query = query.filter(Order.current_state == OrderStatus(normalized_status))
     if origin_city:
         query = query.filter(Order.origin_city.ilike(f"%{origin_city}%"))
     if destination_city:
@@ -161,9 +162,11 @@ async def get_order_stats(db: Session = Depends(get_db)):
     total_orders = db.query(sql_func.count(Order.id)).scalar() or 0
 
     status_counts = (
-        db.query(Order.status, sql_func.count(Order.id)).group_by(Order.status).all()
+        db.query(Order.current_state, sql_func.count(Order.id))
+        .group_by(Order.current_state)
+        .all()
     )
-    status_map = {str(s.value): c for s, c in status_counts}
+    status_map = {getattr(s, "value", str(s)): c for s, c in status_counts}
 
     avg_weight = db.query(sql_func.avg(Order.weight_kg)).scalar() or 0
     total_weight = db.query(sql_func.sum(Order.weight_kg)).scalar() or 0
@@ -232,6 +235,7 @@ async def update_order(
 
 
 @router.post("/orders/{order_id}/transition", response_model=OrderResponse)
+@transition_alias_router.post("/orders/{order_id}/transition", response_model=OrderResponse)
 async def transition_order_status(
     order_id: UUID,
     transition_data: OrderTransitionRequest,
@@ -241,11 +245,13 @@ async def transition_order_status(
     return transition_order(
         db,
         order_id=order_id,
-        new_status=transition_data.new_status,
         event=transition_data.event,
+        payload=transition_data.payload,
         actor_role=transition_data.actor_role,
         actor_id=transition_data.actor_id,
         idempotency_key=transition_data.idempotency_key,
+        trace_id=transition_data.trace_id,
+        to_state=transition_data.to_state,
         reason=transition_data.reason,
         evidence_ref=transition_data.evidence_ref,
     )
@@ -258,7 +264,7 @@ async def list_order_state_events(order_id: UUID, db: Session = Depends(get_db))
     events = order.state_events
     return OrderStateEventListResponse(
         total=len(events),
-        events=[OrderStateEventResponse.model_validate(event) for event in events],
+        events=[StateAuditLogResponse.model_validate(event) for event in events],
     )
 
 
@@ -271,10 +277,12 @@ async def cancel_order(order_id: UUID, db: Session = Depends(get_db)):
     return transition_order(
         db,
         order_id=order_id,
-        new_status=OrderStatus.CANCELLED.value,
+        to_state=OrderStatus.CANCELLED.value,
         event="order_cancelled",
+        payload={"reason": "Cancel endpoint requested"},
         actor_role="OMS",
         actor_id=None,
-        idempotency_key=f"cancel:{order_id}",
+        idempotency_key=uuid5(NAMESPACE_URL, f"cancel:{order_id}"),
+        trace_id=f"cancel-{order_id}",
         reason="Cancel endpoint requested",
     )

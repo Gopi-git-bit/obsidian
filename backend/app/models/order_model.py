@@ -1,44 +1,79 @@
-"""
-Order SQLAlchemy Model — freight transport order lifecycle
-"""
+"""Order SQLAlchemy models for the canonical state-machine gateway."""
+
+from __future__ import annotations
 
 import enum
 import uuid
+
 from sqlalchemy import (
-    Column,
-    String,
-    Numeric,
+    JSON,
     Boolean,
-    Integer,
+    CheckConstraint,
+    Column,
     DateTime,
-    Text,
     Enum,
     ForeignKey,
     Index,
-    CheckConstraint,
+    Integer,
+    Numeric,
+    String,
+    Text,
     Uuid,
 )
-from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from app.database import Base
 
 
 class OrderStatus(str, enum.Enum):
-    CREATED = "created"
-    PENDING_MATCH = "pending_match"
-    MATCHED = "matched"
-    BIDDING = "bidding"
-    BID_ACCEPTED = "bid_accepted"
-    IN_TRANSIT = "in_transit"
-    DELIVERED = "delivered"
-    CANCELLED = "cancelled"
+    CREATED = "CREATED"
+    PAYMENT_PENDING = "PAYMENT_PENDING"
+    CONFIRMED = "CONFIRMED"
+    RINGING = "RINGING"
+    ASSIGNED = "ASSIGNED"
+    EN_ROUTE_TO_PICKUP = "EN_ROUTE_TO_PICKUP"
+    AT_PICKUP_WAITING = "AT_PICKUP_WAITING"
+    LOADING = "LOADING"
+    DEPARTED_FOR_DELIVERY = "DEPARTED_FOR_DELIVERY"
+    AT_DELIVERY_WAITING = "AT_DELIVERY_WAITING"
+    DELIVERED_PENDING_SETTLEMENT = "DELIVERED_PENDING_SETTLEMENT"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
+    SUSPENDED = "SUSPENDED"
+    INCIDENT = "INCIDENT"
 
 
 TERMINAL_ORDER_STATUSES = {
-    OrderStatus.DELIVERED,
+    OrderStatus.COMPLETED,
     OrderStatus.CANCELLED,
+    OrderStatus.SUSPENDED,
 }
+
+
+class ActorRole(str, enum.Enum):
+    OMS = "OMS"
+    TMS = "TMS"
+    FIN = "FIN"
+    RAG = "RAG"
+    SUP = "SUP"
+    CUSTOMER = "CUSTOMER"
+    DRIVER = "DRIVER"
+    ADMIN = "ADMIN"
+
+
+class PaymentMode(str, enum.Enum):
+    ADVANCE = "advance"
+    FULL = "full"
+    TOPAY = "topay"
+
+
+class ConsentStatus(str, enum.Enum):
+    NOT_REQUIRED = "not_required"
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+    TIMEOUT = "timeout"
 
 
 class CargoType(str, enum.Enum):
@@ -50,11 +85,17 @@ class CargoType(str, enum.Enum):
 
 
 class Order(Base):
-    """Freight transport order"""
+    """Freight transport order.
+
+    `current_state` is the canonical lifecycle field. `status` is retained as a
+    read/write compatibility property for older API response code.
+    """
 
     __tablename__ = "orders"
 
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    customer_id = Column(String(80), index=True)
+    vehicle_id = Column(Uuid(as_uuid=True), ForeignKey("vehicle_models.id"), index=True)
 
     shipper_name = Column(String(150), nullable=False)
     shipper_phone = Column(String(15), nullable=False)
@@ -74,6 +115,13 @@ class Order(Base):
 
     cargo_type = Column(Enum(CargoType), default=CargoType.GENERAL, nullable=False)
     cargo_description = Column(Text)
+    material_type = Column(String(60), default="general_goods", nullable=False)
+    body_type_required = Column(String(30), default="open", nullable=False)
+
+    payment_mode = Column(Enum(PaymentMode), default=PaymentMode.ADVANCE, nullable=False)
+    topay_consent_status = Column(
+        Enum(ConsentStatus), default=ConsentStatus.NOT_REQUIRED, nullable=False
+    )
 
     weight_kg = Column(Numeric(10, 2), nullable=False)
     volume_cbm = Column(Numeric(10, 2))
@@ -94,12 +142,13 @@ class Order(Base):
     pickup_datetime = Column(DateTime(timezone=True))
     delivery_deadline = Column(DateTime(timezone=True))
 
-    status = Column(
+    current_state = Column(
         Enum(OrderStatus),
         default=OrderStatus.CREATED,
         nullable=False,
         index=True,
     )
+    payload_metadata = Column(JSON, default=dict, nullable=False)
 
     notes = Column(Text)
 
@@ -112,30 +161,62 @@ class Order(Base):
     matches = relationship(
         "Match", back_populates="order", cascade="all, delete-orphan"
     )
-    state_events = relationship(
-        "OrderStateEvent",
+    state_audit_logs = relationship(
+        "StateAuditLog",
         back_populates="order",
         cascade="all, delete-orphan",
-        order_by="OrderStateEvent.created_at",
+        order_by="StateAuditLog.timestamp",
+    )
+    reservations = relationship(
+        "VehicleReservation",
+        back_populates="order",
+        cascade="all, delete-orphan",
     )
 
     __table_args__ = (
-        Index("idx_order_status", "status"),
+        Index("idx_order_current_state", "current_state"),
         Index("idx_order_origin_dest", "origin_city", "destination_city"),
         Index("idx_order_created", "created_at"),
         CheckConstraint("weight_kg > 0", name="positive_weight"),
     )
 
+    @property
+    def status(self) -> str:
+        return self.current_state.value if self.current_state else OrderStatus.CREATED.value
+
+    @status.setter
+    def status(self, value: str | OrderStatus) -> None:
+        if isinstance(value, OrderStatus):
+            self.current_state = value
+            return
+        normalized = value.strip().upper()
+        legacy_map = {
+            "PENDING_MATCH": OrderStatus.CONFIRMED,
+            "BIDDING": OrderStatus.RINGING,
+            "MATCHED": OrderStatus.ASSIGNED,
+            "BID_ACCEPTED": OrderStatus.ASSIGNED,
+            "IN_TRANSIT": OrderStatus.DEPARTED_FOR_DELIVERY,
+            "DELIVERED": OrderStatus.COMPLETED,
+        }
+        self.current_state = legacy_map.get(normalized, OrderStatus(normalized))
+
+    @property
+    def state_events(self):
+        return self.state_audit_logs
+
     def __repr__(self):
-        return f"<Order {self.id} {self.origin_city}->{self.destination_city} [{self.status}]>"
+        return (
+            f"<Order {self.id} {self.origin_city}->{self.destination_city} "
+            f"[{self.current_state}]>"
+        )
 
 
-class OrderStateEvent(Base):
-    """Audit event for order lifecycle transitions."""
+class StateAuditLog(Base):
+    """Append-only historical log for every state mutation."""
 
-    __tablename__ = "order_state_events"
+    __tablename__ = "state_audit_logs"
 
-    id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    log_id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     order_id = Column(
         Uuid(as_uuid=True),
         ForeignKey("orders.id", ondelete="CASCADE"),
@@ -143,26 +224,78 @@ class OrderStateEvent(Base):
         index=True,
     )
 
-    from_status = Column(Enum(OrderStatus), nullable=False)
-    to_status = Column(Enum(OrderStatus), nullable=False)
-    event = Column(String(80), nullable=False)
-    actor_role = Column(String(40), nullable=False)
+    from_state = Column(Enum(OrderStatus), nullable=False)
+    to_state = Column(Enum(OrderStatus), nullable=False)
+    event_name = Column(String(80), nullable=False)
+    actor_role = Column(Enum(ActorRole), nullable=False)
     actor_id = Column(String(80))
-    idempotency_key = Column(String(120), nullable=False, unique=True, index=True)
-    reason = Column(Text)
-    evidence_ref = Column(String(255))
+    idempotency_key = Column(Uuid(as_uuid=True), nullable=False, index=True)
+    trace_id = Column(String(120), nullable=False, index=True)
+    payload_hash = Column(String(64), nullable=False)
+    request_payload = Column(JSON, default=dict, nullable=False)
+    cached_response = Column(JSON, default=dict, nullable=False)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now(), index=True)
 
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-    order = relationship("Order", back_populates="state_events")
+    order = relationship("Order", back_populates="state_audit_logs")
 
     __table_args__ = (
-        Index("idx_order_state_event_order_created", "order_id", "created_at"),
-        Index("idx_order_state_event_to_status", "to_status"),
+        Index("idx_state_audit_order_timestamp", "order_id", "timestamp"),
+        Index("idx_state_audit_idempotency_timestamp", "idempotency_key", "timestamp"),
     )
 
-    def __repr__(self):
-        return f"<OrderStateEvent {self.order_id} {self.from_status}->{self.to_status}>"
+
+class VehicleReservation(Base):
+    """Vehicle reservation with active unique protection against double booking."""
+
+    __tablename__ = "vehicle_reservations"
+
+    reservation_id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    vehicle_id = Column(Uuid(as_uuid=True), nullable=False, index=True)
+    order_id = Column(
+        Uuid(as_uuid=True),
+        ForeignKey("orders.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    expires_at = Column(DateTime(timezone=True), nullable=False, index=True)
+    is_active = Column(Boolean, default=True, nullable=False, index=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    order = relationship("Order", back_populates="reservations")
+
+    __table_args__ = (
+        Index(
+            "uq_vehicle_reservations_active_vehicle",
+            "vehicle_id",
+            unique=True,
+            postgresql_where=(is_active.is_(True)),
+            sqlite_where=(is_active.is_(True)),
+        ),
+    )
+
+
+class AgentDLQMessage(Base):
+    """Table-backed `agent.dlq` layout for unprocessable transition attempts."""
+
+    __tablename__ = "agent_dlq_messages"
+
+    message_id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    order_id = Column(Uuid(as_uuid=True), index=True)
+    event_name = Column(String(80), nullable=False)
+    actor_role = Column(String(40), nullable=False)
+    idempotency_key = Column(String(120), index=True)
+    trace_id = Column(String(120), index=True)
+    error_code = Column(String(40), nullable=False)
+    error_detail = Column(Text, nullable=False)
+    payload = Column(JSON, default=dict, nullable=False)
+    retry_count = Column(Integer, default=0, nullable=False)
+    topic = Column(String(80), default="agent.dlq", nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        Index("idx_agent_dlq_created", "created_at"),
+        Index("idx_agent_dlq_trace", "trace_id"),
+    )
 
 
 class BidStatus(str, enum.Enum):
@@ -174,7 +307,7 @@ class BidStatus(str, enum.Enum):
 
 
 class Bid(Base):
-    """Bid placed by a vehicle/driver on an order"""
+    """Bid placed by a vehicle/driver on an order."""
 
     __tablename__ = "bids"
 
@@ -217,9 +350,6 @@ class Bid(Base):
         CheckConstraint("bid_amount > 0", name="positive_bid"),
     )
 
-    def __repr__(self):
-        return f"<Bid {self.id} ₹{self.bid_amount} [{self.status}]>"
-
 
 class MatchStatus(str, enum.Enum):
     PROPOSED = "proposed"
@@ -231,7 +361,7 @@ class MatchStatus(str, enum.Enum):
 
 
 class Match(Base):
-    """Vehicle-load match assignment"""
+    """Vehicle-load match assignment."""
 
     __tablename__ = "matches"
 
@@ -274,6 +404,3 @@ class Match(Base):
         Index("idx_match_status", "status"),
         Index("idx_match_order_vehicle", "order_id", "vehicle_id"),
     )
-
-    def __repr__(self):
-        return f"<Match {self.id} score={self.match_score} [{self.status}]>"

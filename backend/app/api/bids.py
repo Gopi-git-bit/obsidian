@@ -3,12 +3,10 @@ Bid API endpoints — driver bidding system for orders
 """
 
 from typing import Optional
-from uuid import UUID
-from datetime import datetime
+from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func as sql_func
 
 from app.database import get_db
 from app.models.order_model import Order, OrderStatus, Bid, BidStatus
@@ -34,14 +32,14 @@ async def create_bid(
     order = db.query(Order).filter(Order.id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    if order.status not in (
+    if order.current_state not in (
         OrderStatus.CREATED,
-        OrderStatus.PENDING_MATCH,
-        OrderStatus.BIDDING,
+        OrderStatus.CONFIRMED,
+        OrderStatus.RINGING,
     ):
         raise HTTPException(
             status_code=400,
-            detail=f"Cannot bid on order in {order.status.value} status",
+            detail=f"Cannot bid on order in {order.status} status",
         )
 
     vehicle = (
@@ -65,14 +63,16 @@ async def create_bid(
     )
     db.add(bid)
 
-    if order.status != OrderStatus.BIDDING:
+    if order.current_state == OrderStatus.CONFIRMED:
         transition_order(
             db,
             order_id=order.id,
-            new_status=OrderStatus.BIDDING.value,
+            to_state=OrderStatus.RINGING.value,
             event="bid_window_opened",
+            payload={},
             actor_role="OMS",
-            idempotency_key=f"bid-window-opened:{order.id}",
+            idempotency_key=uuid4(),
+            trace_id=f"bid-window-opened:{order.id}",
             reason="First eligible bid received",
         )
 
@@ -130,10 +130,12 @@ async def accept_bid(bid_id: UUID, db: Session = Depends(get_db)):
         transition_order(
             db,
             order_id=order.id,
-            new_status=OrderStatus.BID_ACCEPTED.value,
+            to_state=OrderStatus.ASSIGNED.value,
             event="bid_accepted",
-            actor_role="OMS",
-            idempotency_key=f"bid-accepted:{bid.id}",
+            payload={"vehicle_id": str(bid.vehicle_id)},
+            actor_role="TMS",
+            idempotency_key=uuid4(),
+            trace_id=f"bid-accepted:{bid.id}",
             reason="Customer accepted provider bid",
         )
 

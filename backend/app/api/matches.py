@@ -3,8 +3,8 @@ Match API endpoints — vehicle-load matching engine
 """
 
 from typing import Optional
-from uuid import UUID
-from datetime import datetime
+from uuid import UUID, uuid4
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -13,7 +13,6 @@ from sqlalchemy import func as sql_func
 from app.database import get_db
 from app.models.order_model import Order, OrderStatus, Match, MatchStatus
 from app.models.vehicle_model import VehicleModel
-from app.models.order_model import Bid
 from app.schemas.order import MatchResponse, MatchListResponse, MatchAction
 from app.services.order_service import transition_order
 
@@ -115,14 +114,16 @@ async def find_matches(
     matches.sort(key=lambda x: x[2]["match_score"], reverse=True)
     matches = matches[:limit]
 
-    if order.status == OrderStatus.CREATED:
+    if order.current_state == OrderStatus.CONFIRMED:
         transition_order(
             db,
             order_id=order.id,
-            new_status=OrderStatus.PENDING_MATCH.value,
+            to_state=OrderStatus.RINGING.value,
             event="match_candidates_generated",
+            payload={},
             actor_role="OMS",
-            idempotency_key=f"match-candidates-generated:{order.id}",
+            idempotency_key=uuid4(),
+            trace_id=f"match-candidates-generated:{order.id}",
             reason="Matching engine generated vehicle candidates",
         )
     else:
@@ -204,10 +205,17 @@ async def accept_match(
         transition_order(
             db,
             order_id=order.id,
-            new_status=OrderStatus.MATCHED.value,
-            event="match_accepted",
-            actor_role="IMS",
-            idempotency_key=f"match-accepted:{match.id}",
+            to_state=OrderStatus.ASSIGNED.value,
+            event="vehicle_reserved",
+            payload={
+                "vehicle_id": str(match.vehicle_id),
+                "expires_at": (
+                    datetime.now(timezone.utc) + timedelta(minutes=5)
+                ).isoformat(),
+            },
+            actor_role="TMS",
+            idempotency_key=uuid4(),
+            trace_id=f"match-accepted:{match.id}",
             reason=action.notes,
         )
 
