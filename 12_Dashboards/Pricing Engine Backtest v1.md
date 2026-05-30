@@ -102,6 +102,24 @@ Why:
 - high-risk lanes produce visible pricing reasons
 - the output CSV can be inspected in Tableau or spreadsheet workflows
 
+Latest run summary:
+
+| Metric | Result |
+|---|---:|
+| lanes tested | 10 |
+| pass count | 8 |
+| review count | 2 |
+| average rate per km | 36.04 |
+| average route difficulty score | 46.9 |
+
+Price-read distribution:
+
+| Price Read | Count |
+|---|---:|
+| commercially_testable | 7 |
+| correctly_gated | 1 |
+| review | 2 |
+
 ## Operational Use
 
 Use this backtest for:

@@ -110,6 +110,25 @@ Why:
 - contract-risk scenarios go to review instead of being auto-posted
 - month-end cut-off defers commission when OTP falls after period end
 
+Latest run summary:
+
+| Metric | Result |
+|---|---:|
+| scenarios tested | 8 |
+| pass count | 8 |
+| fail count | 0 |
+| blocked count | 1 |
+| review count | 2 |
+| average recognized revenue | 625.00 |
+
+Actual-result distribution:
+
+| Actual Result | Count |
+|---|---:|
+| pass | 5 |
+| blocked | 1 |
+| review | 2 |
+
 ## Run Command
 
 From repo root:
