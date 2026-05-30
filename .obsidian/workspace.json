@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "09930bf86a8ae1e7",
+        "id": "f4e9d36b7b4c82ad",
         "type": "tabs",
         "children": [
           {
-            "id": "23c1cb07261af4c2",
+            "id": "c478cfc5a7c04fce",
             "type": "leaf",
             "state": {
-              "type": "graph",
+              "type": "empty",
               "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "icon": "lucide-file",
+              "title": "New tab"
             }
           }
         ]
@@ -188,7 +188,7 @@
       "github-sync:Sync with Remote": false
     }
   },
-  "active": "23c1cb07261af4c2",
+  "active": "c478cfc5a7c04fce",
   "lastOpenFiles": [
     "00_System/Admin and Ops Frontend for Current Project.md",
     "AGENTS.md",
