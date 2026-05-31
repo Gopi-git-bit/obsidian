@@ -71,6 +71,38 @@ stateDiagram-v2
 | **SETTLEMENT_RELEASED** | `SETTLEMENT_RELEASED` | FIN | Funds transferred |
 | **CLOSED** | `CLOSED` | FIN | Final state |
 
+## Customer-App Policy Overlays
+
+The locked graph remains the execution spine. Customer app business logic adds policy overlays that must be represented in order metadata, payment records, consent records, and event logs without skipping the locked lifecycle states.
+
+Registration and booking checkpoints:
+
+- Organized-company customers require email OTP during registration and order booking submission.
+- Individual or unorganized customers require phone OTP during registration and order booking submission.
+- Consignee phone OTP is required after POD upload before delivery completion can be treated as fully evidenced for finance and settlement.
+
+ToPay overlay:
+
+- `topay_consent_pending`: consignee has been asked by WhatsApp/SMS whether they accept payer responsibility.
+- `topay_consent_accepted`: consignee selected Yes; the payment gateway may open and payment processing continues.
+- `topay_consent_denied`: consignee selected No; OMS redirects the obligation to the consignor.
+- `on_hold_topay_consent`: consignor selected Hold after consignee denial so payer negotiation can continue.
+- `resumed_topay_consent_requested`: consignor resumed a held order and OMS resent the consignee consent request.
+
+Hold/resume rules:
+
+- A hold is a controlled pause, not a reverse transition.
+- Resume creates a new event and returns the order to the next legal policy gate, such as ToPay consent, payment pending, or cancellation.
+- Every hold must preserve `hold_type`, `hold_reason`, `actor`, `timestamp`, and release/resume evidence.
+- UI status can show `ON_HOLD` or `RESUMED`, but backend state changes still go through the transition gateway and audit trail.
+
+Payment/status overlays:
+
+- Full payment can move from `PAYMENT_PENDING` to `CONFIRMED` only after full payment capture is verified.
+- Advance payment can move forward only after the required advance or policy-approved authorization clears; loading reminders do not unlock driver movement by themselves.
+- ToPay can move forward only after consignee consent and payment/policy gate clear, or after consignor resolves the obligation by full payment or approved exception.
+- Payment failure, mismatch, expired consent, document hold, or compliance hold must block progression until a new event resolves the blocking reason.
+
 ### Terminal States
 - `CANCELLED` - Order cancelled by customer or system
 - `FAILED` - Order failed (no vehicle, payment failure, etc.)

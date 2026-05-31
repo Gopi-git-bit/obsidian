@@ -3,7 +3,7 @@ type: memo
 domain: frontend
 scope: architecture
 status: active
-last_updated: 2026-05-01
+last_updated: 2026-05-31
 related_hubs:
   - "[[Technology Stack Hub]]"
   - "[[Operations Strategy Hub]]"
@@ -157,6 +157,7 @@ Core admin and ops capabilities:
 
 - order funnel visibility
 - pending and exception queues
+- cross-app harness monitor for customer, driver, and transport-company flows
 - vehicle and provider availability overview
 - real-time trip and alert monitoring
 - SLA risk and breach review
@@ -170,6 +171,9 @@ The admin app is not just a reporting panel. It is the human supervision layer f
 - escalations
 - unresolved disputes
 - blocked workflows
+- event/state/SLA/verification alignment across frontend apps
+
+Admin Web should surface harness failures such as ToPay denial and hold/resume loops, failed OTP checkpoints, driver no-movement, VTU/phone GPS mismatch, offline sync conflicts, transport-company dual-role inventory conflicts, and finance gate mismatches.
 
 ## 4. Transport Company App
 
@@ -203,12 +207,24 @@ These should be shared across surfaces where appropriate:
 
 - auth and session handling
 - design tokens
+- canonical status and event labels
+- role-context rendering
+- SLA timer rendering
+- OTP and verification status rendering
+- finance gate rendering
+- offline sync indicators
 - map and location display logic
 - document upload components
 - notification presentation
 - currency and time formatting
 - validation rules
 - common API client logic
+
+Backtest rule:
+
+```text
+Every frontend surface must render the same backend event/state/payment truth with role-appropriate visibility, not private local vocabularies.
+```
 
 ## Frontend Folder Direction
 
@@ -286,6 +302,7 @@ login or signup
 
 ```text
 monitor new orders
+-> inspect cross-app harness health
 -> review matching and assignment health
 -> monitor active trips and alerts
 -> inspect SLA risk and incidents

@@ -3,7 +3,7 @@ type: memo
 domain: frontend
 scope: driver_mobile
 status: active
-last_updated: 2026-05-01
+last_updated: 2026-05-31
 related_hubs:
   - "[[Technology Stack Hub]]"
   - "[[Operations Strategy Hub]]"
@@ -58,6 +58,22 @@ That means:
 - the driver app shows and updates only what the driver is allowed to act on
 
 ## Main Navigation
+
+## Verification Harness Alignment
+
+The Driver App must stay synchronized with OMS, TMS, IMS, Payment, Verification, Risk, Communication, and DriverOps agents. Every driver-facing action must map to a backend event, state gate, SLA timer, or escalation path.
+
+Harness-critical overlays:
+
+- Express delivery must show a distinct badge, stricter SLA countdown, explicit acceptance confirmation, vehicle-age/driver-score eligibility where exposed, and elevated commission context returned by backend pricing.
+- ToPay consent must be visible before departure. Driver should see `pending`, `accepted`, `denied`, or `expired/timeout`; rejected or expired consent must trigger wait-for-consignor, return-to-consignor, or support escalation options returned by OMS.
+- Driver no-movement after acceptance must show the movement timeout and escalation status; the app cannot silently keep the order assigned when TMS/OMS has raised reassignment risk.
+- Loading/unloading waiting time must show a timer and backend-calculated late-fee eligibility; the app records evidence but does not calculate final charges locally.
+- VTU/telematics and phone GPS mismatch must surface as an integrity warning when backend detects it. VTU should be treated as authoritative when backend policy says so.
+- Transit damage reporting must capture timestamped, geotagged photos, a short description, and sync/evidence status. Settlement remains blocked until verification/risk review clears.
+- Owner-driver, fleet owner, and salaried driver permissions must be role-aware. Every action must log `actor_id` and `actor_role`.
+- Offline mode must preserve trip context, document scans, POD capture, timestamps, GPS metadata, and sync status without pretending backend transitions succeeded.
+- Fatigue/night-driving alerts should appear when configured by TMS policy and must include rest guidance or escalation state from backend.
 
 Recommended primary navigation:
 
@@ -217,8 +233,14 @@ Important driver-specific notifications:
 
 - new order offer
 - assignment confirmed
+- express delivery SLA commitment
+- ToPay consent denied, expired, or resolved before departure
 - prolonged halt alert
 - route deviation alert
+- VTU/phone GPS mismatch alert
+- no-movement timeout after acceptance
+- fatigue or mandatory rest alert where configured
+- transit damage evidence review update
 - ETA risk or delay update
 - pending document upload reminder
 
@@ -315,6 +337,7 @@ when operationally necessary and backend-authorized.
 The driver app should show:
 
 - customer payment gate status only where it affects dispatch or payout readiness
+- ToPay consent status before departure where it affects movement authorization
 - expected earning
 - commission deducted from driver payout
 - demurrage or waiting compensation if collected and approved
@@ -347,6 +370,20 @@ payout_successful
 payout_failed
 settlement_reconciled
 settlement_closed
+```
+
+Driver-visible harness statuses:
+
+```text
+express_sla_active
+topay_consent_pending
+topay_consent_denied
+movement_timeout_warning
+loading_wait_timer_active
+damage_report_submitted
+telemetry_mismatch_under_review
+offline_sync_pending
+fatigue_alert_active
 ```
 
 Settlement hold copy:
@@ -422,6 +459,25 @@ Important behaviors:
 - queue non-destructive updates where safe
 - clearly show sync status
 - avoid pretending a backend-confirmed transition happened when it has not synced
+
+Offline conflict rule:
+
+```text
+local evidence can queue, but assignment, payment, POD verification, settlement, and cancellation truth must refresh from backend after reconnect.
+```
+
+## Driver Harness Backtest Cases
+
+| Test ID | Scenario | Required Driver UI Evidence |
+|---|---|---|
+| T-DRV-01 | Express offer accepted | express badge, SLA countdown, backend earning preview |
+| T-DRV-02 | ToPay denied before departure | consent status, wait/return/escalate options |
+| T-DRV-03 | Driver accepts but does not move | movement timer, alert, reassignment state |
+| T-DRV-04 | Loading delay crosses grace period | wait timer, evidence event, fee review status |
+| T-DRV-05 | VTU and phone GPS mismatch | telemetry warning, backend review status |
+| T-DRV-06 | Offline POD captured and synced | local evidence, sync pending, backend accepted/rejected result |
+| T-DRV-07 | Transit damage reported | geotagged evidence, incident status, settlement hold |
+| T-DRV-08 | Salaried driver tries owner-only action | action hidden or blocked with role-safe reason |
 
 ## Driver UX Priorities
 

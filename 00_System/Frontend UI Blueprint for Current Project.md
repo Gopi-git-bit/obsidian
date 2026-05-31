@@ -3,7 +3,7 @@ type: memo
 domain: frontend
 scope: ui_blueprint
 status: active
-last_updated: 2026-05-01
+last_updated: 2026-05-31
 related_hubs:
   - "[[Technology Stack Hub]]"
   - "[[Operations Strategy Hub]]"
@@ -123,9 +123,11 @@ Customer goals:
 | State / Condition | Screen | UI Shows | Allowed Customer Actions |
 |---|---|---|---|
 | always | Customer Home | active orders, past orders, create order CTA, blockers | create order, open order |
+| registration | Registration / Verification | organized-company vs individual/unorganized segment, required OTP/KYC status | submit profile, verify OTP |
 | `DRAFT` | Create Order | pickup/drop, cargo, vehicle, schedule, payer, GST/billing inputs, missing fields | submit order request |
 | quote ready | Quote / Proforma | quote, payment mode, payer, proforma status, GST classification, invoice ownership | accept quote, edit, cancel |
 | `PAYMENT_PENDING` | Payment | amount, payment mode, payer responsibility, retry info, ToPay consent or credit gate | pay now, request ToPay consent, cancel if policy allows |
+| ToPay denied or on hold | ToPay Resolution | consignee denial, consignor pay/cancel/hold choices, resume state | pay full amount, cancel, hold, resume |
 | `PAYMENT_GATE_SATISFIED` | Confirmation Pending | payment/authorization/ToPay/credit gate satisfied, backend confirmation pending | wait, refresh, contact support |
 | `CONFIRMED` | Order Confirmed | summary, searching/processing status | cancel if policy allows |
 | `VEHICLE_SEARCH` | Searching / Matching | vehicle search status, next update time | view status, contact support if delayed |
@@ -160,6 +162,8 @@ Driver goals:
 |---|---|---|---|
 | always | Driver Home | online/offline, active job, earnings summary, sync status | toggle availability, open job |
 | `DRIVER_ASSIGNED` | Incoming Order | pickup/drop, distance, load, timeline, earning preview | accept, reject |
+| express offer | Incoming Order | express badge, SLA countdown, earning/commission context | accept express, reject |
+| ToPay pending/denied before departure | Trip Gate | consent status, dispatch blocker, support state | wait, return/escalate if allowed |
 | accepted / going pickup | Pickup | address, route, authorized contact, instructions | arrived pickup |
 | `ARRIVED_PICKUP` | Pickup Arrival | pickup details, document checklist | start loading |
 | `LOADING` | Loading | timer, notes, document scan if needed | depart origin |
@@ -209,8 +213,13 @@ advance_paid
 partially_paid
 fully_paid
 topay_consent_pending
+topay_consent_accepted
+topay_consent_denied
 topay_collection_pending
 topay_collection_received
+on_hold_topay_consent
+on_hold_payment_resolution
+resumed_topay_consent_requested
 credit_due
 final_tax_invoice_generated
 invoice_paid
@@ -258,12 +267,14 @@ Admin goals:
 - compliance
 - audit
 - controlled override
+- cross-app harness monitoring
 
 ## Admin Screen Map
 
 | Screen | UI Shows | Allowed Actions |
 |---|---|---|
 | Admin Dashboard | severe alerts, policy queues, audit indicators | open review |
+| Harness Monitor | event registry health, state transition health, SLA timer health, verification health, finance gate health, offline sync health | inspect, assign owner, request retry, escalate |
 | Audit Viewer | immutable logs, actor, order, timestamp, action trail | filter, export if authorized |
 | Manual Override | rare override workflows | force close, refund trigger, hold release where policy allows |
 | User / Role Management | roles, permissions, verification | suspend, reactivate, change role with audit |
@@ -273,6 +284,14 @@ Admin override rule:
 ```text
 all admin override actions must be logged, justified, and visible in audit trail
 ```
+
+Harness rule:
+
+```text
+Admin Web proves that Customer, Driver, and Transport Company app actions map to canonical backend events, state transitions, SLA timers, verification checkpoints, and finance gates.
+```
+
+Admin Web must render ToPay denial/hold/resume, OTP checkpoints, driver telemetry conflicts, transport-company dual-role conflicts, and finance blockers from backend truth rather than local assumptions.
 
 ## Web First, Mobile Derived
 
@@ -622,6 +641,12 @@ Drivers especially must never be shown fake certainty.
 
 Test:
 
+- customer organized-company registration requires email OTP and company identity fields
+- customer individual/unorganized registration hides GST/company/PAN and requires phone OTP plus KYC reference
+- ToPay accept, deny, hold, resume, and collection states render consistently across Customer, Driver, Transport Company, and Admin surfaces
+- driver express delivery, movement timeout, VTU/GPS mismatch, transit damage, and offline sync states render with backend status
+- transport-company GST/landline verification, TCRS, role toggle, dual-role conflict, and payment-path states render with backend status
+- Admin Harness Monitor shows event, state, SLA, verification, finance, offline sync, and notification health
 - every state renders the correct screen
 - action buttons appear only for allowed role and state
 - rejected backend transitions are handled

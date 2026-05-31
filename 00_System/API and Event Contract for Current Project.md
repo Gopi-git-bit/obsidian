@@ -3,7 +3,7 @@ type: memo
 domain: architecture
 scope: api_and_event_contract
 status: active
-last_updated: 2026-05-15
+last_updated: 2026-05-31
 related_hubs:
   - "[[Technology Stack Hub]]"
   - "[[Current Project Navigation Hub]]"
@@ -62,6 +62,9 @@ Use this as the builder-facing contract for:
 POST   /auth/login
 POST   /auth/logout
 GET    /auth/me
+POST   /auth/register/customer
+POST   /auth/otp/send
+POST   /auth/otp/verify
 ```
 
 Minimum `/auth/me` response:
@@ -75,6 +78,30 @@ Minimum `/auth/me` response:
 }
 ```
 
+`POST /auth/register/customer` minimum request:
+
+```json
+{
+  "customer_segment": "organized_company | individual_unorganized",
+  "company_name": "string or null",
+  "gst_number": "string or null",
+  "business_pan": "string or null",
+  "person_or_trade_name": "string or null",
+  "aadhaar_or_kyc_ref": "string or null",
+  "email": "string or null",
+  "phone": "string",
+  "address": {},
+  "authorized_person_name": "string or null",
+  "authorized_person_mobile": "string or null"
+}
+```
+
+Registration rules:
+
+- `organized_company` requires company identity, company email OTP, phone number, address, and authorized-person details.
+- `individual_unorganized` hides GST/company/PAN requirements and requires person or trade name, phone OTP, address, and Aadhaar/KYC reference.
+- OTP verification state must be stored as backend truth and exposed to the app as `pending | verified | failed | expired`.
+
 ### Customer Order Flow
 
 ```text
@@ -82,6 +109,11 @@ POST   /orders
 GET    /orders/{order_id}
 GET    /orders
 POST   /orders/{order_id}/quote
+POST   /orders/{order_id}/otp-checkpoint
+POST   /orders/{order_id}/topay/consent-request
+POST   /orders/{order_id}/topay/consent-response
+POST   /orders/{order_id}/hold
+POST   /orders/{order_id}/resume
 POST   /orders/{order_id}/payment-intent
 POST   /orders/{order_id}/transition
 ```
@@ -92,15 +124,30 @@ POST   /orders/{order_id}/transition
 {
   "origin_city": "Tiruppur",
   "destination_city": "Chennai",
+  "customer_segment": "organized_company | individual_unorganized",
   "pickup_window_start": "ISO",
   "pickup_window_end": "ISO",
   "material_type": "textile_cartons",
   "vehicle_type_preference": "17ft_closed_body",
   "service_level": "standard",
   "payment_mode": "advance | full | topay",
+  "consignor": {},
+  "consignee": {
+    "name": "string",
+    "phone": "string",
+    "address": {},
+    "company_name": "string or null",
+    "gst_number": "string or null"
+  },
   "documents": []
 }
 ```
+
+Order booking identity rules:
+
+- Organized-company bookings require company or billing profile, authorized person, consignor address, phone, and email OTP checkpoint before submission can move forward.
+- Individual/unorganized bookings require phone OTP checkpoint before submission can move forward; GST number, company name, and company PAN must not be required.
+- ToPay bookings require consignee payer details before quote confirmation.
 
 `POST /orders/{order_id}/quote` minimum response:
 
@@ -125,6 +172,57 @@ POST   /orders/{order_id}/transition
   "amount_due_now": 0,
   "payment_mode": "advance | full | topay",
   "payment_status": "initiated"
+}
+```
+
+`POST /orders/{order_id}/topay/consent-request` minimum request:
+
+```json
+{
+  "consignee_name": "string",
+  "consignee_phone": "string",
+  "message_channel": "whatsapp | sms",
+  "idempotency_key": "string"
+}
+```
+
+`POST /orders/{order_id}/topay/consent-response` minimum request:
+
+```json
+{
+  "response": "yes | no",
+  "actor_role": "consignee",
+  "payment_intent_id": "UUID or null",
+  "idempotency_key": "string"
+}
+```
+
+ToPay behavior:
+
+- `yes` opens or confirms the consignee payment path and may progress only when payment or policy gate clears.
+- `no` redirects the obligation to the consignor, who may pay full amount, cancel, or place the order on hold for negotiation.
+- Hold/resume are explicit commands; resume resends consignee consent and creates a new consent attempt without erasing the earlier denial event.
+
+`POST /orders/{order_id}/hold` minimum request:
+
+```json
+{
+  "hold_type": "topay_consent | payment_resolution | document | compliance | dispute",
+  "reason": "string",
+  "actor_role": "customer | admin | ops",
+  "actor_id": "UUID",
+  "idempotency_key": "string"
+}
+```
+
+`POST /orders/{order_id}/resume` minimum request:
+
+```json
+{
+  "resume_action": "resend_topay_consent | retry_payment | continue_order",
+  "actor_role": "customer | admin | ops",
+  "actor_id": "UUID",
+  "idempotency_key": "string"
 }
 ```
 
@@ -180,6 +278,8 @@ GET    /trips/{trip_id}/tracking
 
 ```text
 POST   /documents/pod
+POST   /orders/{order_id}/consignee-otp/send
+POST   /orders/{order_id}/consignee-otp/verify
 GET    /orders/{order_id}/documents
 ```
 
@@ -195,6 +295,11 @@ GET    /orders/{order_id}/documents
   "idempotency_key": "string"
 }
 ```
+
+Consignee POD OTP rule:
+
+- After POD scanning/upload, consignee phone OTP must be verified before delivery completion and revenue/settlement gates can treat the delivery as fully evidenced.
+- The frontend must render OTP pending, verified, failed, or expired from backend response data.
 
 ### Customer Tracking
 
@@ -231,6 +336,31 @@ POST   /ops/incidents
 GET    /orders/{order_id}/payments
 GET    /orders/{order_id}/invoices
 GET    /ops/finance/blockers
+```
+
+Minimum customer payment response shape:
+
+```json
+{
+  "order_id": "UUID",
+  "payment_mode": "advance | full | topay | credit",
+  "payer": "consignor | consignee | approved_credit_account",
+  "payment_status": "payment_not_started | payment_link_created | booking_payment_pending | advance_paid | partially_paid | fully_paid | topay_consent_pending | topay_consent_accepted | topay_consent_denied | topay_collection_pending | topay_collection_received | on_hold_topay_consent | on_hold_payment_resolution | resumed_topay_consent_requested | credit_approved_due_later | payment_failed | payment_mismatch_under_review | refund_initiated | refund_completed",
+  "amount_due_now": 0,
+  "amount_paid": 0,
+  "remaining_balance": 0,
+  "next_action": "none | pay_now | wait_for_consignee | resend_consent | choose_pay_cancel_or_hold | retry_payment | contact_support"
+}
+```
+
+Minimum customer invoice response shape:
+
+```json
+{
+  "order_id": "UUID",
+  "invoice_status": "proforma_generated | receipt_generated | final_invoice_pending_pod | final_invoice_pending_gst_review | final_tax_invoice_generated | invoice_sent | invoice_paid | debit_note_generated | credit_note_generated",
+  "download_url": "string or null"
+}
 ```
 
 ## Canonical Transition Gateway
@@ -270,6 +400,10 @@ Use this minimum state set for MVP:
 ```text
 DRAFT
 PAYMENT_PENDING
+TOPAY_CONSENT_PENDING
+TOPAY_CONSENT_DENIED
+ON_HOLD
+RESUMED
 CONFIRMED
 MATCHING
 ASSIGNED
@@ -282,12 +416,27 @@ CANCELLED
 EXCEPTION
 ```
 
+Hold-state rule:
+
+- `ON_HOLD` is a controlled pause state used for ToPay denial, payment resolution, document/compliance blockers, or dispute review.
+- `RESUMED` records the restart event after a hold and must immediately route to the next legal policy gate, such as ToPay consent pending, payment pending, matching, or cancellation.
+- The event trail must preserve every hold reason, resume reason, and ToPay consent attempt.
+
 ## Canonical Event Families
 
 ### Order State Events
 
 - `order_created`
+- `customer_registered`
+- `otp_sent`
+- `otp_verified`
+- `order_booking_otp_verified`
 - `quote_generated`
+- `topay_consent_requested`
+- `topay_consent_accepted`
+- `topay_consent_denied`
+- `order_hold_applied`
+- `order_resumed`
 - `payment_intent_created`
 - `payment_confirmed`
 - `order_confirmed`
@@ -305,12 +454,25 @@ EXCEPTION
 - `sla_risk_raised`
 - `delivered`
 - `pod_uploaded`
+- `consignee_otp_sent`
+- `consignee_otp_verified`
 
 ### Finance Events
 
 - `payment_initiated`
 - `payment_confirmed`
+- `payment_failed`
+- `payment_mismatch_under_review`
+- `advance_payment_received`
+- `topay_collection_pending`
+- `topay_collection_received`
+- `refund_initiated`
+- `refund_completed`
 - `invoice_generated`
+- `invoice_sent`
+- `invoice_paid`
+- `debit_note_generated`
+- `credit_note_generated`
 - `settlement_visibility_updated`
 
 ### Alert And Incident Events

@@ -121,6 +121,15 @@ The operational core must make it possible to answer:
 - add role-specific profile tables
 - allow a transport company to act as both customer and provider through separate profiles if needed
 
+Customer identity must preserve the registration split used by the customer app:
+
+- `customer_segment`: `organized_company` or `individual_unorganized`
+- organized-company fields: company name, GST number, business PAN, company email, registered/consignor address, authorized person name, authorized person mobile
+- individual/unorganized fields: person or trade name, phone number, address, Aadhaar/KYC document reference, optional email
+- verification fields: email OTP status, phone OTP status, booking OTP status, and latest verification timestamp
+
+Do not require GST number, company name, or business PAN for individual/unorganized customers. Do not store this as loose free text only; builders need a stable segment enum because registration, booking, billing, ToPay, and OTP rules branch on it.
+
 ### User Roles In Current Project Scope
 
 The current project needs these operational roles clearly represented:
@@ -156,6 +165,18 @@ Transport company dual-role behavior is relevant to the product, but it should b
 - store documents separately
 - store every state transition in `order_state_events`
 
+Customer-order additions now required:
+
+- `customer_segment` copied or referenced from the customer profile at booking time
+- `payment_mode`: `full`, `advance`, `topay`, or approved `credit`
+- `topay_consent_status`: `not_required`, `pending`, `accepted`, `denied`, `expired`, or `resumed`
+- `hold_status`: `none`, `on_hold`, or `released`
+- `hold_type`: `topay_consent`, `payment_resolution`, `document`, `compliance`, or `dispute`
+- `hold_reason`
+- `resumed_at`
+- consignee payer fields for ToPay: consignee name, phone, address, company name where applicable, GST number where applicable, message channel, and consent attempt count
+- OTP checkpoint references for organized-company booking email OTP, individual/unorganized booking phone OTP, and consignee POD OTP
+
 ### Matching Layer
 
 - keep bids and matches separate
@@ -178,6 +199,48 @@ Transport company dual-role behavior is relevant to the product, but it should b
 
 - separate payment, invoice, and finance event records
 - keep enough granularity for order -> invoice -> settlement -> accounting trace
+
+Payment and invoice records must expose customer-facing status without leaking provider settlement internals.
+
+Customer payment statuses:
+
+```text
+payment_not_started
+payment_link_created
+booking_payment_pending
+advance_paid
+partially_paid
+fully_paid
+topay_consent_pending
+topay_consent_accepted
+topay_consent_denied
+topay_collection_pending
+topay_collection_received
+on_hold_topay_consent
+on_hold_payment_resolution
+resumed_topay_consent_requested
+credit_approved_due_later
+payment_failed
+payment_mismatch_under_review
+refund_initiated
+refund_completed
+```
+
+Customer invoice statuses:
+
+```text
+proforma_generated
+receipt_generated
+final_invoice_pending_pod
+final_invoice_pending_gst_review
+final_tax_invoice_generated
+invoice_sent
+invoice_paid
+debit_note_generated
+credit_note_generated
+```
+
+Hold and resume are not payment deletion or overwrite operations. They must create finance/order events that preserve the original denial, failure, or blocker and the later release/resume evidence.
 
 ### Pricing Intelligence Layer
 

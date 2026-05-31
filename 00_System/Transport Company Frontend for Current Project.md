@@ -3,7 +3,7 @@ type: memo
 domain: frontend
 scope: transport_company_mobile
 status: active
-last_updated: 2026-05-01
+last_updated: 2026-05-31
 related_hubs:
   - "[[Technology Stack Hub]]"
   - "[[Operations Strategy Hub]]"
@@ -61,6 +61,22 @@ same company identity, separate role context for ledgers, orders, and permission
 ```
 
 This follows the finance rule that transport-company customer-role and provider-role records must not be mixed.
+
+## Harness Engineering Alignment
+
+The Transport Company App must align with the same event, state, pricing, payment, notification, and schema harness used by Customer and Driver apps.
+
+Harness-critical overlays:
+
+- GST verification and landline IVR OTP must be visible during onboarding and profile changes. Failed verification restricts the company to view-only or policy-limited mode until corrected.
+- Transport Company Reliability Score (TCRS) must be visible where it affects trust, warnings, suspension, appeal, or marketplace exposure.
+- IMS-to-transport handoff must show the current search phase: individual-owner 5 km, individual-owner 10 km, transport-company pool, arriving-vehicle ETA fallback, WhatsApp RAG broadcast, or assignment exhausted.
+- Dual-role conflicts must be explicit. One company inventory pool must prevent the same vehicle being available in both hirer/customer and service-provider contexts.
+- Payment path must be labeled as direct B2B, platform-mediated individual-driver path, or customer-pays-platform path.
+- Cancellation after dispatch must show backend-calculated base charge, payment blocker, and whether new orders are restricted until cleared.
+- Shipment/POD scanning must reuse Driver App verification patterns: OCR, EXIF/GPS, consignee OTP, and temporary driver session expiry.
+- Offline role toggles, accept/reject, document scans, and POD captures must show queued/synced/conflict states.
+- Multi-vehicle orders must show master order plus sub-order split status when OMS/IMS creates sub-orders.
 
 ## Recommended Navigation
 
@@ -121,12 +137,16 @@ Show:
 
 - active operating mode
 - available vehicles
+- committed vehicles by role context
+- dual-role inventory conflict warnings
 - active provider trips
 - active placed orders
 - pending assignments
 - document or compliance blockers
 - payment or service-fee blockers
 - reliability score
+- GST/landline/KYC verification status
+- TCRS score and appeal/suspension state where applicable
 
 Avoid:
 
@@ -151,6 +171,7 @@ Show:
 - required documents
 - accept/reject action
 - assign vehicle/driver action
+- offline accept/reject sync status when needed
 
 Rules:
 
@@ -160,6 +181,7 @@ Rules:
 - provider-side finance is a settlement payable to the company, not a customer receivable
 - POD verification can start settlement preprocessing but does not release payout by itself
 - payout waits for payment obligation, dispute, GST, custody, and bank-verification gates
+- service-provider acceptance creates a provider signal; backend assignment confirmation remains authoritative
 
 ## Customer Mode
 
@@ -294,8 +316,13 @@ advance_paid
 partially_paid
 fully_paid
 topay_consent_pending
+topay_consent_accepted
+topay_consent_denied
 topay_collection_pending
 topay_collection_received
+on_hold_topay_consent
+on_hold_payment_resolution
+resumed_topay_consent_requested
 credit_due
 payment_mismatch_under_review
 final_tax_invoice_generated
@@ -340,6 +367,35 @@ Sections:
 - notification settings
 
 Verification status should be visible and actionable.
+
+Verification and harness statuses:
+
+```text
+gst_verification_pending
+gst_verified
+gst_failed
+landline_ivr_pending
+landline_ivr_verified
+kyc_pending
+kyc_verified
+tcrs_warning
+tcrs_suspended_pending_review
+dual_role_conflict_detected
+offline_sync_pending
+```
+
+## Transport Company Harness Backtest Cases
+
+| Test ID | Scenario | Required TC UI Evidence |
+|---|---|---|
+| T-TC-01 | GST/landline verification succeeds/fails/times out | status, retry path, view-only restriction if failed |
+| T-TC-02 | Role toggle while active orders exist | role context, affected orders, audit state |
+| T-TC-03 | Same vehicle appears in both role contexts | conflict warning, unavailable state, admin escalation |
+| T-TC-04 | IMS escalates from individual owners to TC pool | search phase, candidate list, timeout evidence |
+| T-TC-05 | B2B direct settlement vs platform-mediated payment | payment path label, commission/fee display |
+| T-TC-06 | Cancellation after dispatch | base charge, payment blocker, new-order restriction |
+| T-TC-07 | Offline accept/reject reconnects late | queued action, backend conflict result |
+| T-TC-08 | Multi-vehicle order split | master order, sub-orders, per-vehicle status |
 
 ## MVP Scope
 

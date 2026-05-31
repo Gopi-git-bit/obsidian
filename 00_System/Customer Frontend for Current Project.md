@@ -3,7 +3,7 @@ type: memo
 domain: frontend
 scope: customer_mobile
 status: active
-last_updated: 2026-05-01
+last_updated: 2026-05-31
 related_hubs:
   - "[[Technology Stack Hub]]"
   - "[[Operations Strategy Hub]]"
@@ -39,7 +39,7 @@ It must support:
 
 ## Current Customer App Mission
 
-The customer app helps MSMEs, warehouses, factories, and logistics managers:
+The customer app helps organized companies, MSMEs, warehouses, factories, logistics managers, individual shippers, and unorganized businesses:
 
 - place shipment requests accurately
 - understand price, promise, and payment responsibility
@@ -47,6 +47,13 @@ The customer app helps MSMEs, warehouses, factories, and logistics managers:
 - receive proactive delay and POD updates
 - manage invoices, payments, and shipment history
 - see measurable value from Zippy over time
+
+Customer registration must split identity collection by customer segment:
+
+- Organized company: registered company or formal MSME/warehouse profile using company name, GST number or business PAN, company email, phone number, registered/consignor address, and authorized-person details.
+- Individual or unorganized customer: individual person, small trader, shop owner, small building contractor, tiny industry, or micro industry below the current business-policy turnover threshold. Do not require GST number, company name, or company PAN for this segment.
+
+This split controls which fields appear in registration, booking, verification, billing, and ToPay consent.
 
 ## Current Product Principle
 
@@ -110,6 +117,48 @@ Customer App
 
 ## Core Screens
 
+## 0. Registration And Verification
+
+Purpose:
+
+- create the correct customer profile before booking starts
+
+Segment choice:
+
+- `organized_company`
+- `individual_unorganized`
+
+Organized company fields:
+
+- company name
+- GST number or business PAN
+- company email
+- company phone number
+- registered/consignor address
+- authorized person name
+- authorized person mobile number
+
+Individual or unorganized fields:
+
+- person or trade name
+- phone number
+- address
+- Aadhaar reference or KYC document reference
+- optional email
+
+Verification checkpoints:
+
+- Organized company: email OTP is required during registration and again when submitting an order booking form.
+- Individual or unorganized customer: phone OTP is required during registration and again when submitting an order booking form.
+- Consignee: phone OTP is required after POD scanning to reduce fraud and confirm delivery acceptance.
+
+UI rules:
+
+- Hide GST number, company name, and business PAN when the customer segment is individual/unorganized.
+- Require phone OTP and Aadhaar/KYC reference for individual/unorganized registration.
+- Require company email OTP plus GST/PAN validation status for organized-company registration.
+- Store verification state as backend truth; frontend only renders `pending`, `verified`, `failed`, or `expired`.
+
 ## 1. Home Screen
 
 Purpose:
@@ -153,6 +202,7 @@ shipment details
 
 Required fields:
 
+- customer segment and profile reference
 - product or cargo type
 - weight / volume
 - vehicle type and count
@@ -164,11 +214,22 @@ Required fields:
 - GST/PAN profile, freight payer, and billing contact where required
 - special handling
 
+Individual/unorganized booking behavior:
+
+- The booking form can open as a focused popup or modal from the order button.
+- Pickup may differ from the registered address because customers can book for themselves or for someone else.
+- Destination must still capture consignee name, consignee contact number, and destination address.
+- Email remains optional unless the customer chooses a billing or communication flow that requires it.
+
+Organized-company booking behavior:
+
+- Booking must capture company/GST/PAN billing details where available, authorized person identity, consignor address, phone number, consignee company name, consignee GST number when ToPay is selected and applicable, consignee contact mobile, destination address, and shipment document upload or scan requirement.
+
 Payment-mode section:
 
 - Full Payment: customer pays the full required amount before OMS confirms the order.
 - Part Payment: customer pays the required advance or authorization before confirmation; balance remains visible as receivable until cleared by policy.
-- ToPay: consignor selects consignee as payer; the app must collect consignee name, phone, address, consent status, and payment reminder channel before confirmation.
+- ToPay: consignor selects consignee as payer; the app must collect consignee name, phone, address, consent status, payment reminder channel, and yes/no payment acceptance before confirmation.
 - Credit: visible only for approved customers with a credit limit, due date, and backend policy approval.
 - Escrow/Hold: visible only when the approved custody model supports it; do not describe it as Zippy freely holding funds unless compliance approval exists.
 
@@ -178,6 +239,33 @@ Payment-gate copy:
 Your shipment is confirmed only after the required payment condition is satisfied.
 For ToPay or Credit orders, confirmation depends on approved payer consent, credit policy, and backend finance checks.
 ```
+
+ToPay consignee yes/no flow:
+
+```text
+consignor selects ToPay
+-> consignee details captured
+-> OMS/Communication sends WhatsApp or SMS consent message
+-> consignee chooses Yes or No
+```
+
+If consignee selects Yes:
+
+- payment gateway opens for the consignee
+- payment transaction is attempted
+- successful payment allows OMS to continue confirmation or execution based on policy
+
+If consignee selects No:
+
+- the refusal is redirected to the consignor
+- consignor can pay full amount, cancel the order, or hold the order for negotiation
+
+Hold and resume behavior:
+
+- Hold means the shipment remains paused while consignor and consignee negotiate payer responsibility.
+- Hold must show a clear `on_hold_topay_consent` or `on_hold_payment_resolution` status in the UI.
+- Resume sends the ToPay consent request to the consignee again.
+- If the resumed consignee request is accepted, payment gateway opens; if denied again, the order cancels or remains blocked according to backend policy.
 
 GST and billing inputs:
 
@@ -222,6 +310,7 @@ Show:
 - required booking payment or authorization
 - remaining balance rule
 - ToPay consent state if applicable
+- ToPay hold/resume status when consignee denied payment and consignor has not resolved the obligation
 - detention/waiting policy
 - document requirements
 - cancellation window
@@ -258,6 +347,8 @@ quote accepted
 -> OMS confirms order
 -> assignment and dispatch workflow starts
 ```
+
+For ToPay orders, `required payment gate satisfied` may mean consignee consent plus payment capture, or another backend-approved obligation state. The frontend must not confirm the order locally from a button click.
 
 ## 4. Tracking Screen
 
@@ -328,8 +419,13 @@ advance_paid
 partially_paid
 fully_paid
 topay_consent_pending
+topay_consent_accepted
+topay_consent_denied
 topay_collection_pending
 topay_collection_received
+on_hold_topay_consent
+on_hold_payment_resolution
+resumed_topay_consent_requested
 credit_approved_due_later
 payment_failed
 payment_mismatch_under_review
@@ -380,10 +476,29 @@ ToPay:
 quote accepted
 -> consignee payer details captured
 -> ToPay consent requested
+-> consignee selects Yes or No
+-> if Yes, consignee payment gateway opens and payment is captured or fails
+-> if No, consignor is asked to pay full amount, cancel, or hold
+-> if held, consignor can resume and resend consignee consent
 -> order confirmed only after policy-approved consent/payment gate clears
 -> delivery/POD triggers final invoice and consignee payment request
 -> provider payout remains blocked until ToPay collection or admin-approved obligation resolution
 ```
+
+Advance-payment exception flow:
+
+```text
+loading complete
+-> required advance not received
+-> OMS sends reminder by WhatsApp/SMS
+-> customer pays or retries with alternate method
+-> driver moves only after required payment condition clears
+```
+
+Bank/server failure handling:
+
+- Show payment retry, alternate account, UPI, Google Pay, Paytm, or admin-supported fallback options when backend payment policy exposes them.
+- Do not advance the trip from UI until backend payment status changes to an allowed state.
 
 GST display copy:
 
@@ -439,6 +554,19 @@ Required notifications:
 - debit note or credit note issued
 - payment reminder
 - issue resolved
+
+## Customer Harness Backtest Cases
+
+| Test ID | Scenario | Required Customer UI Evidence |
+|---|---|---|
+| T-CUST-01 | Organized-company registration succeeds/fails OTP | segment, company fields, email OTP state, backend rejection reason |
+| T-CUST-02 | Individual/unorganized registration hides company fields | no GST/company/PAN requirement, phone OTP, KYC reference |
+| T-CUST-03 | Booking OTP checkpoint fails or expires | blocked submission, retry state, backend reason |
+| T-CUST-04 | ToPay consignee accepts and pays | consent accepted, payment captured, confirmation gate status |
+| T-CUST-05 | ToPay consignee denies | redirected consignor choice: pay, cancel, or hold |
+| T-CUST-06 | Held ToPay order resumes | resumed consent request, new response state, preserved prior denial |
+| T-CUST-07 | Advance payment fails after loading | reminder, retry/fallback options, movement blocked until backend clears gate |
+| T-CUST-08 | POD uploaded but consignee OTP pending | delivery evidence visible, final invoice/closure blocked state |
 
 ## CRM And Retention Hooks
 
