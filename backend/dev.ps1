@@ -14,6 +14,16 @@ function Assert-Python {
     }
 }
 
+function Invoke-Migrations {
+    Push-Location $Root
+    try {
+        & $VenvPython -m alembic upgrade head
+    }
+    finally {
+        Pop-Location
+    }
+}
+
 switch ($Task) {
     "setup" {
         $SystemPython = "C:\Users\user\AppData\Local\Programs\Python\Python311\python.exe"
@@ -31,6 +41,8 @@ switch ($Task) {
         if (-not (Test-Path (Join-Path $Root ".env"))) {
             "DATABASE_URL=sqlite:///./test.db" | Set-Content -Path (Join-Path $Root ".env")
         }
+
+        Invoke-Migrations
     }
     "test" {
         Assert-Python
@@ -44,6 +56,7 @@ switch ($Task) {
     }
     "run" {
         Assert-Python
+        Invoke-Migrations
         Push-Location $Root
         try {
             & $VenvPython -m uvicorn app.main:app --reload

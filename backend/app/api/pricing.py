@@ -7,9 +7,14 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
+from app.auth import CUSTOMER_ORDER_ROLES, SUPPORT_READ_ROLES, TRANSPORT_COMPANY_ROLES, require_roles
 from app.database import get_db
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[
+        Depends(require_roles(CUSTOMER_ORDER_ROLES | SUPPORT_READ_ROLES | TRANSPORT_COMPANY_ROLES))
+    ]
+)
 
 
 class PriceEstimateRequest(BaseModel):

@@ -9,11 +9,14 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from app.auth import CUSTOMER_ORDER_ROLES, DRIVER_TRIP_ROLES, SUPPORT_READ_ROLES, require_roles
 from app.database import get_db
 from app.models.order_model import Order
 from app.schemas.logistics import ShipmentStatusListResponse, ShipmentStatusResponse
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(require_roles(CUSTOMER_ORDER_ROLES | DRIVER_TRIP_ROLES | SUPPORT_READ_ROLES))]
+)
 
 
 def _delay_risk(order: Order) -> str:

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Zippy Customer</title>
+    <link rel="stylesheet" href="./src/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>Zippy Customer</h1>
+        <p>Book shipments and track customer-safe order progress</p>
+      </div>
+      <label class="api-base">
+        API
+        <input id="apiBase" value="http://127.0.0.1:8000" spellcheck="false">
+      </label>
+      <div class="login-panel">
+        <input id="username" value="customer-web-dev" aria-label="Username" spellcheck="false">
+        <button id="login" type="button">Login</button>
+        <span id="loginStatus">Not signed in</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="order-form-panel">
+        <div class="panel-title">
+          <h2>Create Order</h2>
+        </div>
+        <form id="orderForm" class="order-form">
+          <label>Shipper name<input name="shipper_name" value="Customer Web Shipper" required></label>
+          <label>Phone<input name="shipper_phone" value="9876543210" required></label>
+          <label>Email<input name="shipper_email" value="customer-web@example.com"></label>
+          <label>Origin city<input name="origin_city" value="Tiruppur" required></label>
+          <label>Origin state<input name="origin_state" value="Tamil Nadu" required></label>
+          <label>Destination city<input name="destination_city" value="Chennai" required></label>
+          <label>Destination state<input name="destination_state" value="Tamil Nadu" required></label>
+          <label>Weight kg<input name="weight_kg" value="1200" type="number" min="1" required></label>
+          <label>Packages<input name="num_packages" value="12" type="number" min="1" required></label>
+          <label>Vehicle category<input name="vehicle_category_preference" value="LCV"></label>
+          <label>Distance km<input name="estimated_distance_km" value="460" type="number" min="1"></label>
+          <label>Offered price<input name="offered_price" value="18000" type="number" min="1"></label>
+          <button id="createOrder" type="submit">Create Order</button>
+        </form>
+      </section>
+
+      <section class="orders-panel">
+        <div class="panel-title">
+          <h2>My Orders</h2>
+          <button id="refreshOrders" type="button">Refresh</button>
+        </div>
+        <div id="ordersStatus" class="status-line">Loading orders...</div>
+        <div id="ordersList" class="orders-list"></div>
+      </section>
+
+      <section class="detail-panel">
+        <div id="emptyState" class="empty-state">Select an order to inspect its progress.</div>
+        <div id="orderDetail" class="hidden">
+          <div class="detail-header">
+            <div>
+              <h2 id="detailTitle">Order</h2>
+              <p id="detailRoute"></p>
+            </div>
+            <span id="lifecycleBadge" class="badge"></span>
+          </div>
+
+          <section>
+            <h3>Customer-Safe Flow</h3>
+            <div id="flowSections" class="record-grid"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

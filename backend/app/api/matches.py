@@ -10,13 +10,25 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func as sql_func
 
+from app.auth import SUPPORT_READ_ROLES, TRANSPORT_COMPANY_ROLES, require_roles
 from app.database import get_db
+from app.models.auth_model import UserAccount, UserRole
 from app.models.order_model import Order, OrderStatus, Match, MatchStatus
 from app.models.vehicle_model import VehicleModel
 from app.schemas.order import MatchResponse, MatchListResponse, MatchAction
 from app.services.order_service import transition_order
+from app.api.flow import create_trip_for_order
 
 router = APIRouter()
+
+
+def _is_transport_company(user: UserAccount) -> bool:
+    return user.role == UserRole.TRANSPORT_COMPANY
+
+
+def _assert_company_owns_match(match: Match, user: UserAccount) -> None:
+    if _is_transport_company(user) and match.transport_company_id != str(user.id):
+        raise HTTPException(status_code=404, detail="Match not found")
 
 
 def calculate_match_score(order, vehicle) -> dict:
@@ -51,12 +63,16 @@ def calculate_match_score(order, vehicle) -> dict:
     }
 
 
-@router.get("/orders/{order_id}/match")
+@router.get(
+    "/orders/{order_id}/match",
+    dependencies=[Depends(require_roles(TRANSPORT_COMPANY_ROLES))],
+)
 async def find_matches(
     order_id: UUID,
     limit: int = Query(5, ge=1, le=20, description="Max matches to return"),
     min_score: float = Query(30.0, ge=0, le=100, description="Minimum match score"),
     db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(TRANSPORT_COMPANY_ROLES)),
 ):
     """Find best vehicles for an order using weighted scoring algorithm"""
     order = db.query(Order).filter(Order.id == order_id).first()
@@ -66,6 +82,8 @@ async def find_matches(
     preferred_category = getattr(order, "vehicle_category_preference", None)
 
     query = db.query(VehicleModel)
+    if _is_transport_company(current_user):
+        query = query.filter(VehicleModel.transport_company_id == str(current_user.id))
 
     weight_kg = float(order.weight_kg)
     if preferred_category:
@@ -92,6 +110,7 @@ async def find_matches(
         match = Match(
             order_id=order.id,
             vehicle_id=vehicle.id,
+            transport_company_id=vehicle.transport_company_id,
             match_score=scores["match_score"],
             utilization_percent=scores["utilization_percent"],
             efficiency_score=scores["efficiency_score"],
@@ -149,16 +168,22 @@ async def find_matches(
     }
 
 
-@router.post("/matches/{match_id}/accept", response_model=MatchResponse)
+@router.post(
+    "/matches/{match_id}/accept",
+    response_model=MatchResponse,
+    dependencies=[Depends(require_roles(TRANSPORT_COMPANY_ROLES))],
+)
 async def accept_match(
     match_id: UUID,
     action: MatchAction = MatchAction(),
     db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(TRANSPORT_COMPANY_ROLES)),
 ):
     """Accept a proposed match"""
     match = db.query(Match).filter(Match.id == match_id).first()
     if not match:
         raise HTTPException(status_code=404, detail="Match not found")
+    _assert_company_owns_match(match, current_user)
     if match.status != MatchStatus.PROPOSED:
         raise HTTPException(
             status_code=400,
@@ -218,22 +243,29 @@ async def accept_match(
             trace_id=f"match-accepted:{match.id}",
             reason=action.notes,
         )
+        create_trip_for_order(db, order_id=order.id, vehicle_id=match.vehicle_id)
 
     db.commit()
     db.refresh(match)
     return match
 
 
-@router.post("/matches/{match_id}/reject", response_model=MatchResponse)
+@router.post(
+    "/matches/{match_id}/reject",
+    response_model=MatchResponse,
+    dependencies=[Depends(require_roles(TRANSPORT_COMPANY_ROLES))],
+)
 async def reject_match(
     match_id: UUID,
     action: MatchAction = MatchAction(),
     db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(TRANSPORT_COMPANY_ROLES)),
 ):
     """Reject a proposed match"""
     match = db.query(Match).filter(Match.id == match_id).first()
     if not match:
         raise HTTPException(status_code=404, detail="Match not found")
+    _assert_company_owns_match(match, current_user)
     if match.status != MatchStatus.PROPOSED:
         raise HTTPException(
             status_code=400,
@@ -246,16 +278,23 @@ async def reject_match(
     return match
 
 
-@router.get("/matches", response_model=MatchListResponse)
+@router.get(
+    "/matches",
+    response_model=MatchListResponse,
+    dependencies=[Depends(require_roles(SUPPORT_READ_ROLES | TRANSPORT_COMPANY_ROLES))],
+)
 async def list_matches(
     status: Optional[str] = Query(None, description="Filter by match status"),
     order_id: Optional[UUID] = Query(None, description="Filter by order ID"),
     limit: int = Query(50, le=500),
     offset: int = Query(0, ge=0),
     db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(SUPPORT_READ_ROLES | TRANSPORT_COMPANY_ROLES)),
 ):
     """List all matches with optional filters"""
     query = db.query(Match)
+    if _is_transport_company(current_user):
+        query = query.filter(Match.transport_company_id == str(current_user.id))
 
     if status:
         valid = [s.value for s in MatchStatus]
@@ -276,7 +315,10 @@ async def list_matches(
     )
 
 
-@router.get("/matches/stats")
+@router.get(
+    "/matches/stats",
+    dependencies=[Depends(require_roles(SUPPORT_READ_ROLES | TRANSPORT_COMPANY_ROLES))],
+)
 async def get_match_stats(db: Session = Depends(get_db)):
     """Get match statistics"""
     total_matches = db.query(sql_func.count(Match.id)).scalar() or 0

@@ -13,6 +13,7 @@ class VehicleResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True, protected_namespaces=())
 
     id: UUID
+    transport_company_id: Optional[str]
     manufacturer: str
     model_name: str
     variant: Optional[str]
@@ -38,6 +39,34 @@ class VehicleResponse(BaseModel):
     axle_config: Optional[str]
     tyres: Optional[int]
     price_ex_showroom: Optional[float]
+
+
+class VehicleCreate(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    manufacturer: str = Field(..., min_length=1, max_length=50)
+    model_name: str = Field(..., min_length=1, max_length=100)
+    category: str
+    body_type: str = "open"
+    gvw_kg: Optional[float] = None
+    payload_kg: Optional[float] = None
+    mileage_kmpl: Optional[float] = None
+    price_ex_showroom: Optional[float] = None
+    is_active: bool = True
+
+
+class VehicleUpdate(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+    manufacturer: Optional[str] = None
+    model_name: Optional[str] = None
+    category: Optional[str] = None
+    body_type: Optional[str] = None
+    gvw_kg: Optional[float] = None
+    payload_kg: Optional[float] = None
+    mileage_kmpl: Optional[float] = None
+    price_ex_showroom: Optional[float] = None
+    is_active: Optional[bool] = None
 
 class VehicleListResponse(BaseModel):
     """Paginated list of vehicles"""

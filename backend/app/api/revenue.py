@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from app.auth import FINANCE_ADMIN_ROLES, require_roles
 from app.schemas.revenue import RevenueRecognitionRequest, RevenueRecognitionResponse
 from app.services.revenue_service import recognize_revenue
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_roles(FINANCE_ADMIN_ROLES))])
 
 
 @router.post("/revenue/recognize", response_model=RevenueRecognitionResponse)

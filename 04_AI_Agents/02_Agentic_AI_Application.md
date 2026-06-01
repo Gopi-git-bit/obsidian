@@ -9,6 +9,7 @@
 > Agents **NEVER** move money without approval.
 > All lifecycle actions flow through [[07_State_Machine]] via the `transition()` method.
 > Agent outputs must include an idempotency key, actor identity, trace context, and decision reason.
+> Agent integrations must use the backend agent APIs in [[API and Event Contract for Current Project]]; direct DB writes are forbidden.
 
 ## Purpose
 
@@ -25,6 +26,46 @@ The system is designed around a 7-agent architecture:
 - Communication Agent
 
 The Order Management Agent is the orchestration brain. It validates demand, prioritizes customers, delegates vehicle selection, coordinates payment and pricing checks, emits canonical lifecycle events, and escalates failures without bypassing governance.
+
+## Current Backend/API Alignment
+
+This note preserves the older operational agent roles, but implementation must align to the current backend structure:
+
+```text
+FastAPI services and policy modules own workflow truth
+agents recommend, score, summarize, classify, or request actions
+supervisor policy gate approves, holds, rejects, or escalates high-risk outputs
+frontend apps render only backend-persisted status
+```
+
+Agent API boundary:
+
+```text
+GET    /agents/{agent_code}/context/{entity_type}/{entity_id}
+POST   /agents/{agent_code}/recommendations
+POST   /agents/{agent_code}/actions
+POST   /supervisor/policy/check
+POST   /rag/query
+POST   /rag/ocr/validate
+```
+
+Required agent payload fields:
+
+- `agent_code`
+- `entity_type`
+- `entity_id`
+- `requested_action` or recommendation type
+- `decision_reason`
+- `trace_id`
+- `idempotency_key`
+- `evidence_refs`
+- confidence score where applicable
+
+Frontend harness rule:
+
+```text
+agent output becomes visible to Customer, Driver, Transport Company, or Admin UI only after backend persistence and policy validation.
+```
 
 ## Agent Inventory
 
@@ -258,7 +299,7 @@ Locked transportation SLA breach rules from the state-machine implementation:
 
 | Area | Rule |
 |---|---|
-| Orchestration | LangGraph/agent reasoning may propose actions; n8n handles validation, retry, and DLQ; Django state machine remains the source of truth |
+| Orchestration | LangGraph/agent reasoning may propose actions; workflow tools handle validation, retry, and DLQ; backend state machine and transition gateway remain the source of truth |
 | Idempotency | Every output requires `idempotency_key`, `request_id`, or `assignment_request_id` |
 | DLQ | Permanent failures go to Dead Letter Queue |
 | Shadow mode | New models run in parallel before activation |

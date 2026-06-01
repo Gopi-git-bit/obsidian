@@ -10,10 +10,15 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 
+from app.auth import CUSTOMER_ORDER_ROLES, SUPPORT_READ_ROLES, TRANSPORT_COMPANY_ROLES, require_roles
 from app.database import get_db
 from app.services.pricing_service import pricing_engine, DynamicPricingEngine
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[
+        Depends(require_roles(CUSTOMER_ORDER_ROLES | SUPPORT_READ_ROLES | TRANSPORT_COMPANY_ROLES))
+    ]
+)
 
 
 class MLPricingRequest(BaseModel):

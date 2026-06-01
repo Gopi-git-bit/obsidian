@@ -40,6 +40,7 @@ class VehicleModel(Base):
     id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     manufacturer = Column(String(50), nullable=False)
     model_name = Column(String(100), nullable=False)
+    transport_company_id = Column(String(80), index=True)
     variant = Column(String(50))
     category = Column(String(30), nullable=False)
     body_type = Column(String(20), nullable=False)

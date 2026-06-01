@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Zippy Admin</title>
+    <link rel="stylesheet" href="./src/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>Zippy Admin</h1>
+        <p>Order lifecycle and settlement operations</p>
+      </div>
+      <label class="api-base">
+        API
+        <input id="apiBase" value="http://127.0.0.1:8000" spellcheck="false">
+      </label>
+      <div class="dev-login">
+        <button id="devLogin" type="button">Dev Login</button>
+        <span id="loginStatus">Not signed in</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="orders-panel">
+        <div class="panel-title">
+          <h2>Orders</h2>
+          <button id="refreshOrders" type="button">Refresh</button>
+        </div>
+        <div id="ordersStatus" class="status-line">Loading orders...</div>
+        <div id="ordersList" class="orders-list"></div>
+      </section>
+
+      <section class="detail-panel">
+        <div id="emptyState" class="empty-state">Select an order to inspect its flow.</div>
+        <div id="orderDetail" class="hidden">
+          <div class="detail-header">
+            <div>
+              <h2 id="detailTitle">Order</h2>
+              <p id="detailRoute"></p>
+            </div>
+            <span id="lifecycleBadge" class="badge"></span>
+          </div>
+
+          <div id="actions" class="actions"></div>
+
+          <section>
+            <h3>Flow Health</h3>
+            <div id="flowSteps" class="step-grid"></div>
+            <div id="missingSteps" class="missing"></div>
+          </section>
+
+          <section>
+            <h3>Records</h3>
+            <div id="recordSections" class="record-grid"></div>
+          </section>
+
+          <section>
+            <h3>Audit Trail</h3>
+            <div id="auditTrail" class="audit-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

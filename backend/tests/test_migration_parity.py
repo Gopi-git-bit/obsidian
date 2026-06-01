@@ -1,0 +1,112 @@
+"""Migration parity checks for the canonical order lifecycle schema."""
+
+from __future__ import annotations
+
+import sqlite3
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from uuid import uuid4
+
+from fastapi.testclient import TestClient
+
+from app.main import app
+from conftest import auth_headers
+
+
+client = TestClient(app)
+client.headers.update(auth_headers(client, "super_admin"))
+DB_PATH = Path(__file__).resolve().parents[1] / ".pytest_alembic.db"
+
+
+def _order_payload() -> dict:
+    return {
+        "shipper_name": "Migration Parity",
+        "shipper_phone": "9876543210",
+        "shipper_email": "parity@example.com",
+        "origin_city": "Tiruppur",
+        "origin_state": "Tamil Nadu",
+        "destination_city": "Chennai",
+        "destination_state": "Tamil Nadu",
+        "cargo_type": "general",
+        "weight_kg": 1200.0,
+        "num_packages": 10,
+        "vehicle_category_preference": "LCV",
+        "is_interstate": False,
+        "estimated_distance_km": 460.0,
+        "offered_price": 18000.0,
+    }
+
+
+def _transition(order_id: str, to_state: str, event: str, *, actor_role: str = "OMS", payload=None):
+    return client.post(
+        f"/api/v1/orders/{order_id}/transition",
+        json={
+            "to_state": to_state,
+            "event": event,
+            "payload": payload or {},
+            "actor_role": actor_role,
+            "idempotency_key": str(uuid4()),
+            "trace_id": f"migration-parity-{uuid4()}",
+        },
+    )
+
+
+def test_alembic_schema_uses_current_state_without_required_status_column():
+    with sqlite3.connect(DB_PATH) as conn:
+        order_columns = {
+            row[1]: {"type": row[2], "not_null": bool(row[3])}
+            for row in conn.execute("pragma table_info(orders)").fetchall()
+        }
+        revision = conn.execute("select version_num from alembic_version").fetchone()
+
+    assert revision is not None
+    assert revision[0] == "007_supervisor_exception_holds"
+    assert "current_state" in order_columns
+    assert order_columns["current_state"]["not_null"] is True
+    assert "status" not in order_columns
+
+
+def test_order_creation_and_state_transitions_on_alembic_database():
+    created = client.post("/api/v1/orders", json=_order_payload())
+    assert created.status_code == 201, created.text
+    order = created.json()
+    assert order["current_state"] == "CREATED"
+    assert order["status"] == "CREATED"
+
+    confirmed = _transition(
+        order["id"],
+        "CONFIRMED",
+        "order_submitted",
+        payload={
+            "payment_mode": "advance",
+            "topay_consent_status": "not_required",
+            "material_type": "general_goods",
+            "body_type_required": "open",
+        },
+    )
+    assert confirmed.status_code == 200, confirmed.text
+    assert confirmed.json()["current_state"] == "CONFIRMED"
+
+    vehicle_id = str(uuid4())
+    reserved = _transition(
+        order["id"],
+        "RINGING",
+        "vehicle_reserved",
+        actor_role="TMS",
+        payload={
+            "vehicle_id": vehicle_id,
+            "expires_at": (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat(),
+        },
+    )
+    assert reserved.status_code == 200, reserved.text
+    assert reserved.json()["current_state"] == "RINGING"
+
+    assigned = _transition(
+        order["id"],
+        "ASSIGNED",
+        "driver_response",
+        actor_role="DRIVER",
+        payload={"driver_id": "driver-migration", "vehicle_id": vehicle_id, "action": "ACCEPT"},
+    )
+    assert assigned.status_code == 200, assigned.text
+    assert assigned.json()["current_state"] == "ASSIGNED"

@@ -16,7 +16,7 @@ tags:
 source_files:
   - "C:\Users\user\Downloads\AI agent roles.txt"
 created: 2026-05-01
-updated: 2026-05-01
+updated: 2026-05-31
 ---
 
 # Agent Governance and Operating Model for Current Project
@@ -65,6 +65,35 @@ Agents help the platform:
 
 Agents should not become a hidden replacement for backend logic.
 
+## Backend And API Alignment
+
+Agents must use the backend API contract rather than a private integration path.
+
+Agent-facing integration points:
+
+```text
+GET    /agents/{agent_code}/context/{entity_type}/{entity_id}
+POST   /agents/{agent_code}/recommendations
+POST   /agents/{agent_code}/actions
+POST   /supervisor/policy/check
+POST   /rag/query
+POST   /rag/ocr/validate
+```
+
+Every agent API request must include:
+
+- `agent_code`
+- `entity_type`
+- `entity_id`
+- `requested_action` or recommendation type
+- `decision_reason`
+- `trace_id`
+- `idempotency_key`
+- `evidence_refs` where applicable
+- confidence score where a model output is involved
+
+Agent outputs are persisted as recommendations, risk flags, draft communications, policy checks, or transition requests. Backend services decide whether anything changes.
+
 ## Current Agent Philosophy
 
 The current project should use:
@@ -92,6 +121,8 @@ Agents must not:
 - invent payment outcomes
 - close disputes unilaterally
 - override stored SLA policies without an approved control path
+- call database write paths directly
+- use event bus messages as a shortcut around API/service policy
 
 ## 2. Agents May Operate Only Within Clear Boundaries
 
@@ -115,6 +146,8 @@ Agent-originated actions should carry:
 - `timestamp`
 - `input reference`
 - `output summary`
+- `policy_version` when a rule decision is involved
+- `source_event_id` when the action follows a backend event
 
 ## Current Agent Set
 
@@ -339,6 +372,7 @@ API request or worker event
 -> service-layer workflow
 -> policy checks
 -> agent evaluation where needed
+-> supervisor policy check for high-risk outputs
 -> event/log emission
 -> persisted result
 ```
@@ -357,6 +391,19 @@ Important event families:
 - payment and invoice events
 - SLA risk and breach events
 - alert and incident events
+- agent recommendation and supervisor policy events
+
+Agent governance events should use the canonical event envelope in [[API and Event Contract for Current Project]]:
+
+- `agent_recommendation_recorded`
+- `agent_action_requested`
+- `supervisor_policy_check_requested`
+- `supervisor_policy_approved`
+- `supervisor_policy_held`
+- `supervisor_policy_rejected`
+- `manual_review_required`
+- `agent_conflict_detected`
+- `agent_fallback_mode_enabled`
 
 ## Role Of Agents In Return-Trip And Triangle Logic
 
@@ -418,6 +465,21 @@ Required test categories:
 - dispute recommendation vs execution separation tests
 - SLA escalation correctness tests
 - alert classification tests
+- agent API schema validation tests
+- supervisor hold/reject path tests
+- trace/idempotency propagation tests
+- frontend harness visibility tests for agent-originated blockers
+
+## Frontend Alignment
+
+Frontend apps must see agent-originated outcomes only after backend persistence.
+
+Examples:
+
+- Customer App sees ToPay, payment, invoice, tracking, and verification status from backend responses, not agent chat output.
+- Driver App sees assignment, movement timeout, VTU/GPS review, POD review, and payout blockers from backend status fields.
+- Transport Company App sees TCRS, role conflict, verification, and payment-path status from backend status fields.
+- Admin Web sees agent recommendations, policy holds, conflicts, fallback mode, and manual-review needs through the Harness Monitor and AI Review views.
 
 ## What Survives Tool Or Model Changes
 

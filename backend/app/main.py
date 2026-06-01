@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from app.api import (
+    auth,
     vehicles,
     health,
     pricing,
@@ -18,21 +19,14 @@ from app.api import (
     routing,
     shipments,
     revenue,
+    flow,
+    supervisor,
 )
-from app.database import engine
 from app.middleware.privacy import DPDPPrivacyMaskingMiddleware
-from app.models import vehicle_model, order_model
-
-
-def init_database():
-    """Create the local schema for development and tests."""
-    vehicle_model.Base.metadata.create_all(bind=engine)
-    order_model.Base.metadata.create_all(bind=engine)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_database()
     yield
 
 
@@ -55,6 +49,7 @@ app.add_middleware(
 app.add_middleware(DPDPPrivacyMaskingMiddleware)
 
 # Include routers
+app.include_router(auth.router, prefix="/api/v1", tags=["Auth"])
 app.include_router(health.router, prefix="/api/v1", tags=["Health"])
 app.include_router(vehicles.router, prefix="/api/v1", tags=["Vehicles"])
 app.include_router(pricing.router, prefix="/api/v1", tags=["Pricing"])
@@ -66,9 +61,8 @@ app.include_router(ml_pricing.router, prefix="/api/v1", tags=["ML Pricing"])
 app.include_router(routing.router, prefix="/api/v1", tags=["Route Optimization"])
 app.include_router(shipments.router, prefix="/api/v1", tags=["Shipments"])
 app.include_router(revenue.router, prefix="/api/v1", tags=["Revenue Controls"])
-
-# Ensure schema exists for local development and direct test imports.
-init_database()
+app.include_router(flow.router, prefix="/api/v1", tags=["Order Flow"])
+app.include_router(supervisor.router, prefix="/api/v1", tags=["Supervisor"])
 
 
 @app.get("/")

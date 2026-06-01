@@ -53,6 +53,10 @@ Use this as the builder-facing contract for:
 - `documents`
 - `alerts`
 - `ops`
+- `agents`
+- `supervisor`
+- `rag`
+- `harness`
 
 ## API Surface
 
@@ -330,6 +334,82 @@ GET    /ops/alerts
 POST   /ops/incidents
 ```
 
+### Agent And Supervisor APIs
+
+Agents use these APIs to request context, submit recommendations, and ask for guarded actions. They do not write database state directly.
+
+```text
+GET    /agents/{agent_code}/context/{entity_type}/{entity_id}
+POST   /agents/{agent_code}/recommendations
+POST   /agents/{agent_code}/actions
+POST   /supervisor/policy/check
+POST   /rag/query
+POST   /rag/ocr/validate
+```
+
+`POST /agents/{agent_code}/actions` minimum request:
+
+```json
+{
+  "agent_code": "OMS | IMS | TMS | FIN | DISPUTE | COMMS | ADMIN_OPS | SUP",
+  "entity_type": "order | trip | payment | invoice | settlement | incident | user",
+  "entity_id": "UUID",
+  "requested_action": "string",
+  "decision_reason": "string",
+  "confidence": 0.0,
+  "actor_role": "agent",
+  "actor_id": "string",
+  "trace_id": "string",
+  "idempotency_key": "string",
+  "evidence_refs": []
+}
+```
+
+Allowed agent action outcomes:
+
+- `recommendation_recorded`
+- `transition_requested`
+- `policy_check_required`
+- `manual_review_required`
+- `notification_draft_created`
+- `hold_recommended`
+- `rejected_by_policy`
+
+`POST /supervisor/policy/check` minimum response:
+
+```json
+{
+  "decision": "approve | hold | reject | manual_review_required",
+  "policy_version": "string",
+  "reason": "string",
+  "required_evidence": [],
+  "trace_id": "string"
+}
+```
+
+Agent API rules:
+
+- Agents must include `trace_id` and `idempotency_key` for every recommendation or action request.
+- Agent actions that change lifecycle state must be converted into `POST /orders/{order_id}/transition` or another approved backend command.
+- FIN, DISPUTE, TMS, IMS, and COMMS outputs that affect money, assignment, POD, closure, or customer promises must pass policy and role checks before the backend persists any outcome.
+- SUP/Supervisor can approve, hold, reject, or escalate; it still does not mutate state directly.
+
+### Frontend Harness APIs
+
+Admin Web uses these read-oriented APIs to backtest frontend alignment across Customer, Driver, Transport Company, and Admin surfaces.
+
+```text
+GET /ops/harness/events
+GET /ops/harness/state-health
+GET /ops/harness/sla-health
+GET /ops/harness/verification-health
+GET /ops/harness/finance-gates
+GET /ops/harness/offline-sync
+GET /ops/harness/agent-health
+```
+
+Harness responses should expose canonical event names, current backend state, expected next event, blocker reason, owning role/agent, SLA timer, and frontend-visible status.
+
 ### Finance Visibility
 
 ```text
@@ -392,6 +472,8 @@ Required behavior:
 - validate role permission
 - write order state event
 - return authoritative updated state
+- preserve trace context and idempotency outcome
+- write an immutable audit or admin-action record when actor is privileged
 
 ## Canonical Order States
 
@@ -480,6 +562,20 @@ Hold-state rule:
 - `driver_alert_created`
 - `incident_logged`
 
+### Agent Governance Events
+
+- `agent_recommendation_recorded`
+- `agent_action_requested`
+- `supervisor_policy_check_requested`
+- `supervisor_policy_approved`
+- `supervisor_policy_held`
+- `supervisor_policy_rejected`
+- `manual_review_required`
+- `agent_conflict_detected`
+- `agent_fallback_mode_enabled`
+- `rag_query_completed`
+- `ocr_validation_completed`
+
 ## Canonical Event Envelope
 
 ```json
@@ -492,6 +588,10 @@ Hold-state rule:
   "actor_id": "UUID",
   "timestamp": "ISO",
   "idempotency_key": "string",
+  "trace_id": "string",
+  "source_app": "customer | driver | transport_company | admin | backend | worker | agent",
+  "agent_code": "string or null",
+  "policy_version": "string or null",
   "payload": {}
 }
 ```
@@ -500,6 +600,9 @@ Hold-state rule:
 
 - frontend reads authoritative status from resource responses
 - workers may emit events but must not bypass transition rules
+- agents may request or recommend actions but must not bypass transition rules
+- every mutation must carry an idempotency key and trace context
+- backend emits frontend-visible statuses using the same vocabulary used by frontend notes
 - realtime streams may mirror events but not act as command channels
 - every accepted transition must create at least one durable event row
 

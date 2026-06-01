@@ -8,7 +8,14 @@ from uuid import NAMESPACE_URL, UUID, uuid5
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from app.auth import (
+    CUSTOMER_ORDER_ROLES,
+    OPS_ADMIN_ROLES,
+    SUPPORT_READ_ROLES,
+    require_roles,
+)
 from app.database import get_db
+from app.models.auth_model import UserAccount, UserRole
 from app.models.order_model import Order, OrderStatus, CargoType
 from app.schemas.order import (
     OrderCreate,
@@ -30,8 +37,28 @@ VALID_STATUSES = [s.value for s in OrderStatus]
 VALID_CARGO_TYPES = [c.value for c in CargoType]
 
 
-@router.post("/orders", response_model=OrderResponse, status_code=201)
-async def create_order(order_data: OrderCreate, db: Session = Depends(get_db)):
+ORDER_READ_ROLES = CUSTOMER_ORDER_ROLES | SUPPORT_READ_ROLES
+
+
+def _is_customer(user: UserAccount) -> bool:
+    return user.role == UserRole.CUSTOMER
+
+
+def _assert_customer_owns_order(order: Order, user: UserAccount) -> None:
+    if _is_customer(user) and order.customer_id != str(user.id):
+        raise HTTPException(status_code=404, detail="Order not found")
+
+
+@router.post(
+    "/orders",
+    response_model=OrderResponse,
+    status_code=201,
+)
+async def create_order(
+    order_data: OrderCreate,
+    db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(CUSTOMER_ORDER_ROLES)),
+):
     """Create a new freight transport order"""
     if order_data.cargo_type and order_data.cargo_type not in VALID_CARGO_TYPES:
         raise HTTPException(
@@ -39,9 +66,13 @@ async def create_order(order_data: OrderCreate, db: Session = Depends(get_db)):
             detail=f"Invalid cargo_type. Must be one of: {VALID_CARGO_TYPES}",
         )
 
+    payload = order_data.model_dump()
+    if _is_customer(current_user):
+        payload["customer_id"] = str(current_user.id)
+
     order = Order(
         current_state=OrderStatus.CREATED,
-        **order_data.model_dump(),
+        **payload,
     )
     db.add(order)
     db.commit()
@@ -49,8 +80,16 @@ async def create_order(order_data: OrderCreate, db: Session = Depends(get_db)):
     return order
 
 
-@router.post("/orders/intake", response_model=OrderIntakeResponse, status_code=201)
-async def intake_order(order_data: OrderIntakeRequest, db: Session = Depends(get_db)):
+@router.post(
+    "/orders/intake",
+    response_model=OrderIntakeResponse,
+    status_code=201,
+)
+async def intake_order(
+    order_data: OrderIntakeRequest,
+    db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(CUSTOMER_ORDER_ROLES)),
+):
     """Create a DPDP-consented order from the Z.ai frontend intake flow."""
     if order_data.cargo_type and order_data.cargo_type not in VALID_CARGO_TYPES:
         raise HTTPException(
@@ -58,9 +97,14 @@ async def intake_order(order_data: OrderIntakeRequest, db: Session = Depends(get
             detail=f"Invalid cargo_type. Must be one of: {VALID_CARGO_TYPES}",
         )
 
+    query = db.query(Order).filter(
+        Order.notes.ilike(f"%intake_idempotency_key={order_data.idempotency_key}%")
+    )
+    if _is_customer(current_user):
+        query = query.filter(Order.customer_id == str(current_user.id))
+
     existing = (
-        db.query(Order)
-        .filter(Order.notes.ilike(f"%intake_idempotency_key={order_data.idempotency_key}%"))
+        query
         .first()
     )
     if existing:
@@ -86,6 +130,8 @@ async def intake_order(order_data: OrderIntakeRequest, db: Session = Depends(get
     order_payload = order_data.model_dump(
         exclude={"consent_id", "privacy_notice_version", "idempotency_key"}
     )
+    if _is_customer(current_user):
+        order_payload["customer_id"] = str(current_user.id)
     order_payload["notes"] = " | ".join(part for part in notes_parts if part)
 
     order = Order(current_state=OrderStatus.CREATED, **order_payload)
@@ -107,7 +153,10 @@ async def intake_order(order_data: OrderIntakeRequest, db: Session = Depends(get
     )
 
 
-@router.get("/orders", response_model=OrderListResponse)
+@router.get(
+    "/orders",
+    response_model=OrderListResponse,
+)
 async def list_orders(
     status: Optional[str] = Query(None, description="Filter by order status"),
     origin_city: Optional[str] = Query(None, description="Filter by origin city"),
@@ -120,9 +169,12 @@ async def list_orders(
     limit: int = Query(50, le=500),
     offset: int = Query(0, ge=0),
     db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(ORDER_READ_ROLES)),
 ):
     """List orders with optional filters"""
     query = db.query(Order)
+    if _is_customer(current_user):
+        query = query.filter(Order.customer_id == str(current_user.id))
 
     if status:
         normalized_status = status.strip().upper()
@@ -154,7 +206,10 @@ async def list_orders(
     )
 
 
-@router.get("/orders/stats/summary")
+@router.get(
+    "/orders/stats/summary",
+    dependencies=[Depends(require_roles(SUPPORT_READ_ROLES))],
+)
 async def get_order_stats(db: Session = Depends(get_db)):
     """Get order summary statistics"""
     from sqlalchemy import func as sql_func
@@ -194,20 +249,32 @@ async def get_order_stats(db: Session = Depends(get_db)):
     }
 
 
-@router.get("/orders/{order_id}", response_model=OrderResponse)
-async def get_order(order_id: UUID, db: Session = Depends(get_db)):
+@router.get(
+    "/orders/{order_id}",
+    response_model=OrderResponse,
+)
+async def get_order(
+    order_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(ORDER_READ_ROLES)),
+):
     """Get a specific order by ID"""
     order = db.query(Order).filter(Order.id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
+    _assert_customer_owns_order(order, current_user)
     return order
 
 
-@router.patch("/orders/{order_id}", response_model=OrderResponse)
+@router.patch(
+    "/orders/{order_id}",
+    response_model=OrderResponse,
+)
 async def update_order(
     order_id: UUID,
     order_data: OrderUpdate,
     db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(CUSTOMER_ORDER_ROLES)),
 ):
     """Update editable order commercial fields.
 
@@ -216,6 +283,7 @@ async def update_order(
     order = db.query(Order).filter(Order.id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
+    _assert_customer_owns_order(order, current_user)
 
     update_data = order_data.model_dump(exclude_unset=True)
 
@@ -234,8 +302,16 @@ async def update_order(
     return order
 
 
-@router.post("/orders/{order_id}/transition", response_model=OrderResponse)
-@transition_alias_router.post("/orders/{order_id}/transition", response_model=OrderResponse)
+@router.post(
+    "/orders/{order_id}/transition",
+    response_model=OrderResponse,
+    dependencies=[Depends(require_roles(OPS_ADMIN_ROLES))],
+)
+@transition_alias_router.post(
+    "/orders/{order_id}/transition",
+    response_model=OrderResponse,
+    dependencies=[Depends(require_roles(OPS_ADMIN_ROLES))],
+)
 async def transition_order_status(
     order_id: UUID,
     transition_data: OrderTransitionRequest,
@@ -257,7 +333,11 @@ async def transition_order_status(
     )
 
 
-@router.get("/orders/{order_id}/events", response_model=OrderStateEventListResponse)
+@router.get(
+    "/orders/{order_id}/events",
+    response_model=OrderStateEventListResponse,
+    dependencies=[Depends(require_roles(SUPPORT_READ_ROLES))],
+)
 async def list_order_state_events(order_id: UUID, db: Session = Depends(get_db)):
     """List lifecycle state events for an order."""
     order = get_order_or_404(db, order_id)
@@ -268,7 +348,11 @@ async def list_order_state_events(order_id: UUID, db: Session = Depends(get_db))
     )
 
 
-@router.post("/orders/{order_id}/cancel", response_model=OrderResponse)
+@router.post(
+    "/orders/{order_id}/cancel",
+    response_model=OrderResponse,
+    dependencies=[Depends(require_roles(OPS_ADMIN_ROLES))],
+)
 async def cancel_order(order_id: UUID, db: Session = Depends(get_db)):
     """Cancel an order"""
     order = db.query(Order).filter(Order.id == order_id).first()

@@ -3,7 +3,7 @@ type: memo
 domain: backend
 scope: async_orchestration
 status: active
-last_updated: 2026-05-17
+last_updated: 2026-05-31
 related_hubs:
   - "[[Current Project Navigation Hub]]"
   - "[[Backend Structure for Current Project]]"
@@ -55,6 +55,16 @@ Use it for:
 - replay-safe orchestration after accepted transitions
 
 If Kafka or another event bus is introduced, treat it as an event transport or analytics feed, not as a replacement for backend workflow truth.
+
+The improved backend design adds a reliability spine that should be adopted in the current FastAPI interpretation:
+
+```text
+accepted database write
+-> transactional outbox row
+-> publisher emits to Redis Streams/Kafka or worker queue
+-> consumer handles idempotently
+-> consumer requests legal follow-up transition if needed
+```
 
 ## Core Principle
 
@@ -115,6 +125,8 @@ Use event rows for:
 - analytics feed
 - ops troubleshooting
 
+For actions that mutate business state, write the domain row and outbox message in the same database transaction. A publisher should send only committed outbox rows and mark delivery status separately.
+
 ### 3. Safe Retry
 
 Every async step should be safe to replay.
@@ -124,6 +136,13 @@ Minimum rules:
 - duplicate idempotency key must not duplicate lifecycle change
 - duplicate payout, invoice, alert, or notification must be blocked where harmful
 - exhausted retries must land in a visible failure bucket
+
+Outbox and worker idempotency:
+
+- outbox message id must be stable
+- consumer idempotency key must include event type and entity id
+- duplicate publish must not duplicate payment, invoice, settlement, notification, assignment, or state transition
+- negative idempotency can preserve repeatable validation failures for command retries
 
 ### 4. Ordered Ownership
 
@@ -184,6 +203,40 @@ Worker logs should include:
 - `event`
 - `worker_name`
 - `order_id`, `trip_id`, or `finance entity id` where relevant
+
+Trace context should move across:
+
+- HTTP request
+- outbox row
+- event bus message
+- Celery task
+- agent action request
+- supervisor policy check
+- audit/event record
+
+Use `trace_id`, `request_id`, `idempotency_key`, and source app/agent fields consistently so Admin Harness Monitor can correlate frontend, backend, worker, and agent behavior.
+
+## Agent-Orchestration Boundary
+
+Workers may call agent APIs for recommendation or classification, but agents do not become worker authority.
+
+Safe pattern:
+
+```text
+worker loads backend context
+-> calls agent recommendation endpoint
+-> records recommendation event
+-> calls supervisor policy check when high-risk
+-> requests legal backend command if approved
+```
+
+Unsafe pattern:
+
+```text
+worker or agent writes order/payment/settlement state directly
+```
+
+Long-running orchestrators such as Temporal can be introduced later for complex assignment, payment, settlement, or dispute workflows, but they must follow the same gateway, outbox, idempotency, and audit rules.
 
 ## Relationship To Event Contract
 

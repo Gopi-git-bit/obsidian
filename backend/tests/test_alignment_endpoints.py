@@ -5,8 +5,10 @@ from uuid import uuid4
 from fastapi.testclient import TestClient
 
 from app.main import app
+from conftest import auth_headers
 
 client = TestClient(app)
+client.headers.update(auth_headers(client, "super_admin"))
 
 
 def _intake_payload():

@@ -8,15 +8,41 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from app.auth import SUPPORT_READ_ROLES, TRANSPORT_COMPANY_ROLES, require_roles
 from app.database import get_db
+from app.models.auth_model import UserAccount, UserRole
 from app.models.vehicle_model import VehicleModel
 from app.schemas.vehicle import (
     VehicleResponse,
     VehicleListResponse,
     VehicleRecommendResponse,
+    VehicleCreate,
+    VehicleUpdate,
 )
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_roles(SUPPORT_READ_ROLES | TRANSPORT_COMPANY_ROLES))])
+
+
+def _is_transport_company(user: UserAccount) -> bool:
+    return user.role == UserRole.TRANSPORT_COMPANY
+
+
+def _assert_company_owns_vehicle(vehicle: VehicleModel, user: UserAccount) -> None:
+    if _is_transport_company(user) and vehicle.transport_company_id != str(user.id):
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+
+
+@router.post("/vehicles", response_model=VehicleResponse, status_code=201)
+async def create_vehicle(
+    payload: VehicleCreate,
+    db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(TRANSPORT_COMPANY_ROLES)),
+):
+    vehicle = VehicleModel(**payload.model_dump(), transport_company_id=str(current_user.id))
+    db.add(vehicle)
+    db.commit()
+    db.refresh(vehicle)
+    return VehicleResponse.model_validate(vehicle)
 
 
 @router.get("/vehicles", response_model=VehicleListResponse)
@@ -34,9 +60,12 @@ async def list_vehicles(
     limit: int = Query(100, le=500, description="Maximum number of results"),
     offset: int = Query(0, ge=0, description="Offset for pagination"),
     db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(SUPPORT_READ_ROLES | TRANSPORT_COMPANY_ROLES)),
 ):
     """List all vehicles with optional filters"""
     query = db.query(VehicleModel).filter(VehicleModel.is_active == True)
+    if _is_transport_company(current_user):
+        query = query.filter(VehicleModel.transport_company_id == str(current_user.id))
 
     if category:
         query = query.filter(VehicleModel.category == category)
@@ -62,13 +91,36 @@ async def list_vehicles(
 
 
 @router.get("/vehicles/{vehicle_id}", response_model=VehicleResponse)
-async def get_vehicle(vehicle_id: UUID, db: Session = Depends(get_db)):
+async def get_vehicle(
+    vehicle_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(SUPPORT_READ_ROLES | TRANSPORT_COMPANY_ROLES)),
+):
     """Get a specific vehicle by ID"""
     vehicle = db.query(VehicleModel).filter(VehicleModel.id == vehicle_id).first()
 
     if not vehicle:
         raise HTTPException(status_code=404, detail="Vehicle not found")
+    _assert_company_owns_vehicle(vehicle, current_user)
 
+    return VehicleResponse.model_validate(vehicle)
+
+
+@router.patch("/vehicles/{vehicle_id}", response_model=VehicleResponse)
+async def update_vehicle(
+    vehicle_id: UUID,
+    payload: VehicleUpdate,
+    db: Session = Depends(get_db),
+    current_user: UserAccount = Depends(require_roles(TRANSPORT_COMPANY_ROLES)),
+):
+    vehicle = db.query(VehicleModel).filter(VehicleModel.id == vehicle_id).first()
+    if not vehicle:
+        raise HTTPException(status_code=404, detail="Vehicle not found")
+    _assert_company_owns_vehicle(vehicle, current_user)
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(vehicle, key, value)
+    db.commit()
+    db.refresh(vehicle)
     return VehicleResponse.model_validate(vehicle)
 
 

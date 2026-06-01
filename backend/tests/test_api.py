@@ -5,8 +5,10 @@ Basic tests for the FastAPI backend
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
+from conftest import auth_headers
 
 client = TestClient(app)
+client.headers.update(auth_headers(client, "super_admin"))
 
 
 def test_health_check():

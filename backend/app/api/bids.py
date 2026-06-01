@@ -8,6 +8,13 @@ from uuid import UUID, uuid4
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from app.auth import (
+    CUSTOMER_ORDER_ROLES,
+    DRIVER_TRIP_ROLES,
+    SUPPORT_READ_ROLES,
+    TRANSPORT_COMPANY_ROLES,
+    require_roles,
+)
 from app.database import get_db
 from app.models.order_model import Order, OrderStatus, Bid, BidStatus
 from app.models.vehicle_model import VehicleModel
@@ -22,7 +29,12 @@ from app.services.order_service import transition_order
 router = APIRouter()
 
 
-@router.post("/orders/{order_id}/bids", response_model=BidResponse, status_code=201)
+@router.post(
+    "/orders/{order_id}/bids",
+    response_model=BidResponse,
+    status_code=201,
+    dependencies=[Depends(require_roles(DRIVER_TRIP_ROLES | TRANSPORT_COMPANY_ROLES))],
+)
 async def create_bid(
     order_id: UUID,
     bid_data: BidCreate,
@@ -81,7 +93,20 @@ async def create_bid(
     return bid
 
 
-@router.get("/orders/{order_id}/bids", response_model=BidListResponse)
+@router.get(
+    "/orders/{order_id}/bids",
+    response_model=BidListResponse,
+    dependencies=[
+        Depends(
+            require_roles(
+                SUPPORT_READ_ROLES
+                | CUSTOMER_ORDER_ROLES
+                | DRIVER_TRIP_ROLES
+                | TRANSPORT_COMPANY_ROLES
+            )
+        )
+    ],
+)
 async def list_bids(
     order_id: UUID,
     status: Optional[str] = Query(None, description="Filter by bid status"),
@@ -110,7 +135,11 @@ async def list_bids(
     )
 
 
-@router.post("/bids/{bid_id}/accept", response_model=BidResponse)
+@router.post(
+    "/bids/{bid_id}/accept",
+    response_model=BidResponse,
+    dependencies=[Depends(require_roles(CUSTOMER_ORDER_ROLES))],
+)
 async def accept_bid(bid_id: UUID, db: Session = Depends(get_db)):
     """Accept a bid"""
     bid = db.query(Bid).filter(Bid.id == bid_id).first()
@@ -156,7 +185,11 @@ async def accept_bid(bid_id: UUID, db: Session = Depends(get_db)):
     return bid
 
 
-@router.post("/bids/{bid_id}/reject", response_model=BidResponse)
+@router.post(
+    "/bids/{bid_id}/reject",
+    response_model=BidResponse,
+    dependencies=[Depends(require_roles(CUSTOMER_ORDER_ROLES | DRIVER_TRIP_ROLES | TRANSPORT_COMPANY_ROLES))],
+)
 async def reject_bid(bid_id: UUID, db: Session = Depends(get_db)):
     """Reject a bid"""
     bid = db.query(Bid).filter(Bid.id == bid_id).first()
@@ -173,7 +206,11 @@ async def reject_bid(bid_id: UUID, db: Session = Depends(get_db)):
     return bid
 
 
-@router.post("/bids/{bid_id}/counter", response_model=BidResponse)
+@router.post(
+    "/bids/{bid_id}/counter",
+    response_model=BidResponse,
+    dependencies=[Depends(require_roles(CUSTOMER_ORDER_ROLES | DRIVER_TRIP_ROLES | TRANSPORT_COMPANY_ROLES))],
+)
 async def counter_bid(
     bid_id: UUID,
     counter_data: BidCounter,

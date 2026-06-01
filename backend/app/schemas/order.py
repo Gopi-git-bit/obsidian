@@ -344,6 +344,7 @@ class MatchResponse(BaseModel):
     id: UUID
     order_id: UUID
     vehicle_id: UUID
+    transport_company_id: Optional[str]
     bid_id: Optional[UUID]
     match_score: Optional[float]
     utilization_percent: Optional[float]

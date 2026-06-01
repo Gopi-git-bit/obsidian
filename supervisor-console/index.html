@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Zippy Supervisor</title>
+    <link rel="stylesheet" href="./src/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>Zippy Supervisor</h1>
+        <p>Exception cases, evidence review, fraud holds, and decision audit</p>
+      </div>
+      <label class="api-base">API<input id="apiBase" value="http://127.0.0.1:8000" spellcheck="false"></label>
+      <div class="login-panel">
+        <input id="username" value="supervisor-console-dev" aria-label="Username" spellcheck="false">
+        <button id="login" type="button">Login</button>
+        <span id="loginStatus">Not signed in</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel">
+        <div class="panel-title"><h2>Cases</h2><button id="refresh" type="button">Refresh</button></div>
+        <div id="caseStatus" class="status-line">Loading cases...</div>
+        <div id="caseList" class="list"></div>
+      </section>
+
+      <section class="panel detail-panel">
+        <div id="emptyState" class="empty-state">Select a case to review.</div>
+        <div id="caseDetail" class="hidden">
+          <div class="detail-header">
+            <div><h2 id="detailTitle">Case</h2><p id="detailSub"></p></div>
+            <span id="caseBadge" class="badge"></span>
+          </div>
+          <div class="actions">
+            <button id="holdCase" type="button">Hold</button>
+            <button id="approveCase" type="button">Approve</button>
+            <button id="rejectCase" type="button">Reject</button>
+          </div>
+          <section><h3>POD / OTP / Evidence Review</h3><div id="records" class="record-grid"></div></section>
+          <section><h3>Audit Trail</h3><div id="auditTrail" class="audit-list"></div></section>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

@@ -12,10 +12,13 @@ from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.orm import Session
 
+from app.auth import DRIVER_TRIP_ROLES, SUPPORT_READ_ROLES, TRANSPORT_COMPANY_ROLES, require_roles
 from app.database import get_db
 from app.services.route_optimizer import route_service
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(require_roles(DRIVER_TRIP_ROLES | SUPPORT_READ_ROLES | TRANSPORT_COMPANY_ROLES))]
+)
 
 
 class RouteNodeInput(BaseModel):

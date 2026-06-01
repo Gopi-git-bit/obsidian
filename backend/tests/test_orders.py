@@ -10,8 +10,10 @@ from fastapi.testclient import TestClient
 from app.database import SessionLocal
 from app.main import app
 from app.models.order_model import AgentDLQMessage, VehicleReservation
+from conftest import auth_headers
 
 client = TestClient(app)
+client.headers.update(auth_headers(client, "super_admin"))
 
 SAMPLE_ORDER = {
     "shipper_name": "Rajesh Kumar",

@@ -28,6 +28,12 @@ def _add_column_if_missing(table_name: str, column: sa.Column) -> None:
         op.add_column(table_name, column)
 
 
+def _has_index(table_name: str, index_name: str) -> bool:
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    return index_name in {index["name"] for index in inspector.get_indexes(table_name)}
+
+
 def upgrade() -> None:
     bind = op.get_bind()
     dialect = bind.dialect.name
@@ -81,6 +87,10 @@ def upgrade() -> None:
             END
             """
         )
+        if _has_index("orders", "idx_order_status"):
+            op.drop_index("idx_order_status", table_name="orders")
+        with op.batch_alter_table("orders") as batch_op:
+            batch_op.drop_column("status")
 
     op.create_index("idx_order_current_state", "orders", ["current_state"], unique=False)
     op.create_index("ix_orders_customer_id", "orders", ["customer_id"], unique=False)
@@ -173,6 +183,25 @@ def downgrade() -> None:
     op.drop_index("ix_orders_vehicle_id", table_name="orders")
     op.drop_index("ix_orders_customer_id", table_name="orders")
     op.drop_index("idx_order_current_state", table_name="orders")
+    if not _has_column("orders", "status"):
+        op.add_column(
+            "orders",
+            sa.Column("status", sa.String(length=20), server_default="CREATED", nullable=False),
+        )
+        op.execute(
+            """
+            UPDATE orders
+            SET status = CASE UPPER(current_state)
+                WHEN 'CONFIRMED' THEN 'PENDING_MATCH'
+                WHEN 'RINGING' THEN 'BIDDING'
+                WHEN 'ASSIGNED' THEN 'MATCHED'
+                WHEN 'DEPARTED_FOR_DELIVERY' THEN 'IN_TRANSIT'
+                WHEN 'COMPLETED' THEN 'DELIVERED'
+                ELSE current_state
+            END
+            """
+        )
+        op.create_index("idx_order_status", "orders", ["status"], unique=False)
     for column_name in (
         "payload_metadata",
         "current_state",

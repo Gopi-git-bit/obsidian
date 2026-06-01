@@ -1,0 +1,14 @@
+{
+  "name": "zippy-supervisor-console",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate:api": "..\\backend\\.venv\\Scripts\\python.exe scripts/generate_api_client.py",
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
+  }
+}

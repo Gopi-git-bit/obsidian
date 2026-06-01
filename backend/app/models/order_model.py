@@ -375,6 +375,7 @@ class Match(Base):
     vehicle_id = Column(
         Uuid(as_uuid=True), ForeignKey("vehicle_models.id"), nullable=False, index=True
     )
+    transport_company_id = Column(String(80), index=True)
     bid_id = Column(
         Uuid(as_uuid=True), ForeignKey("bids.id"), nullable=True, index=True
     )
