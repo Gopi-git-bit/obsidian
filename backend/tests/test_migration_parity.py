@@ -60,7 +60,7 @@ def test_alembic_schema_uses_current_state_without_required_status_column():
         revision = conn.execute("select version_num from alembic_version").fetchone()
 
     assert revision is not None
-    assert revision[0] == "007_supervisor_exception_holds"
+    assert revision[0] == "010_policy_kernel"
     assert "current_state" in order_columns
     assert order_columns["current_state"]["not_null"] is True
     assert "status" not in order_columns

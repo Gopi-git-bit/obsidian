@@ -16,10 +16,13 @@ from app.api import (
     matches,
     bids,
     ml_pricing,
+    policy,
     routing,
     shipments,
     revenue,
     flow,
+    finance,
+    outbox,
     supervisor,
 )
 from app.middleware.privacy import DPDPPrivacyMaskingMiddleware
@@ -58,10 +61,13 @@ app.include_router(orders.transition_alias_router, prefix="/api", tags=["Orders"
 app.include_router(matches.router, prefix="/api/v1", tags=["Matching"])
 app.include_router(bids.router, prefix="/api/v1", tags=["Bidding"])
 app.include_router(ml_pricing.router, prefix="/api/v1", tags=["ML Pricing"])
+app.include_router(policy.router, prefix="/api/v1", tags=["Policy"])
 app.include_router(routing.router, prefix="/api/v1", tags=["Route Optimization"])
 app.include_router(shipments.router, prefix="/api/v1", tags=["Shipments"])
 app.include_router(revenue.router, prefix="/api/v1", tags=["Revenue Controls"])
 app.include_router(flow.router, prefix="/api/v1", tags=["Order Flow"])
+app.include_router(finance.router, prefix="/api/v1", tags=["Finance"])
+app.include_router(outbox.router, prefix="/api/v1", tags=["Outbox"])
 app.include_router(supervisor.router, prefix="/api/v1", tags=["Supervisor"])
 
 

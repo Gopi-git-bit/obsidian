@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from app.database import SessionLocal
 from app.main import app
 from app.models.order_model import AgentDLQMessage, VehicleReservation
+from app.models.policy_model import PolicyDecision
 from conftest import auth_headers
 
 client = TestClient(app)
@@ -56,19 +57,23 @@ def transition(
     actor_role: str = "OMS",
     payload: dict | None = None,
     idempotency_key: str | None = None,
+    trace_id: str | None = None,
+    confidence_score: float | None = None,
     endpoint_prefix: str = "/api/v1",
 ):
-    return client.post(
-        f"{endpoint_prefix}/orders/{order_id}/transition",
-        json={
-            "to_state": to_state,
-            "event": event,
-            "payload": payload or {},
-            "actor_role": actor_role,
-            "idempotency_key": idempotency_key or str(uuid4()),
-            "trace_id": f"trace-{uuid4()}",
-        },
-    )
+    body = {
+        "to_state": to_state,
+        "event": event,
+        "payload": payload or {},
+        "actor_role": actor_role,
+    }
+    if idempotency_key != "":
+        body["idempotency_key"] = idempotency_key or str(uuid4())
+    if trace_id != "":
+        body["trace_id"] = trace_id if trace_id is not None else f"trace-{uuid4()}"
+    if confidence_score is not None:
+        body["confidence_score"] = confidence_score
+    return client.post(f"{endpoint_prefix}/orders/{order_id}/transition", json=body)
 
 
 def confirm(order_id: str, payload: dict | None = None):
@@ -233,15 +238,111 @@ def test_legal_happy_path_through_full_lifecycle():
 def test_illegal_skipped_transition_blocked_and_dlq_written():
     order_id = create_order()
     before = _dlq_count()
+    key = str(uuid4())
     response = transition(
         order_id,
         "ASSIGNED",
         "skip_matching",
         actor_role="TMS",
+        idempotency_key=key,
     )
     assert response.status_code == 400
     assert response.json()["detail"]["error_code"] == "INVALID_INPUT"
     assert _dlq_count() == before + 1
+    db = SessionLocal()
+    try:
+        decision = db.query(PolicyDecision).filter(PolicyDecision.idempotency_key == key).one()
+        assert decision.requested_action == "state.transition"
+        assert decision.result == "rejected"
+        assert decision.reason_code == "INVALID_STATE_TRANSITION"
+    finally:
+        db.close()
+
+
+def test_valid_transition_creates_policy_preflight_decision():
+    order_id = create_order()
+    key = str(uuid4())
+    response = transition(
+        order_id,
+        "CONFIRMED",
+        "order_submitted",
+        idempotency_key=key,
+        payload={
+            "payment_mode": "advance",
+            "topay_consent_status": "not_required",
+            "material_type": "general_goods",
+            "body_type_required": "open",
+        },
+    )
+    assert response.status_code == 200, response.text
+    db = SessionLocal()
+    try:
+        decision = db.query(PolicyDecision).filter(PolicyDecision.idempotency_key == key).one()
+        assert decision.entity_id == order_id
+        assert decision.requested_action == "state.transition"
+        assert decision.result == "approved"
+    finally:
+        db.close()
+
+
+def test_transition_missing_policy_metadata_rejected_and_recorded():
+    order_id = create_order()
+    key = str(uuid4())
+    missing_trace = transition(
+        order_id,
+        "CONFIRMED",
+        "order_submitted",
+        idempotency_key=key,
+        trace_id="",
+        payload={
+            "payment_mode": "advance",
+            "topay_consent_status": "not_required",
+            "material_type": "general_goods",
+            "body_type_required": "open",
+        },
+    )
+    assert missing_trace.status_code == 409, missing_trace.text
+    assert missing_trace.json()["detail"]["reason_code"] == "TRACE_ID_REQUIRED"
+    db = SessionLocal()
+    try:
+        assert db.query(PolicyDecision).filter(PolicyDecision.idempotency_key == key).one().result == "rejected"
+    finally:
+        db.close()
+
+    missing_idem = transition(
+        order_id,
+        "CONFIRMED",
+        "order_submitted",
+        idempotency_key="",
+        payload={
+            "payment_mode": "advance",
+            "topay_consent_status": "not_required",
+            "material_type": "general_goods",
+            "body_type_required": "open",
+        },
+    )
+    assert missing_idem.status_code == 409, missing_idem.text
+    assert missing_idem.json()["detail"]["reason_code"] == "IDEMPOTENCY_KEY_REQUIRED"
+
+
+def test_transition_forbidden_agent_action_rejected_by_policy_preflight():
+    order_id = create_order()
+    key = str(uuid4())
+    response = transition(
+        order_id,
+        "CONFIRMED",
+        "order_submitted",
+        actor_role="SUP",
+        idempotency_key=key,
+        payload={
+            "payment_mode": "advance",
+            "topay_consent_status": "not_required",
+            "material_type": "general_goods",
+            "body_type_required": "open",
+        },
+    )
+    assert response.status_code == 409, response.text
+    assert response.json()["detail"]["reason_code"] == "FORBIDDEN_AGENT_ACTION"
 
 
 def test_role_transition_blocked():

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from uuid import UUID, uuid4
+from uuid import NAMESPACE_URL, UUID, uuid4, uuid5
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
@@ -33,8 +33,10 @@ from app.models.flow_model import (
 )
 from app.models.order_model import Match, Order, OrderStatus
 from app.models.vehicle_model import VehicleModel
-from app.models.supervisor_model import FraudHold
+from app.models.supervisor_model import FraudHold, SettlementHold
 from app.services.order_service import transition_order
+from app.services.outbox_service import emit_outbox_event, outbox_key
+from app.services.policy_service import record_policy_decision, validate_action_policy
 
 router = APIRouter()
 
@@ -92,11 +94,19 @@ class OTPVerifyRequest(IdempotentPayload):
 
 
 class SettlementReleaseRequest(IdempotentPayload):
+    idempotency_key: str | None = Field(None, min_length=1, max_length=120)
     amount: float = Field(..., gt=0)
     commission_amount: float = Field(..., ge=0)
     gst_amount: float = Field(..., ge=0)
     driver_payable_amount: float = Field(..., ge=0)
     currency: str = "INR"
+    trace_id: str | None = Field(None, max_length=120)
+    confidence_score: float | None = Field(None, ge=0, le=1)
+    decision_reason: str | None = None
+    evidence_refs: list[str] = Field(default_factory=list)
+    route_zone: str | None = Field(None, max_length=80)
+    proposed_margin_pct: float | None = Field(None, ge=0)
+    vehicle_supply_pct: float | None = Field(None, ge=0, le=100)
 
 
 class DriverAssignRequest(BaseModel):
@@ -262,6 +272,50 @@ def _record_milestone(
     trip.status = milestone_type.lower()
     db.flush()
     return milestone
+
+
+def _record_settlement_audit(
+    db: Session,
+    *,
+    trip: Trip,
+    milestone_type: str,
+    idempotency_key: str,
+    status: str,
+    payload: dict | None = None,
+) -> TripMilestone:
+    existing = db.query(TripMilestone).filter(TripMilestone.idempotency_key == idempotency_key).first()
+    if existing:
+        return existing
+    milestone = TripMilestone(
+        order_id=trip.order_id,
+        trip_id=trip.trip_id,
+        milestone_type=milestone_type,
+        status=status,
+        payload=payload or {},
+        idempotency_key=idempotency_key,
+    )
+    db.add(milestone)
+    db.flush()
+    return milestone
+
+
+def _audit_idempotency_key(prefix: str, source_key: str) -> str:
+    key = f"{prefix}:{source_key}"
+    if len(key) <= 120:
+        return key
+    return f"{prefix}:{uuid5(NAMESPACE_URL, source_key)}"
+
+
+def _policy_block(detail_code: str, result: str, requires_review: bool):
+    raise HTTPException(
+        status_code=409,
+        detail={
+            "error_code": "POLICY_PREFLIGHT_BLOCKED",
+            "reason_code": detail_code,
+            "result": result,
+            "requires_human_review": requires_review,
+        },
+    )
 
 
 @router.get(
@@ -767,9 +821,167 @@ async def verify_otp(
 )
 async def release_settlement(trip_id: UUID, payload: SettlementReleaseRequest, db: Session = Depends(get_db)):
     trip = _trip_or_404(db, trip_id)
-    active_hold = db.query(FraudHold).filter(FraudHold.order_id == trip.order_id, FraudHold.is_active == True).first()
-    if active_hold:
-        raise HTTPException(status_code=409, detail="Active fraud hold requires supervisor clearance")
+    order = _order_or_404(db, trip.order_id)
+
+    existing = (
+        db.query(SettlementRecord)
+        .filter(SettlementRecord.idempotency_key == payload.idempotency_key)
+        .first()
+        if payload.idempotency_key
+        else None
+    )
+    if existing:
+        _record_settlement_audit(
+            db,
+            trip=trip,
+            milestone_type="settlement_release_replayed",
+            idempotency_key=_audit_idempotency_key("settlement-replay", payload.idempotency_key),
+            status="released",
+            payload={"settlement_id": str(existing.settlement_id), "status": existing.status},
+        )
+        db.commit()
+        return {"settlement_id": str(existing.settlement_id), "status": existing.status}
+
+    preflight_fraud_hold = db.query(FraudHold).filter(FraudHold.order_id == order.id, FraudHold.is_active == True).first()
+    preflight_settlement_hold = (
+        db.query(SettlementHold)
+        .filter(
+            SettlementHold.is_active == True,
+            (SettlementHold.order_id == order.id) | (SettlementHold.trip_id == trip.trip_id),
+        )
+        .first()
+    )
+    preflight_pod = (
+        db.query(TripDocument)
+        .filter(
+            TripDocument.trip_id == trip.trip_id,
+            TripDocument.document_type == "pod",
+            TripDocument.verification_status == "verified",
+        )
+        .first()
+    )
+    preflight_payload = {
+        "trip_id": str(trip.trip_id),
+        "order_id": str(order.id),
+        "pod_verified": bool(preflight_pod),
+        "otp_verified": trip.otp_verified == "true",
+        "fraud_hold_active": preflight_fraud_hold is not None,
+        "settlement_hold_active": preflight_settlement_hold is not None,
+        "actor_role": "finance_admin",
+        "amount": payload.amount,
+        "route_zone": payload.route_zone,
+        "proposed_margin_pct": payload.proposed_margin_pct,
+        "vehicle_supply_pct": payload.vehicle_supply_pct,
+    }
+    outcome = validate_action_policy(
+        db,
+        agent_code="FIN",
+        entity_type="settlement",
+        requested_action="settlement.release",
+        confidence_score=payload.confidence_score,
+        payload=preflight_payload,
+        trace_id=payload.trace_id,
+        idempotency_key=payload.idempotency_key,
+    )
+    decision = record_policy_decision(
+        db,
+        agent_code="FIN",
+        entity_type="settlement",
+        entity_id=str(trip.trip_id),
+        requested_action="settlement.release",
+        decision_reason=payload.decision_reason,
+        trace_id=payload.trace_id,
+        idempotency_key=payload.idempotency_key,
+        confidence_score=payload.confidence_score,
+        evidence_refs=payload.evidence_refs,
+        payload=preflight_payload,
+        outcome=outcome,
+    )
+    if decision.result != "approved":
+        db.commit()
+        _policy_block(decision.reason_code, decision.result, decision.requires_human_review)
+
+    if not payload.idempotency_key:
+        db.commit()
+        _policy_block(decision.reason_code, decision.result, decision.requires_human_review)
+
+    active_fraud_hold = db.query(FraudHold).filter(FraudHold.order_id == order.id, FraudHold.is_active == True).first()
+    if active_fraud_hold:
+        _record_settlement_audit(
+            db,
+            trip=trip,
+            milestone_type="settlement_release_blocked",
+            idempotency_key=_audit_idempotency_key("settlement-blocked", payload.idempotency_key),
+            status="blocked",
+            payload={"blocker": "fraud_hold", "hold_id": str(active_fraud_hold.hold_id), "reason": active_fraud_hold.reason},
+        )
+        emit_outbox_event(
+            db,
+            event_type="settlement.release_blocked",
+            aggregate_type="trip",
+            aggregate_id=trip.trip_id,
+            recipient_role="finance_admin",
+            payload={
+                "order_id": str(order.id),
+                "trip_id": str(trip.trip_id),
+                "blocker_code": "FRAUD_HOLD_ACTIVE",
+                "hold_id": str(active_fraud_hold.hold_id),
+                "reason": active_fraud_hold.reason,
+            },
+            idempotency_key=outbox_key("settlement.release_blocked", "fraud_hold", trip.trip_id, payload.idempotency_key),
+        )
+        db.commit()
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error_code": "SETTLEMENT_RELEASE_BLOCKED",
+                "blocker": "fraud_hold",
+                "message": "Active fraud hold requires supervisor clearance",
+            },
+        )
+
+    active_settlement_hold = (
+        db.query(SettlementHold)
+        .filter(
+            SettlementHold.is_active == True,
+            (SettlementHold.order_id == order.id) | (SettlementHold.trip_id == trip.trip_id),
+        )
+        .first()
+    )
+    if active_settlement_hold:
+        _record_settlement_audit(
+            db,
+            trip=trip,
+            milestone_type="settlement_release_blocked",
+            idempotency_key=_audit_idempotency_key("settlement-blocked", payload.idempotency_key),
+            status="blocked",
+            payload={"blocker": "settlement_hold", "hold_id": str(active_settlement_hold.hold_id), "reason": active_settlement_hold.reason},
+        )
+        emit_outbox_event(
+            db,
+            event_type="settlement.release_blocked",
+            aggregate_type="trip",
+            aggregate_id=trip.trip_id,
+            recipient_role="finance_admin",
+            payload={
+                "order_id": str(order.id),
+                "trip_id": str(trip.trip_id),
+                "blocker_code": "SETTLEMENT_HOLD_ACTIVE",
+                "hold_id": str(active_settlement_hold.hold_id),
+                "reason": active_settlement_hold.reason,
+            },
+            idempotency_key=outbox_key("settlement.release_blocked", "settlement_hold", trip.trip_id, payload.idempotency_key),
+        )
+        db.commit()
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "error_code": "SETTLEMENT_RELEASE_BLOCKED",
+                "blocker": "settlement_hold",
+                "message": "Active settlement hold requires supervisor clearance",
+            },
+        )
+
     pod = (
         db.query(TripDocument)
         .filter(
@@ -780,11 +992,16 @@ async def release_settlement(trip_id: UUID, payload: SettlementReleaseRequest, d
         .first()
     )
     if not pod or trip.otp_verified != "true":
+        _record_settlement_audit(
+            db,
+            trip=trip,
+            milestone_type="settlement_release_blocked",
+            idempotency_key=_audit_idempotency_key("settlement-blocked", payload.idempotency_key),
+            status="blocked",
+            payload={"blocker": "verification", "message": "POD and OTP must be verified before settlement release"},
+        )
+        db.commit()
         raise HTTPException(status_code=409, detail="POD and OTP must be verified before settlement release")
-
-    existing = db.query(SettlementRecord).filter(SettlementRecord.idempotency_key == payload.idempotency_key).first()
-    if existing:
-        return {"settlement_id": str(existing.settlement_id), "status": existing.status}
 
     settlement = SettlementRecord(
         order_id=trip.order_id,
@@ -814,6 +1031,7 @@ async def release_settlement(trip_id: UUID, payload: SettlementReleaseRequest, d
         total_amount=payload.commission_amount + payload.gst_amount,
     )
     db.add_all([journal, invoice])
+    db.flush()
     transition_order(
         db,
         order_id=trip.order_id,
@@ -824,6 +1042,41 @@ async def release_settlement(trip_id: UUID, payload: SettlementReleaseRequest, d
         idempotency_key=uuid4(),
         trace_id=f"settlement-release:{settlement.settlement_id}",
         reason="Settlement released after POD and OTP verification",
+    )
+    _record_settlement_audit(
+        db,
+        trip=trip,
+        milestone_type="settlement_released",
+        idempotency_key=_audit_idempotency_key("settlement-release", payload.idempotency_key),
+        status="released",
+        payload={"settlement_id": str(settlement.settlement_id), "amount": payload.amount, "currency": payload.currency},
+    )
+    emit_outbox_event(
+        db,
+        event_type="settlement.released",
+        aggregate_type="settlement",
+        aggregate_id=settlement.settlement_id,
+        recipient_role="finance_admin",
+        payload={"order_id": str(order.id), "trip_id": str(trip.trip_id), "settlement_id": str(settlement.settlement_id), "amount": payload.amount, "currency": payload.currency},
+        idempotency_key=outbox_key("settlement.released", settlement.settlement_id, payload.idempotency_key),
+    )
+    emit_outbox_event(
+        db,
+        event_type="finance.journal_created",
+        aggregate_type="settlement",
+        aggregate_id=settlement.settlement_id,
+        recipient_role="finance_admin",
+        payload={"order_id": str(order.id), "settlement_id": str(settlement.settlement_id), "journal_entry_id": str(journal.journal_entry_id), "amount": payload.driver_payable_amount, "currency": payload.currency},
+        idempotency_key=outbox_key("finance.journal_created", journal.journal_entry_id),
+    )
+    emit_outbox_event(
+        db,
+        event_type="finance.gst_invoice_created",
+        aggregate_type="settlement",
+        aggregate_id=settlement.settlement_id,
+        recipient_role="finance_admin",
+        payload={"order_id": str(order.id), "settlement_id": str(settlement.settlement_id), "gst_invoice_id": str(invoice.invoice_id), "invoice_number": invoice.invoice_number},
+        idempotency_key=outbox_key("finance.gst_invoice_created", invoice.invoice_id),
     )
     db.commit()
     return {

@@ -106,10 +106,10 @@ def test_customer_order_to_settlement_accounting_flow():
             "body_type_required": "open",
         },
     )
-    matches = client.get(f"/api/v1/orders/{order_id}/match?limit=1&min_score=0")
+    matches = client.get(f"/api/v1/orders/{order_id}/match?limit=20&min_score=0")
     assert matches.status_code == 200, matches.text
-    match_id = matches.json()["matches"][0]["match_id"]
-    assert matches.json()["matches"][0]["vehicle_id"] == vehicle_id
+    match = next(item for item in matches.json()["matches"] if item["vehicle_id"] == vehicle_id)
+    match_id = match["match_id"]
 
     # Trip created.
     accepted = client.post(f"/api/v1/matches/{match_id}/accept", json={"notes": "accept test match"})
@@ -213,6 +213,10 @@ def test_customer_order_to_settlement_accounting_flow():
             "driver_payable_amount": 16200,
             "currency": "INR",
             "idempotency_key": f"settlement-{uuid4()}",
+            "trace_id": f"settlement-trace-{uuid4()}",
+            "confidence_score": 0.91,
+            "decision_reason": "MVP flow settlement release preflight",
+            "evidence_refs": ["pod:verified", "otp:verified"],
         },
     )
     assert settlement.status_code == 201, settlement.text

@@ -28,9 +28,36 @@ from app.schemas.order import (
 )
 from app.schemas.logistics import OrderIntakeRequest, OrderIntakeResponse
 from app.services.order_service import get_order_or_404, transition_order
+from app.services.policy_service import record_policy_decision, validate_action_policy
 
 router = APIRouter()
 transition_alias_router = APIRouter()
+
+
+def _agent_code_for_actor(actor_role: str) -> str:
+    role = actor_role.strip().upper()
+    return {
+        "OMS": "OMS",
+        "TMS": "TMS",
+        "FIN": "FIN",
+        "DRIVER": "TMS",
+        "CUSTOMER": "OMS",
+        "ADMIN": "ADMIN_OPS",
+        "RAG": "ADMIN_OPS",
+        "SUP": "SUP",
+    }.get(role, "ADMIN_OPS")
+
+
+def _raise_policy_block(decision) -> None:
+    raise HTTPException(
+        status_code=409,
+        detail={
+            "error_code": "POLICY_PREFLIGHT_BLOCKED",
+            "reason_code": decision.reason_code,
+            "result": decision.result,
+            "requires_human_review": decision.requires_human_review,
+        },
+    )
 
 
 VALID_STATUSES = [s.value for s in OrderStatus]
@@ -318,6 +345,46 @@ async def transition_order_status(
     db: Session = Depends(get_db),
 ):
     """Request an order lifecycle transition through the policy gateway."""
+    order = get_order_or_404(db, order_id)
+    policy_payload = {
+        "from_state": order.current_state.value,
+        "to_state": transition_data.to_state,
+        "event": transition_data.event,
+        "actor_role": transition_data.actor_role,
+        "payload": transition_data.payload,
+    }
+    outcome = validate_action_policy(
+        db,
+        agent_code=_agent_code_for_actor(transition_data.actor_role),
+        entity_type="order",
+        requested_action="state.transition",
+        confidence_score=transition_data.confidence_score,
+        payload=policy_payload,
+        trace_id=transition_data.trace_id,
+        idempotency_key=str(transition_data.idempotency_key) if transition_data.idempotency_key else None,
+    )
+    decision = record_policy_decision(
+        db,
+        agent_code=_agent_code_for_actor(transition_data.actor_role),
+        entity_type="order",
+        entity_id=str(order_id),
+        requested_action="state.transition",
+        decision_reason=transition_data.decision_reason or transition_data.reason,
+        trace_id=transition_data.trace_id,
+        idempotency_key=str(transition_data.idempotency_key) if transition_data.idempotency_key else None,
+        confidence_score=transition_data.confidence_score,
+        evidence_refs=transition_data.evidence_refs or ([transition_data.evidence_ref] if transition_data.evidence_ref else []),
+        payload=policy_payload,
+        outcome=outcome,
+    )
+    if decision.result != "approved" and decision.reason_code != "INVALID_STATE_TRANSITION":
+        db.commit()
+        _raise_policy_block(decision)
+    if not transition_data.idempotency_key or not transition_data.trace_id:
+        db.commit()
+        _raise_policy_block(decision)
+    db.commit()
+
     return transition_order(
         db,
         order_id=order_id,

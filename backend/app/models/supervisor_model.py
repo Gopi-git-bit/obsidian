@@ -47,7 +47,9 @@ class SettlementHold(Base):
 
     hold_id = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     case_id = Column(Uuid(as_uuid=True), ForeignKey("exception_cases.case_id", ondelete="CASCADE"), nullable=True, index=True)
-    settlement_id = Column(Uuid(as_uuid=True), ForeignKey("settlement_records.settlement_id", ondelete="CASCADE"), nullable=False, index=True)
+    settlement_id = Column(Uuid(as_uuid=True), ForeignKey("settlement_records.settlement_id", ondelete="CASCADE"), nullable=True, index=True)
+    order_id = Column(Uuid(as_uuid=True), nullable=True, index=True)
+    trip_id = Column(Uuid(as_uuid=True), nullable=True, index=True)
     reason = Column(Text, nullable=False)
     is_active = Column(Boolean, default=True, nullable=False, index=True)
     placed_by = Column(String(80), nullable=False)

@@ -314,7 +314,11 @@ function renderActions() {
         gst_amount: Number(promptRequired("GST amount", "324")),
         driver_payable_amount: Number(promptRequired("Driver payable", "16200")),
         currency: "INR",
-        idempotency_key: `admin-settlement-${crypto.randomUUID()}`
+        idempotency_key: `admin-settlement-${crypto.randomUUID()}`,
+        trace_id: `admin-settlement-${crypto.randomUUID()}`,
+        confidence_score: 0.91,
+        decision_reason: "Admin settlement release preflight",
+        evidence_refs: ["pod:verified", "otp:verified"]
       })),
       !tripId
     )

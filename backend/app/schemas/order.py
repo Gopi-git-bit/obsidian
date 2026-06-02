@@ -166,10 +166,13 @@ class OrderTransitionRequest(BaseModel):
     payload: dict[str, Any]
     actor_role: str = Field(..., min_length=1, max_length=40)
     actor_id: Optional[str] = Field(None, max_length=80)
-    idempotency_key: UUID
-    trace_id: str = Field(..., min_length=1, max_length=120)
+    idempotency_key: Optional[UUID] = None
+    trace_id: Optional[str] = Field(None, min_length=1, max_length=120)
     reason: Optional[str] = None
     evidence_ref: Optional[str] = Field(None, max_length=255)
+    confidence_score: Optional[float] = Field(0.99, ge=0, le=1)
+    decision_reason: Optional[str] = None
+    evidence_refs: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_transition_contract(self):

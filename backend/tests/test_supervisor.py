@@ -162,7 +162,18 @@ def test_finance_cannot_release_settlement_under_fraud_hold_until_cleared():
     held = client.post(f"/api/v1/supervisor/orders/{order_id}/fraud-hold", json={"reason": "fraud risk"}, headers=sup)
     assert held.status_code == 200, held.text
     finance = auth_headers(client, "finance_admin", username=f"finance-hold-{uuid4()}")
-    payload = {"amount": 18000, "commission_amount": 1800, "gst_amount": 324, "driver_payable_amount": 16200, "currency": "INR", "idempotency_key": f"settle-{uuid4()}"}
+    payload = {
+        "amount": 18000,
+        "commission_amount": 1800,
+        "gst_amount": 324,
+        "driver_payable_amount": 16200,
+        "currency": "INR",
+        "idempotency_key": f"settle-{uuid4()}",
+        "trace_id": f"settlement-trace-{uuid4()}",
+        "confidence_score": 0.91,
+        "decision_reason": "Supervisor hold test settlement release preflight",
+        "evidence_refs": ["pod:verified", "otp:verified"],
+    }
     blocked = client.post(f"/api/v1/trips/{trip_id}/settlements/release", json=payload, headers=finance)
     assert blocked.status_code == 409
     cleared = client.post(f"/api/v1/supervisor/cases/{held.json()['case']['case_id']}/approve", json={"reason": "cleared"}, headers=sup)
