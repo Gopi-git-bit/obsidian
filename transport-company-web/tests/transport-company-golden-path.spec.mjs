@@ -21,7 +21,7 @@ let server;
 let staticServer;
 
 function runPython(args) {
-  const result = spawnSync(pythonExe, args, { cwd: backendRoot, env: { ...process.env, DATABASE_URL: databaseUrl }, encoding: "utf8" });
+  const result = spawnSync(pythonExe, args, { cwd: backendRoot, env: { ...process.env, DATABASE_URL: databaseUrl, APP_ENV: "development", CORS_ORIGINS: "*" }, encoding: "utf8" });
   if (result.status !== 0) throw new Error(`Python failed\n${result.stdout}\n${result.stderr}`);
 }
 
@@ -96,7 +96,7 @@ async function startStaticServer() {
 test.beforeAll(async () => {
   if (existsSync(dbPath)) rmSync(dbPath, { force: true });
   runPython(["-m", "alembic", "upgrade", "head"]);
-  server = spawn(pythonExe, ["-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8000"], { cwd: backendRoot, env: { ...process.env, DATABASE_URL: databaseUrl }, stdio: "pipe" });
+  server = spawn(pythonExe, ["-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8000"], { cwd: backendRoot, env: { ...process.env, DATABASE_URL: databaseUrl, APP_ENV: "development", CORS_ORIGINS: "*" }, stdio: "pipe" });
   await waitForBackend();
   await startStaticServer();
 });

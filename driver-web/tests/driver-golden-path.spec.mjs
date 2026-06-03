@@ -23,7 +23,7 @@ let staticServer;
 function runPython(args) {
   const result = spawnSync(pythonExe, args, {
     cwd: backendRoot,
-    env: { ...process.env, DATABASE_URL: databaseUrl },
+    env: { ...process.env, DATABASE_URL: databaseUrl, APP_ENV: "development", CORS_ORIGINS: "*" },
     encoding: "utf8"
   });
   if (result.status !== 0) {
@@ -209,7 +209,7 @@ test.beforeAll(async () => {
     ["-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8000"],
     {
       cwd: backendRoot,
-      env: { ...process.env, DATABASE_URL: databaseUrl },
+      env: { ...process.env, DATABASE_URL: databaseUrl, APP_ENV: "development", CORS_ORIGINS: "*" },
       stdio: "pipe"
     }
   );

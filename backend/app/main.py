@@ -26,6 +26,7 @@ from app.api import (
     supervisor,
 )
 from app.middleware.privacy import DPDPPrivacyMaskingMiddleware
+from app.config import cors_allowed_origins
 from app.observability import (
     RequestIdLoggingMiddleware,
     configure_logging,
@@ -53,7 +54,7 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=cors_allowed_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

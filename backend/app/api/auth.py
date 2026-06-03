@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.auth import create_access_token, hash_password, verify_password
+from app.config import is_development
 from app.database import get_db
 from app.models.auth_model import UserAccount, UserRole
 
@@ -51,6 +52,9 @@ async def dev_login(payload: DevLoginRequest, db: Session = Depends(get_db)):
     This intentionally avoids OAuth while keeping browser tests and local
     operator workflows on the same Authorization header path as production.
     """
+    if not is_development():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
+
     user = db.query(UserAccount).filter(UserAccount.username == payload.username).first()
     if user:
         user.password_hash = hash_password(payload.password)

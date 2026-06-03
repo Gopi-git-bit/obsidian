@@ -85,11 +85,14 @@ If migrations fail, the backend container exits instead of serving with a drifte
 Required environment:
 
 - `DATABASE_URL`: database connection string. The app fails startup if this is missing.
+- `JWT_SECRET`: signing secret for JWT tokens. Use a strong non-default value for pilot/production.
 
 Optional environment:
 
+- `APP_ENV`: `development`, `pilot`, or `production`. Defaults to `development`.
 - `APP_VERSION`: returned by health/readiness responses. Defaults to `1.0.0`.
 - `LOG_LEVEL`: Python logging level. Defaults to `INFO`.
+- `CORS_ORIGINS`: comma-separated browser origins. Defaults to `*` in local development.
 - `SENTRY_DSN`: enables Sentry only when set and `sentry_sdk` is installed.
 - `SENTRY_TRACES_SAMPLE_RATE`: optional Sentry trace sample rate. Defaults to `0`.
 
@@ -104,6 +107,59 @@ Request tracing:
 - Send `X-Request-ID` to preserve an upstream request id.
 - If omitted, the backend generates one and returns it in `X-Request-ID`.
 - Request logs include method, path, status code, latency, request id, and trace id.
+
+## Pilot Security Profile
+
+`POST /api/v1/auth/dev-login` is available only when `APP_ENV=development`.
+
+For pilot or production runtime:
+
+```powershell
+$env:APP_ENV="pilot"
+$env:JWT_SECRET="<strong-random-secret>"
+```
+
+Use `POST /api/v1/auth/login` with seeded or manually provisioned accounts for pilot operators. Do not expose dev-login outside local development.
+
+For browser deployments, set `CORS_ORIGINS` to the exact frontend origins, for example:
+
+```text
+CORS_ORIGINS=https://admin-pilot.example.com,https://finance-pilot.example.com
+```
+
+Avoid `CORS_ORIGINS=*` outside local development.
+
+## Port Isolation For E2E
+
+The Playwright E2E harnesses start their own FastAPI backend on port `8000`. Stop the Docker runtime stack before running E2E tests, or run Docker with another published port:
+
+```powershell
+docker compose --env-file backend/.env.example -f ..\docker-compose.runtime.yml down
+npm.cmd run test:e2e
+```
+
+Alternative:
+
+```powershell
+$env:BACKEND_PORT="8010"
+docker compose --env-file backend/.env.example -f ..\docker-compose.runtime.yml up -d
+```
+
+## Pilot Postgres Backup And Restore
+
+Create a logical backup:
+
+```powershell
+docker compose --env-file backend/.env.example -f ..\docker-compose.runtime.yml exec -T postgres pg_dump -U zippy -d zippy -Fc > zippy-pilot.dump
+```
+
+Restore into an empty pilot database:
+
+```powershell
+docker compose --env-file backend/.env.example -f ..\docker-compose.runtime.yml exec -T postgres pg_restore -U zippy -d zippy --clean --if-exists < zippy-pilot.dump
+```
+
+Before restore, take a fresh backup and stop the backend container to avoid writes during restore. Store pilot backups outside the repo and protect them as sensitive data.
 
 ## API Documentation
 

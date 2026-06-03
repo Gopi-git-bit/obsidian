@@ -20,8 +20,11 @@ services:
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-zippy}:${POSTGRES_PASSWORD:-zippy_dev_password}@postgres:5432/${POSTGRES_DB:-zippy}
+      APP_ENV: ${BACKEND_APP_ENV:-pilot}
       APP_VERSION: ${APP_VERSION:-1.0.0}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      JWT_SECRET: ${JWT_SECRET:-change_me_for_pilot_or_production}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:4173,http://localhost:5173}
       SENTRY_DSN: ${SENTRY_DSN:-}
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0}
       PORT: 8000
