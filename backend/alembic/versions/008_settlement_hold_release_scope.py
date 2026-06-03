@@ -18,6 +18,16 @@ depends_on = None
 
 
 def upgrade() -> None:
+    bind = op.get_bind()
+    if bind.dialect.name == "postgresql":
+        op.alter_column(
+            "alembic_version",
+            "version_num",
+            existing_type=sa.String(length=32),
+            type_=sa.String(length=80),
+            existing_nullable=False,
+        )
+
     with op.batch_alter_table("settlement_holds") as batch_op:
         batch_op.add_column(sa.Column("order_id", sa.Uuid(), nullable=True))
         batch_op.add_column(sa.Column("trip_id", sa.Uuid(), nullable=True))

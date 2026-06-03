@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import importlib.util
 import sqlite3
+from types import SimpleNamespace
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from uuid import uuid4
@@ -16,6 +18,7 @@ from conftest import auth_headers
 client = TestClient(app)
 client.headers.update(auth_headers(client, "super_admin"))
 DB_PATH = Path(__file__).resolve().parents[1] / ".pytest_alembic.db"
+MIGRATIONS_PATH = Path(__file__).resolve().parents[1] / "alembic" / "versions"
 
 
 def _order_payload() -> dict:
@@ -64,6 +67,32 @@ def test_alembic_schema_uses_current_state_without_required_status_column():
     assert "current_state" in order_columns
     assert order_columns["current_state"]["not_null"] is True
     assert "status" not in order_columns
+
+
+def test_userrole_postgres_enum_reuses_existing_type_without_recreate():
+    migration_path = MIGRATIONS_PATH / "004_auth_rbac_foundation.py"
+    spec = importlib.util.spec_from_file_location("migration_004_auth_rbac_foundation", migration_path)
+    assert spec and spec.loader
+    migration = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(migration)
+
+    enum_type = migration._user_role_enum(SimpleNamespace(dialect=SimpleNamespace(name="postgresql")))
+
+    assert enum_type.name == "userrole"
+    assert enum_type.create_type is False
+
+
+def test_revision_ids_fit_widened_alembic_version_column():
+    revision_ids = []
+    for migration_path in MIGRATIONS_PATH.glob("*.py"):
+        spec = importlib.util.spec_from_file_location(f"migration_{migration_path.stem}", migration_path)
+        assert spec and spec.loader
+        migration = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(migration)
+        revision_ids.append(migration.revision)
+
+    assert any(len(revision) > 32 for revision in revision_ids)
+    assert all(len(revision) <= 80 for revision in revision_ids)
 
 
 def test_order_creation_and_state_transitions_on_alembic_database():

@@ -1,0 +1,14 @@
+.env
+.venv/
+.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.db
+test.db
+.pytest_alembic.db
+alembic_verify*.db
+graphify-out/
+models/
+test-results/
+playwright-report/

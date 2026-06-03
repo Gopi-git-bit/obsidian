@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
 
 
 revision = "004_auth_rbac_foundation"
@@ -16,19 +17,49 @@ down_revision = "003_order_to_settlement_flow"
 branch_labels = None
 depends_on = None
 
+USER_ROLE_VALUES = (
+    "CUSTOMER",
+    "DRIVER",
+    "TRANSPORT_COMPANY",
+    "SUPPORT_ADMIN",
+    "OPS_ADMIN",
+    "FINANCE_ADMIN",
+    "SUPER_ADMIN",
+)
+
+
+def _user_role_enum(bind):
+    if bind.dialect.name == "postgresql":
+        return postgresql.ENUM(*USER_ROLE_VALUES, name="userrole", create_type=False)
+    return sa.Enum(*USER_ROLE_VALUES, name="userrole")
+
 
 def upgrade() -> None:
-    user_role = sa.Enum(
-        "CUSTOMER",
-        "DRIVER",
-        "TRANSPORT_COMPANY",
-        "SUPPORT_ADMIN",
-        "OPS_ADMIN",
-        "FINANCE_ADMIN",
-        "SUPER_ADMIN",
-        name="userrole",
-    )
-    user_role.create(op.get_bind(), checkfirst=True)
+    bind = op.get_bind()
+    if bind.dialect.name == "postgresql":
+        op.execute(
+            """
+            DO $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'userrole') THEN
+                    CREATE TYPE userrole AS ENUM (
+                        'CUSTOMER',
+                        'DRIVER',
+                        'TRANSPORT_COMPANY',
+                        'SUPPORT_ADMIN',
+                        'OPS_ADMIN',
+                        'FINANCE_ADMIN',
+                        'SUPER_ADMIN'
+                    );
+                END IF;
+            END
+            $$;
+            """
+        )
+    else:
+        sa.Enum(*USER_ROLE_VALUES, name="userrole").create(bind, checkfirst=True)
+
+    user_role = _user_role_enum(bind)
 
     op.create_table(
         "user_accounts",

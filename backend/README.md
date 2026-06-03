@@ -21,6 +21,7 @@ cd "C:\Users\user\Downloads\MiniMax Agent_ Minimize Effort, Maximize Intelligenc
 - upgrades `pip`
 - installs `requirements.txt`
 - creates a local `.env` with `DATABASE_URL=sqlite:///./test.db` if missing
+- runs `alembic upgrade head`
 
 `.\dev.ps1 test`
 
@@ -28,6 +29,7 @@ cd "C:\Users\user\Downloads\MiniMax Agent_ Minimize Effort, Maximize Intelligenc
 
 `.\dev.ps1 run`
 
+- runs `alembic upgrade head`
 - starts the FastAPI app with `uvicorn` and reload enabled
 
 ## Manual Commands
@@ -47,6 +49,36 @@ cd "C:\Users\user\Downloads\MiniMax Agent_ Minimize Effort, Maximize Intelligenc
 - `backend/test.db` is ignored by git
 
 If you later want to point the app at PostgreSQL, replace the `DATABASE_URL` value in `backend/.env`.
+
+## Container Runtime
+
+The backend image is defined in `backend/Dockerfile`. It installs the FastAPI backend, runs Alembic migrations on startup, starts Uvicorn, and exposes a Docker healthcheck against `/ready`.
+
+Build only the backend image from the repository root:
+
+```powershell
+docker build -f backend/Dockerfile -t zippy-backend:local backend
+```
+
+Run the minimal runtime profile with Postgres and the backend:
+
+```powershell
+docker compose --env-file backend/.env.example -f docker-compose.runtime.yml up --build
+```
+
+Validate compose configuration without starting containers:
+
+```powershell
+docker compose --env-file backend/.env.example -f docker-compose.runtime.yml config
+```
+
+The container startup path is intentionally:
+
+```text
+alembic upgrade head -> uvicorn app.main:app
+```
+
+If migrations fail, the backend container exits instead of serving with a drifted schema.
 
 ## Deployment And Observability
 
