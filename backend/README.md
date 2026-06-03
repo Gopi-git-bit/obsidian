@@ -48,6 +48,31 @@ cd "C:\Users\user\Downloads\MiniMax Agent_ Minimize Effort, Maximize Intelligenc
 
 If you later want to point the app at PostgreSQL, replace the `DATABASE_URL` value in `backend/.env`.
 
+## Deployment And Observability
+
+Required environment:
+
+- `DATABASE_URL`: database connection string. The app fails startup if this is missing.
+
+Optional environment:
+
+- `APP_VERSION`: returned by health/readiness responses. Defaults to `1.0.0`.
+- `LOG_LEVEL`: Python logging level. Defaults to `INFO`.
+- `SENTRY_DSN`: enables Sentry only when set and `sentry_sdk` is installed.
+- `SENTRY_TRACES_SAMPLE_RATE`: optional Sentry trace sample rate. Defaults to `0`.
+
+Operational endpoints:
+
+- `GET /health`: service status, app version, database connectivity, timestamp.
+- `GET /ready`: database connectivity plus required migration-backed table availability.
+- Existing prefixed probes remain available under `/api/v1/health`, `/api/v1/health/live`, and `/api/v1/ready`.
+
+Request tracing:
+
+- Send `X-Request-ID` to preserve an upstream request id.
+- If omitted, the backend generates one and returns it in `X-Request-ID`.
+- Request logs include method, path, status code, latency, request id, and trace id.
+
 ## API Documentation
 
 - Swagger UI: `http://localhost:8000/docs`

@@ -26,6 +26,15 @@ from app.api import (
     supervisor,
 )
 from app.middleware.privacy import DPDPPrivacyMaskingMiddleware
+from app.observability import (
+    RequestIdLoggingMiddleware,
+    configure_logging,
+    init_sentry_if_configured,
+    unhandled_exception_handler,
+)
+
+configure_logging()
+init_sentry_if_configured()
 
 
 @asynccontextmanager
@@ -50,9 +59,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.add_middleware(DPDPPrivacyMaskingMiddleware)
+app.add_middleware(RequestIdLoggingMiddleware)
+app.add_exception_handler(Exception, unhandled_exception_handler)
 
 # Include routers
 app.include_router(auth.router, prefix="/api/v1", tags=["Auth"])
+app.include_router(health.router, tags=["Health"])
 app.include_router(health.router, prefix="/api/v1", tags=["Health"])
 app.include_router(vehicles.router, prefix="/api/v1", tags=["Vehicles"])
 app.include_router(pricing.router, prefix="/api/v1", tags=["Pricing"])

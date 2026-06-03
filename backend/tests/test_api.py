@@ -5,10 +5,16 @@ Basic tests for the FastAPI backend
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
+from app.observability import REQUEST_ID_HEADER, init_sentry_if_configured
 from conftest import auth_headers
 
 client = TestClient(app)
 client.headers.update(auth_headers(client, "super_admin"))
+
+
+@app.get("/__test/unhandled-error", include_in_schema=False)
+async def _test_unhandled_error():
+    raise RuntimeError("boom")
 
 
 def test_health_check():
@@ -19,6 +25,18 @@ def test_health_check():
     assert data["status"] == "healthy"
     assert data["database"] == "connected"
     assert "version" in data
+    assert "timestamp" in data
+
+
+def test_root_health_endpoint():
+    """Root health endpoint supports deployment probes."""
+    response = client.get("/health")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "healthy"
+    assert data["database"] == "connected"
+    assert data["version"]
+    assert data["timestamp"]
 
 
 def test_liveness_probe():
@@ -35,6 +53,45 @@ def test_readiness_probe():
     data = response.json()
     assert data["status"] == "ready"
     assert data["database"] == "connected"
+
+
+def test_root_readiness_endpoint_checks_tables():
+    response = client.get("/ready")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "ready"
+    assert data["database"] == "connected"
+    assert "orders" in data["checked_tables"]
+    assert "policy_decisions" in data["checked_tables"]
+    assert data["missing_tables"] == []
+
+
+def test_request_id_header_is_returned():
+    request_id = "test-request-id-123"
+    response = client.get("/health", headers={REQUEST_ID_HEADER: request_id})
+    assert response.status_code == 200
+    assert response.headers[REQUEST_ID_HEADER] == request_id
+
+
+def test_request_id_header_is_generated_when_missing():
+    response = client.get("/health", headers={REQUEST_ID_HEADER: ""})
+    assert response.status_code == 200
+    assert response.headers[REQUEST_ID_HEADER]
+
+
+def test_unhandled_error_response_includes_request_id():
+    error_client = TestClient(app, raise_server_exceptions=False)
+    response = error_client.get("/__test/unhandled-error", headers={REQUEST_ID_HEADER: "error-request-id"})
+    assert response.status_code == 500
+    assert response.headers[REQUEST_ID_HEADER] == "error-request-id"
+    body = response.json()
+    assert body["error"]["code"] == "INTERNAL_SERVER_ERROR"
+    assert body["error"]["request_id"] == "error-request-id"
+
+
+def test_missing_sentry_dsn_does_not_crash(monkeypatch):
+    monkeypatch.delenv("SENTRY_DSN", raising=False)
+    init_sentry_if_configured()
 
 
 def test_root_endpoint():
