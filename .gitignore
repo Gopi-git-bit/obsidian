@@ -44,6 +44,9 @@ coverage/
 .cache/
 .ruff_cache/
 tmp/
+test-results/
+playwright-report/
+.playwright/
 
 # ── Nested git repositories ──
 transport-service/
