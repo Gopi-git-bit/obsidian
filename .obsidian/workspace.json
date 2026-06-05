@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "f4e9d36b7b4c82ad",
+        "id": "ad49abead43debfa",
         "type": "tabs",
         "children": [
           {
-            "id": "c478cfc5a7c04fce",
+            "id": "bcf4b562f6833758",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -188,7 +188,7 @@
       "github-sync:Sync with Remote": false
     }
   },
-  "active": "c478cfc5a7c04fce",
+  "active": "bcf4b562f6833758",
   "lastOpenFiles": [
     "00_System/Admin and Ops Frontend for Current Project.md",
     "AGENTS.md",
