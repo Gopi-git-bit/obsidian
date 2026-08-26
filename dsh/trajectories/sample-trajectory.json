@@ -1,0 +1,53 @@
+{
+  "id": "sample-trajectory-001",
+  "requestId": "req-sample-001",
+  "agentRole": "logistics-ops",
+  "agentId": "logistics-ops",
+  "startedAt": "2026-01-01T00:00:00.000Z",
+  "endedAt": "2026-01-01T00:00:05.000Z",
+  "status": "completed",
+  "steps": [
+    {
+      "step": 1,
+      "timestamp": "2026-01-01T00:00:00.000Z",
+      "agentRole": "logistics-ops",
+      "agentId": "logistics-ops",
+      "type": "thought",
+      "content": "User requested order from Bengaluru to Chennai, 5 tons electronics."
+    },
+    {
+      "step": 2,
+      "timestamp": "2026-01-01T00:00:01.000Z",
+      "agentRole": "logistics-ops",
+      "agentId": "logistics-ops",
+      "type": "tool_call",
+      "content": "Invoking audit.log to record intent.",
+      "payload": {
+        "capability": "audit.log",
+        "plugin": "plugin-supabase-audit"
+      }
+    },
+    {
+      "step": 3,
+      "timestamp": "2026-01-01T00:00:02.000Z",
+      "agentRole": "logistics-ops",
+      "agentId": "logistics-ops",
+      "type": "tool_call",
+      "content": "Generated order draft ZIP-2026-000001 via order-create edge function.",
+      "payload": {
+        "capability": "erp.write",
+        "plugin": "plugin-odoo-composio"
+      }
+    },
+    {
+      "step": 4,
+      "timestamp": "2026-01-01T00:00:05.000Z",
+      "agentRole": "logistics-ops",
+      "agentId": "logistics-ops",
+      "type": "decision",
+      "content": "Order created successfully. Awaiting payment confirmation."
+    }
+  ],
+  "finalOutput": "Order ZIP-2026-000001 created. Next step: payment confirmation.",
+  "error": null
+}

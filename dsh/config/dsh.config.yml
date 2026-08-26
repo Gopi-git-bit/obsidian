@@ -1,0 +1,222 @@
+# DeepSeek Harness — Main Configuration
+
+projectId: zippy-logistics
+description: >-
+  Orchestrates Hermes (logistics ops), Paperclips (BI), TinyFish (research),
+  n8n (automation), Odoo (ERP), and Supabase (audit/RLS) for Zippy Logistics.
+
+environment: development
+
+plugins:
+  - name: plugin-hermes-adapter
+    path: ./plugins/plugin-hermes-adapter/index.ts
+    config:
+      baseUrl: http://localhost:8080/v1
+      apiKey: ${HERMES_API_KEY}
+      model: deepseek-chat
+
+  - name: plugin-odoo-composio
+    path: ./plugins/plugin-odoo-composio/index.ts
+    config:
+      composioBaseUrl: https://backend.composio.ai/api
+      composioApiKey: ${COMPOSIO_API_KEY}
+      entity: hermes_ops
+      connectionId: ${ODOO_CONNECTION_ID}
+
+  - name: plugin-supabase-audit
+    path: ./plugins/plugin-supabase-audit/index.ts
+    config:
+      supabaseUrl: ${SUPABASE_URL}
+      serviceRoleKey: ${SUPABASE_SERVICE_ROLE_KEY}
+
+  - name: plugin-research
+    path: ./plugins/plugin-research/index.ts
+    config:
+      tinyfishBaseUrl: https://api.tinyfish.ai
+      tinyfishApiKey: ${TINYFISH_API_KEY}
+      n8nWebhookUrl: ${N8N_WEBHOOK_URL}
+      n8nApiKey: ${N8N_API_KEY}
+
+agents:
+  # --- Layer A: Logistics Operations (Hermes) ---
+  - id: logistics-ops
+    role: logistics-ops
+    displayName: "Logistics Operations Agent"
+    description: "Handles order creation, dispatch, and fleet coordination."
+    model: hermes-2-pro
+    capabilities:
+      - llm.generate
+      - audit.log
+      - audit.lock
+      - erp.read
+      - erp.write
+      - composio.invoke
+    allowedTools:
+      - order_create
+      - dispatch_search
+      - dispatch_offer
+      - vehicle_status
+      - odoo_read_order
+      - odoo_write_order
+    systemPrompt: >-
+      You are the Zippy Logistics Operations Agent.
+      You follow the SOP in sop_sections for order lifecycle and dispatch.
+      Always validate capacity, body type, and compliance documents before assignment.
+      Log every decision via audit.log.
+    plugins:
+      - plugin-hermes-adapter
+      - plugin-supabase-audit
+      - plugin-odoo-composio
+    maxSteps: 10
+
+  - id: marketing-ops
+    role: marketing-ops
+    displayName: "Marketing Operations Agent"
+    description: "Manages campaigns, lead scoring, and customer segmentation."
+    model: deepseek-chat
+    capabilities:
+      - llm.generate
+      - audit.log
+      - erp.read
+      - erp.write
+    allowedTools:
+      - campaign_create
+      - lead_score
+      - customer_segment
+    systemPrompt: >-
+      You are the Zippy Marketing Agent.
+      You read customer scores and create targeted campaigns in Odoo.
+      All writes must be logged.
+    plugins:
+      - plugin-hermes-adapter
+      - plugin-supabase-audit
+      - plugin-odoo-composio
+
+  - id: sales-ops
+    role: sales-ops
+    displayName: "Sales Operations Agent"
+    description: "Handles quotes, contracts, and CRM updates."
+    model: deepseek-chat
+    capabilities:
+      - llm.generate
+      - audit.log
+      - erp.read
+      - erp.write
+    allowedTools:
+      - quote_generate
+      - contract_create
+      - crm_update
+    systemPrompt: >-
+      You are the Zippy Sales Agent.
+      Generate quotes and update CRM records in Odoo.
+      Observe credit limits and payment terms.
+    plugins:
+      - plugin-hermes-adapter
+      - plugin-supabase-audit
+      - plugin-odoo-composio
+
+  - id: accounting-ops
+    role: accounting-ops
+    displayName: "Accounting Operations Agent"
+    description: "Handles invoices, settlements, and refunds."
+    model: deepseek-chat
+    capabilities:
+      - llm.generate
+      - audit.log
+      - audit.lock
+      - erp.read
+      - erp.write
+    allowedTools:
+      - invoice_create
+      - settlement_process
+      - refund_approve
+    systemPrompt: >-
+      You are the Zippy Accounting Agent.
+      Process settlements only when POD is verified.
+      Refunds above threshold require admin approval.
+    plugins:
+      - plugin-hermes-adapter
+      - plugin-supabase-audit
+      - plugin-odoo-composio
+
+  # --- Layer B: Business Intelligence (Paperclips) ---
+  - id: bi-research
+    role: bi-research
+    displayName: "Market Research Agent"
+    description: "Gathers market intelligence via TinyFish and web sources."
+    model: tinyfish-research
+    capabilities:
+      - llm.generate
+      - tinyfish.search
+      - n8n.trigger
+      - audit.log
+    allowedTools:
+      - tinyfish_search
+      - n8n_run_workflow
+      - web_scrape
+    systemPrompt: >-
+      You are the Zippy Market Research Agent.
+      Use TinyFish to gather competitor pricing, demand signals, and route economics.
+      Trigger n8n workflows to normalize raw data.
+    plugins:
+      - plugin-hermes-adapter
+      - plugin-supabase-audit
+      - plugin-research
+
+  - id: bi-analyst
+    role: bi-analyst
+    displayName: "Business Analyst Agent"
+    description: "Analyzes data and posts insights to Odoo."
+    model: deepseek-chat
+    capabilities:
+      - llm.generate
+      - n8n.trigger
+      - erp.read
+      - erp.comment
+      - audit.log
+    allowedTools:
+      - n8n_query
+      - odoo_read_report
+      - odoo_post_comment
+    systemPrompt: >-
+      You are the Zippy Business Analyst Agent.
+      Query n8n for aggregated data and post insights as comments on Odoo dashboards.
+    plugins:
+      - plugin-hermes-adapter
+      - plugin-supabase-audit
+      - plugin-odoo-composio
+      - plugin-research
+
+  # --- Platform Admin ---
+  - id: platform-admin
+    role: platform-admin
+    displayName: "Platform Administrator Agent"
+    description: "Oversees agents, overrides holds, and regulates AI behavior."
+    model: deepseek-chat
+    capabilities:
+      - llm.generate
+      - audit.log
+      - audit.lock
+      - erp.read
+      - erp.write
+      - erp.comment
+      - composio.invoke
+    allowedTools:
+      - admin_override
+      - agent_regulate
+      - user_suspend
+      - order_cancel
+    systemPrompt: >-
+      You are the Zippy Platform Administration Agent.
+      You have override authority. All override actions must be logged with reason.
+    plugins:
+      - plugin-hermes-adapter
+      - plugin-supabase-audit
+      - plugin-odoo-composio
+
+permissions: []
+
+trajectory:
+  enabled: true
+  storage: local
+  retentionDays: 90
